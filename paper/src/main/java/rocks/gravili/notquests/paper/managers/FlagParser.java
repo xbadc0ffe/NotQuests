@@ -6,7 +6,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FlagParser {
-    private static final String FLAG_PATTERN = "--[a-zA-Z]+ [a-zA-Z0-9%]+";
+    // Flag values must be allowed to contain underscores, hyphens, and dots
+    // because quest/category/profile identifiers commonly contain them.
+    // The previous pattern truncated "--quest Trader_Tier1_Wheat" to "Trader",
+    // which caused OpenGuiAction to receive a null Quest and broke %QUESTNAME%
+    // substitution on the quest-preview GUI.
+    private static final String FLAG_PATTERN = "--[a-zA-Z]+ [\\w%.\\-]+";
 
     public static Map<String, String> parseFlags(String stringToParse) {
         return Pattern.compile(FLAG_PATTERN)
@@ -16,8 +21,8 @@ public class FlagParser {
                 .toList()
                 .stream()
                 .collect(
-                        Collectors.toMap(flag -> flag.split(" ")[0].replace("-", ""),
-                        flag -> flag.split(" ")[1].replace("-", ""))
+                        Collectors.toMap(flag -> flag.split(" ")[0].substring(2),
+                        flag -> flag.split(" ")[1])
                 );
     }
 }
