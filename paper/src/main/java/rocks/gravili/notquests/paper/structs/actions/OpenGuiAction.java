@@ -133,7 +133,7 @@ public class OpenGuiAction extends Action {
             guiContext.setCategory(category);
         }
 
-        var targetPlayer = (String) flags.get("targetPlayer");
+        var targetPlayer = (String) flags.get("targetplayer");
         if (targetPlayer != null) {
             var player = main.getMain().getServer().getPlayer(targetPlayer);
             if (player != null) {
