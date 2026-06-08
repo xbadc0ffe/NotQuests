@@ -131,6 +131,8 @@ chat:
         base: 'Kiütött Blokkok: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Megölt Szörnyek: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Lények etetése: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Felvett Tárgyak: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

@@ -113,6 +113,8 @@ chat:
         base: 'Breek Blokken: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Fok Wezens: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Voer Wezens: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Raap Items op: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

@@ -113,6 +113,8 @@ chat:
         base: 'Сломать блоки: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Разводите мобов: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Покормите мобов: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Использовать предметы: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

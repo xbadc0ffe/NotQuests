@@ -113,6 +113,8 @@ chat:
         base: 'Breek blokke: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Teel wesens: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Voer wesens: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Tel items op: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

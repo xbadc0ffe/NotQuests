@@ -99,6 +99,8 @@ chat:
         base: 'Σπάσε μπλοκ: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Αναπαραγωγή πλασμάτων: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Τάισμα πλασμάτων: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Μάζεψε αντικείμενα: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

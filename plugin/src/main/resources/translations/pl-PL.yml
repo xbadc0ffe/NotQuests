@@ -117,6 +117,8 @@ chat:
         base: 'Zniszcz bloki: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Rozmnóż: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Nakarm moby: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Podnieś Przedmioty: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

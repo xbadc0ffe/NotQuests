@@ -113,6 +113,8 @@ chat:
         base: 'שבור בלוקים: <main>%BLOCKTOBREAK%'
       breed:
         base: 'רבה יצורים: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'האכל יצורים: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'אסוף פריטים: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

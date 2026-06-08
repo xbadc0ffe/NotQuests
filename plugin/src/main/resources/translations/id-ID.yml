@@ -113,6 +113,8 @@ chat:
         base: 'Hancurkan Blok: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Kembangbiakkan Mob: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Beri Makan Mob: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Ambil Item: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

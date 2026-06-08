@@ -113,6 +113,8 @@ chat:
         base: 'Partir Blocos: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Reproduzir Criaturas: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Alimentar Criaturas: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Apanhar Itens: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

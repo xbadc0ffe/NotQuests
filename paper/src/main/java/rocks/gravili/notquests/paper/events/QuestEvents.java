@@ -41,6 +41,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -810,6 +811,30 @@ public class QuestEvents implements Listener {
                 questPlayer.queueObjectiveCheck(activeObjective -> {
                     if (activeObjective.getObjective() instanceof final BreedObjective breedObjective) {
                         if(breedObjective.getEntityToBreedType().equalsIgnoreCase("any") ||  breedObjective.getEntityToBreedType().equalsIgnoreCase(e.getEntityType().toString())){
+                            activeObjective.addProgress(1);
+                        }
+
+                    }
+                });
+                questPlayer.checkQueuedObjectives();
+
+            }
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private void onEntityEnterLoveMode(EntityEnterLoveModeEvent e) {
+        if (!e.isCancelled()) {
+            if (e.getHumanEntity() instanceof final Player player) {
+                final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+                if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
+                    return;
+                }
+
+                questPlayer.queueObjectiveCheck(activeObjective -> {
+                    if (activeObjective.getObjective() instanceof final FeedMobsObjective feedMobsObjective) {
+                        if (feedMobsObjective.getEntityToFeedType().equalsIgnoreCase("any") || feedMobsObjective.getEntityToFeedType().equalsIgnoreCase(e.getEntityType().toString())) {
                             activeObjective.addProgress(1);
                         }
 

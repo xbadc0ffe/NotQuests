@@ -113,6 +113,8 @@ chat:
         base: 'Riko lohkoja: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Lisää eläimiä: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Ruoki eläimiä: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Poimi esineitä: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

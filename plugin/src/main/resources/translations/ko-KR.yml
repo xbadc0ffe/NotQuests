@@ -113,6 +113,8 @@ chat:
         base: '블록 부수기: <main>%BLOCKTOBREAK%'
       breed:
         base: '몹 번식시키기: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: '몹 먹이주기: <main>%ENTITYTOFEED%'
       pickupItems:
         base: '아이템 줍기: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

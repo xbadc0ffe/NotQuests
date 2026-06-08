@@ -113,6 +113,8 @@ chat:
         base: 'Förstör block: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Föd upp varelser: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Mata varelser: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Plocka upp föremål: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

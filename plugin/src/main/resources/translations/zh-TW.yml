@@ -113,6 +113,8 @@ chat:
         base: 破壞方塊:<main>%BLOCKTOBREAK%
       breed:
         base: '餵養生物: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: '餵食生物: <main>%ENTITYTOFEED%'
       pickupItems:
         base: '撿起物品: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)'
       consumeItems:

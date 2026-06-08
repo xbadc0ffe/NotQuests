@@ -107,6 +107,8 @@ chat:
         base: 'Znič blocky: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Rozmnož zvířata: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Nakrm zvířata: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Seber itemy: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

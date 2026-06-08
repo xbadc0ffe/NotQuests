@@ -113,6 +113,8 @@ chat:
         base: 'Razbij blokove: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Razmnoži stvorenja: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Nahrani stvorenja: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Pokupi predmete: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

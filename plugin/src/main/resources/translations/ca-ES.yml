@@ -113,6 +113,8 @@ chat:
         base: 'Trenca Blocs: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Cria Criatures: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Alimenta Criatures: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Recull Objectes: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

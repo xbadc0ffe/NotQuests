@@ -113,6 +113,8 @@ chat:
         base: 'كسر الكتل: <main>%BLOCKTOBREAK%'
       breed:
         base: 'تربية الوحوش: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'إطعام الوحوش: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'التقاط العناصر: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

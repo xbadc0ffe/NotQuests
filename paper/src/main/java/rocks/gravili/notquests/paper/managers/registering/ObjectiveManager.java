@@ -81,6 +81,7 @@ public class ObjectiveManager {
                 "KillEliteMobs", KillEliteMobsObjective.class); // TODO: only if EliteMobs enabled?
         registerObjective("ReachLocation", ReachLocationObjective.class);
         registerObjective("BreedMobs", BreedObjective.class);
+        registerObjective("FeedMobs", FeedMobsObjective.class);
         registerObjective("SlimefunResearch", SlimefunResearchObjective.class);
         registerObjective("RunCommand", RunCommandObjective.class);
         registerObjective("Interact", InteractObjective.class);

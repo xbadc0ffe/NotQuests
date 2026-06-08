@@ -101,6 +101,8 @@ chat:
         base: 'Phá vỡ khối: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Mobs giống: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Cho Mobs ăn: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Nhặt vật phẩm: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

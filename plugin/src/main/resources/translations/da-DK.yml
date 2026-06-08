@@ -113,6 +113,8 @@ chat:
         base: 'Bryd blokke: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Avl mobs: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Fodr mobs: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Saml genstande op: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

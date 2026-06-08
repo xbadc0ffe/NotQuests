@@ -113,6 +113,8 @@ chat:
         base: 'Sparge blocuri: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Înmulțește creaturi: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Hrănește creaturi: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Ridică obiecte: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

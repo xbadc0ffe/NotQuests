@@ -113,6 +113,8 @@ chat:
         base: 'Blöcke abbauen: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Mobs züchten: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Mobs füttern: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Items aufheben: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

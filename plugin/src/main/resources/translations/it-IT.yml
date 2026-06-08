@@ -113,6 +113,8 @@ chat:
         base: 'Rompi blocchi: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Riproduci mob: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Nutri mob: <main>%ENTITYTOFEED%'
       pickupItems:
         base: 'Raccogli oggetti: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:
