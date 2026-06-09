@@ -25,21 +25,21 @@ import com.gamingmesh.jobs.container.JobsPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.incendo.cloud.Command;
-import org.incendo.cloud.description.Description;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.suggestion.Suggestion;
 import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.commands.framework.NQArguments;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
+import rocks.gravili.notquests.paper.commands.framework.NQDescription;
+import rocks.gravili.notquests.paper.commands.framework.NQFlag;
 import rocks.gravili.notquests.paper.structs.ActiveObjective;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 import rocks.gravili.notquests.paper.structs.objectives.Objective;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-import static org.incendo.cloud.parser.standard.StringParser.stringParser;
-import static rocks.gravili.notquests.paper.commands.arguments.variables.NumberVariableValueParser.numberVariableParser;
+import static rocks.gravili.notquests.paper.commands.arguments.variables.NumberVariableArgument.numberVariableArgument;
 
 public class JobsRebornReachJobLevelObjective extends Objective {
 
@@ -52,24 +52,23 @@ public class JobsRebornReachJobLevelObjective extends Objective {
 
     public static void handleCommands(
             NotQuests main,
-            PaperCommandManager<CommandSender> manager,
-            Command.Builder<CommandSender> addObjectiveBuilder,
+            NQCommandManager manager,
+            NQCommandBuilder addObjectiveBuilder,
             final int level) {
         if (!main.getIntegrationsManager().isJobsRebornEnabled()) {
             return;
         }
 
         manager.command(addObjectiveBuilder
-                .required("Job Name", stringParser(), Description.of("Name of the job"), (context, lastString) -> {
-                    main.getUtilManager().sendFancyCommandCompletion(context.sender(), lastString.input().split(" "), "[Job Name]", "");
-                    ArrayList<Suggestion> completions = new ArrayList<>();
+                .required("Job Name", NQArguments.stringArgument(), NQDescription.of("Name of the job"), (context, input) -> {
+                    List<String> completions = new ArrayList<>();
                     for (Job job : Jobs.getJobs()) {
-                        completions.add(Suggestion.suggestion(job.getName()));
+                        completions.add(job.getName());
                     }
-                    return CompletableFuture.completedFuture(completions);
+                    return completions;
                 })
-                .required("level", numberVariableParser("level", null), Description.of("Job level which needs to be reached"))
-                .flag(manager.flagBuilder("doNotCountPreviousLevels").withDescription(Description.of("Makes it so only additional levels gained from the time of unlocking this Objective will count (and previous/existing counts will not count, so it starts from zero)")))
+                .required("level", numberVariableArgument("level", null), NQDescription.of("Job level which needs to be reached"))
+                .flag(NQFlag.builder("doNotCountPreviousLevels").withDescription(NQDescription.of("Makes it so only additional levels gained from the time of unlocking this Objective will count (and previous/existing counts will not count, so it starts from zero)")).build())
                 .handler((context) -> {
                     final String amountExpression = context.get("level");
                     final boolean countPreviousLevels = !context.flags().isPresent("doNotCountPreviousLevels");

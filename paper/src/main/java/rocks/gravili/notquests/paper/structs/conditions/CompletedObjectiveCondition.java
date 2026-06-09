@@ -18,13 +18,11 @@
 
 package rocks.gravili.notquests.paper.structs.conditions;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.incendo.cloud.Command;
-import org.incendo.cloud.description.Description;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.suggestion.Suggestion;
 import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
+import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.structs.ActiveQuest;
 import rocks.gravili.notquests.paper.structs.Quest;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
@@ -32,9 +30,9 @@ import rocks.gravili.notquests.paper.structs.objectives.Objective;
 import rocks.gravili.notquests.paper.structs.objectives.ObjectiveHolder;
 
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
-import static rocks.gravili.notquests.paper.commands.arguments.ObjectiveParser.objectiveParser;
+import static rocks.gravili.notquests.paper.commands.arguments.ObjectiveArgument.objectiveArgument;
 
 public class CompletedObjectiveCondition extends Condition {
 
@@ -46,22 +44,20 @@ public class CompletedObjectiveCondition extends Condition {
 
     public static void handleCommands(
             NotQuests main,
-            PaperCommandManager<CommandSender> manager,
-            Command.Builder<CommandSender> builder,
+            NQCommandManager manager,
+            NQCommandBuilder builder,
             ConditionFor conditionFor) {
         if (conditionFor == ConditionFor.OBJECTIVEUNLOCK || conditionFor == ConditionFor.OBJECTIVEPROGRESS || conditionFor == ConditionFor.OBJECTIVECOMPLETE) {
-            manager.command(builder.required("dependingObjectiveId", objectiveParser(main, 0), Description.of("Depending Objective ID"), (context, lastString) -> {
-                        main.getUtilManager().sendFancyCommandCompletion(context.sender(), lastString.input().split(" "), "[Depending Objective ID]", "");
-
-                        ArrayList<Suggestion> completions = new ArrayList<>();
+            manager.command(builder.required("dependingObjectiveId", objectiveArgument(main, 0), NQDescription.of("Depending Objective ID"), (context, input) -> {
+                        List<String> completions = new ArrayList<>();
 
                         final Quest quest = context.get("quest");
                         for (final Objective objective : quest.getObjectives()) {
                             if (objective.getObjectiveID() != ((Objective) context.get("objectiveId")).getObjectiveID()) { //TODO: Support nested objectives
-                                completions.add(Suggestion.suggestion("" + objective.getObjectiveID()));
+                                completions.add("" + objective.getObjectiveID());
                             }
                         }
-                        return CompletableFuture.completedFuture(completions);
+                        return completions;
                     })
                     .handler(
                             (context) -> {

@@ -17,6 +17,7 @@
  */
 
 package rocks.gravili.notquests.paper.managers.integrations;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
 
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
@@ -47,7 +48,7 @@ public class WorldEditManager {
   public void handleReachLocationObjectiveCreation(
       final Player player,
       final String locationName,
-      final @NonNull CommandContext<CommandSender> context,
+      final @NonNull NQCommandContext context,
       final int level) {
     BukkitPlayer actor =
         BukkitAdapter.adapt(player); // WorldEdit's native Player class extends Actor

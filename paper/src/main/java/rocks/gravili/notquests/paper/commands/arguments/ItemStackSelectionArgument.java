@@ -1,0 +1,140 @@
+/*
+ * NotQuests - A Questing plugin for Minecraft Servers
+ * Copyright (C) 2022 Alessio Gravili
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package rocks.gravili.notquests.paper.commands.arguments;
+
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.commands.arguments.wrappers.ItemStackSelection;
+import rocks.gravili.notquests.paper.commands.framework.NQArgumentType;
+import rocks.gravili.notquests.paper.managers.items.NQItem;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * Native-framework port of {@code ItemStackSelectionParser}: resolves a comma-separated selection of
+ * materials, NotQuests items, {@code hand} (the sender's main-hand item) and {@code any} into an
+ * {@link ItemStackSelection}.
+ *
+ * <p>The {@code hand} keyword resolves the command sender's main-hand item, so this argument reads
+ * the source via {@link #convert(String, Object)}.
+ */
+public final class ItemStackSelectionArgument extends NQArgumentType<ItemStackSelection> {
+    private final NotQuests main;
+
+    public ItemStackSelectionArgument(final NotQuests main) {
+        this.main = main;
+    }
+
+    public static ItemStackSelectionArgument itemStackSelectionArgument(final NotQuests main) {
+        return new ItemStackSelectionArgument(main);
+    }
+
+    @Override
+    public ArgumentType<String> getNativeType() {
+        return StringArgumentType.greedyString();
+    }
+
+    @Override
+    public ItemStackSelection convert(final String input) throws CommandSyntaxException {
+        // The "hand" keyword needs the command sender; resolution happens in convert(String, source).
+        return convert(input, null);
+    }
+
+    @Override
+    public <S> ItemStackSelection convert(final String input, final S source) throws CommandSyntaxException {
+        final CommandSender sender =
+                source instanceof CommandSourceStack stack ? stack.getSender() : null;
+
+        if (input == null || input.isEmpty()) {
+            throw fail("No input provided");
+        }
+
+        try {
+            final ItemStackSelection itemStackSelection = new ItemStackSelection(main);
+
+            for (final String inputPart : input.split(",")) {
+                if (inputPart.equalsIgnoreCase("hand")) {
+                    if (sender instanceof final Player player) {
+                        itemStackSelection.addItemStack(player.getInventory().getItemInMainHand());
+                    } else {
+                        throw fail("Cannot parse item argument '" + inputPart + "'");
+                    }
+                } else if (inputPart.equalsIgnoreCase("any")) {
+                    itemStackSelection.setAny(true);
+                } else {
+                    try {
+                        itemStackSelection.addMaterial(Material.valueOf(inputPart.toUpperCase(Locale.ROOT)));
+                    } catch (Exception ignored) {
+                        final NQItem nqItem = main.getItemsManager().getItem(inputPart);
+                        if (nqItem != null) {
+                            itemStackSelection.addNqItem(nqItem);
+                        } else {
+                            throw fail("Cannot parse item argument '" + inputPart + "'");
+                        }
+                    }
+                }
+            }
+            return itemStackSelection;
+
+        } catch (final IllegalArgumentException exception) {
+            throw fail("Cannot parse item argument 'invalid input'");
+        }
+    }
+
+    @Override
+    protected List<String> suggest(final CommandContext<?> context, final String remaining) {
+        final List<String> possibleMaterials = new ArrayList<>();
+        for (final Material value : Material.values()) {
+            possibleMaterials.add(value.name().toLowerCase());
+            possibleMaterials.add(value.name().toLowerCase() + ",");
+        }
+
+        for (final NQItem nqItem : main.getItemsManager().getItems()) {
+            possibleMaterials.add(nqItem.getItemName());
+            possibleMaterials.add(nqItem.getItemName() + ",");
+        }
+
+        possibleMaterials.add("hand");
+        possibleMaterials.add("hand,");
+        possibleMaterials.add("any");
+        possibleMaterials.add("any,");
+
+        final String rawInput = remaining;
+        if (!rawInput.contains(",")) {
+            return possibleMaterials;
+        } else {
+            final List<String> completions = new ArrayList<>();
+            final String partAfterLastCommaInInput = rawInput.substring((rawInput.lastIndexOf(",") > rawInput.length() - 1) ? (rawInput.lastIndexOf(",")) : (rawInput.lastIndexOf(",") + 1));
+            for (final String possibleMaterial : possibleMaterials) {
+                final String string = rawInput.substring(0, rawInput.length() - 1 - partAfterLastCommaInInput.length()) + "," + possibleMaterial;
+                completions.add(string);
+            }
+            return completions;
+        }
+    }
+}

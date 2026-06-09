@@ -17,6 +17,13 @@
  */
 
 package rocks.gravili.notquests.paper.managers.registering;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
+import static rocks.gravili.notquests.paper.commands.arguments.variables.BooleanVariableArgument.booleanVariableArgument;
+import static rocks.gravili.notquests.paper.commands.arguments.variables.NumberVariableArgument.numberVariableArgument;
+import static rocks.gravili.notquests.paper.commands.arguments.variables.StringVariableArgument.stringVariableArgument;
+import rocks.gravili.notquests.paper.commands.framework.NQDescription;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -173,15 +180,15 @@ public class VariablesManager {
             }
 
 
-            final CommandFlag<Player> playerSelectorCommandFlag = CommandFlag.builder("player").withComponent(playerParser()).build();
+            final rocks.gravili.notquests.paper.commands.framework.NQFlag playerSelectorCommandFlag = rocks.gravili.notquests.paper.commands.framework.NQFlag.builder("player").withArgument(rocks.gravili.notquests.paper.commands.framework.NQArguments.playerArgument()).withDescription(NQDescription.of("Target player")).build();
 
 
-            final Command.Builder<CommandSender> variableCheckCommandBuilder = main.getCommandManager().getAdminCommandBuilder()
+            final NQCommandBuilder variableCheckCommandBuilder = main.getCommandManager().getAdminCommandBuilder()
                     .literal("variables", "variable")
                     .literal("check");
 
 
-            main.getCommandManager().getPaperCommandManager().command(registerVariableCommands(variableString, variableCheckCommandBuilder)
+            main.getCommandManager().getNQCommandManager().command(registerVariableCommands(variableString, variableCheckCommandBuilder)
                     .flag(playerSelectorCommandFlag)
                     .handler((context) -> {
 
@@ -250,31 +257,31 @@ public class VariablesManager {
         }
     }
 
-    public Command.Builder<CommandSender> registerVariableCommands(
-            String variableString, Command.Builder<CommandSender> builder) {
-        Command.Builder<CommandSender> newBuilder =
-                builder.literal(variableString, Description.of("Variable Name"));
+    public NQCommandBuilder registerVariableCommands(
+            String variableString, NQCommandBuilder builder) {
+        NQCommandBuilder newBuilder =
+                builder.literal(variableString, NQDescription.of("Variable Name"));
 
         Variable<?> variable = getVariableFromString(variableString);
         if (variable != null) {
             if (variable.getRequiredStrings() != null) {
                 for (StringVariableValueParser<CommandSender> stringParser : variable.getRequiredStrings()) {
-                    newBuilder = newBuilder.required(stringParser.getIdentifier(), stringParser.getParserDescriptor(), Description.of("Optional String Argument"));
+                    newBuilder = newBuilder.required(stringParser.getIdentifier(), stringVariableArgument(stringParser.getIdentifier(), variable), NQDescription.of("Optional String Argument"));
                 }
             }
             if (variable.getRequiredNumbers() != null) {
                 for (NumberVariableValueParser<CommandSender> numberParser : variable.getRequiredNumbers()) {
-                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberParser.getParserDescriptor(), Description.of("Optional Number Argument"));
+                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberVariableArgument(numberParser.getIdentifier(), variable), NQDescription.of("Optional Number Argument"));
                 }
             }
             if (variable.getRequiredBooleans() != null) {
                 for (BooleanVariableValueParser<CommandSender> booleanParser : variable.getRequiredBooleans()) {
-                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanParser.getParserDescriptor(), Description.of("Optional Boolean Argument"));
+                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanVariableArgument(booleanParser.getIdentifier(), variable), NQDescription.of("Optional Boolean Argument"));
                 }
             }
             if (variable.getRequiredBooleanFlags() != null) {
                 for (CommandFlag<?> commandFlag : variable.getRequiredBooleanFlags()) {
-                    newBuilder = newBuilder.flag(commandFlag);
+                    newBuilder = newBuilder.flag(rocks.gravili.notquests.paper.commands.framework.NQFlag.presence(commandFlag.name(), NQDescription.EMPTY));
                 }
             }
         }
@@ -305,11 +312,11 @@ public class VariablesManager {
         }
 
     /*try {
-        Method commandHandler = Variable.getMethod("handleCommands", main.getClass(), PaperCommandManager.class, Command.Builder.class, VariableFor.class);
-        commandHandler.invoke(Variable, main, main.getCommandManager().getPaperCommandManager(), main.getCommandManager().getAdminEditAddRequirementCommandBuilder(), VariableFor.QUEST);
-        commandHandler.invoke(Variable, main, main.getCommandManager().getPaperCommandManager(), main.getCommandManager().getAdminEditObjectiveAddVariableCommandBuilder(), VariableFor.OBJECTIVE);
-        commandHandler.invoke(Variable, main, main.getCommandManager().getPaperCommandManager(), main.getCommandManager().getAdminAddVariableCommandBuilder(), VariableFor.variablesYML); //For Actions.yml
-        commandHandler.invoke(Variable, main, main.getCommandManager().getPaperCommandManager(), main.getCommandManager().getAdminEditActionsAddVariableCommandBuilder(), VariableFor.Action); //For Actions.yml
+        Method commandHandler = Variable.getMethod("handleCommands", main.getClass(), NQCommandManager.class, NQCommandBuilder.class, VariableFor.class);
+        commandHandler.invoke(Variable, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditAddRequirementCommandBuilder(), VariableFor.QUEST);
+        commandHandler.invoke(Variable, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddVariableCommandBuilder(), VariableFor.OBJECTIVE);
+        commandHandler.invoke(Variable, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminAddVariableCommandBuilder(), VariableFor.variablesYML); //For Actions.yml
+        commandHandler.invoke(Variable, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditActionsAddVariableCommandBuilder(), VariableFor.Action); //For Actions.yml
     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
         e.printStackTrace();
     }*/
@@ -340,7 +347,7 @@ public class VariablesManager {
         return variables.keySet();
     }
 
-    public void addVariable(Variable<?> Variable, CommandContext<CommandSender> context) {
+    public void addVariable(Variable<?> Variable, NQCommandContext context) {
     }
 
     public final Variable<?> getVariableFromString(final String variableString) {

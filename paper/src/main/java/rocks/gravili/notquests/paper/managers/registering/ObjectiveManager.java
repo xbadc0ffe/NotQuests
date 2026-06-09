@@ -17,6 +17,10 @@
  */
 
 package rocks.gravili.notquests.paper.managers.registering;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
+import rocks.gravili.notquests.paper.commands.framework.NQDescription;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -43,7 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static rocks.gravili.notquests.paper.commands.arguments.ObjectiveParser.objectiveParser;
+import static rocks.gravili.notquests.paper.commands.arguments.ObjectiveArgument.objectiveArgument;
 
 public class ObjectiveManager {
     private final NotQuests main;
@@ -119,49 +123,49 @@ public class ObjectiveManager {
         objectives.put(identifier, objective);
 
         try {
-            Method commandHandler = objective.getMethod("handleCommands", main.getClass(), PaperCommandManager.class, Command.Builder.class, int.class);
+            Method commandHandler = objective.getMethod("handleCommands", main.getClass(), NQCommandManager.class, NQCommandBuilder.class, int.class);
 
             //Level 0
-            final Command.Builder<CommandSender> objectivesBuilder = main.getCommandManager().getAdminEditCommandBuilder().literal("objectives", "o");
-            final Command.Builder<CommandSender> adminEditAddObjectiveCommandBuilder =
+            final NQCommandBuilder objectivesBuilder = main.getCommandManager().getAdminEditCommandBuilder().literal("objectives", "o");
+            final NQCommandBuilder adminEditAddObjectiveCommandBuilder =
                     objectivesBuilder.literal("add");
 
-            commandHandler.invoke(objective, main, main.getCommandManager().getPaperCommandManager(), adminEditAddObjectiveCommandBuilder
-                    .literal(identifier, Description.of("Creates a new " + identifier + " objective"))
+            commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilder
+                    .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
                     .flag(main.getCommandManager().taskDescription), 0);
 
             //Level 1
             final String objectiveIDIdentifier = "objectiveId";
-            final Command.Builder<CommandSender> objectivesBuilderLevel1 = objectivesBuilder.literal("edit").required(objectiveIDIdentifier, objectiveParser(main, 0), Description.of(objectiveIDIdentifier));
+            final NQCommandBuilder objectivesBuilderLevel1 = objectivesBuilder.literal("edit").required(objectiveIDIdentifier, objectiveArgument(main, 0), NQDescription.of(objectiveIDIdentifier));
 
 
-            final Command.Builder<CommandSender> adminEditAddObjectiveCommandBuilderLevel1 =
+            final NQCommandBuilder adminEditAddObjectiveCommandBuilderLevel1 =
                     objectivesBuilderLevel1.literal("objectives", "o").literal("add");
 
             //Level 1
-            commandHandler.invoke(objective, main, main.getCommandManager().getPaperCommandManager(), adminEditAddObjectiveCommandBuilderLevel1
-                    .literal(identifier, Description.of("Creates a new " + identifier + " objective"))
+            commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilderLevel1
+                    .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
                     .flag(main.getCommandManager().taskDescription), 1);
 
 
-            final Command.Builder<CommandSender> objectivesBuilder2 = objectivesBuilderLevel1.literal("objectives", "");
+            final NQCommandBuilder objectivesBuilder2 = objectivesBuilderLevel1.literal("objectives", "");
             final String objectiveIDIdentifier2 = "objectiveId2";
             final int level2 = 2;
-            final Command.Builder<CommandSender> objectivesBuilderLevel2 = objectivesBuilder2
+            final NQCommandBuilder objectivesBuilderLevel2 = objectivesBuilder2
                     .literal("edit")
-                    .required(objectiveIDIdentifier2, objectiveParser(main, 1), Description.of(objectiveIDIdentifier2));
+                    .required(objectiveIDIdentifier2, objectiveArgument(main, 1), NQDescription.of(objectiveIDIdentifier2));
 
 
-            final Command.Builder<CommandSender> adminEditAddObjectiveCommandBuilderLevel2 =
+            final NQCommandBuilder adminEditAddObjectiveCommandBuilderLevel2 =
                     objectivesBuilderLevel2.literal("objectives", "o").literal("add");
 
             //Level 2
             commandHandler.invoke(
                     objective,
                     main,
-                    main.getCommandManager().getPaperCommandManager(),
+                    main.getCommandManager().getNQCommandManager(),
                     adminEditAddObjectiveCommandBuilderLevel2
-                            .literal(identifier, Description.of("Creates a new " + identifier + " objective"))
+                            .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
                             .flag(main.getCommandManager().taskDescription), 2);
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -194,7 +198,7 @@ public class ObjectiveManager {
         return objectives.keySet();
     }
 
-    public void addObjective(Objective objective, CommandContext<CommandSender> context, int level) {
+    public void addObjective(Objective objective, NQCommandContext context, int level) {
 
 
         final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
@@ -230,10 +234,10 @@ public class ObjectiveManager {
                     commandHandler.invoke(
                             objective,
                             main,
-                            main.getCommandManager().getPaperCommandManager(),
+                            main.getCommandManager().getNQCommandManager(),
                             main.getCommandManager()
                                     .getAdminEditAddObjectiveCommandBuilder()
-                                    .literal(identifier, Description.of("Creates a new " + identifier + " objective")));
+                                    .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective")));
 
                     //TODO Check if right? Why action stuff?
                     //TODO: Maybe remove everything below? Why is that there?
@@ -242,7 +246,7 @@ public class ObjectiveManager {
           commandHandler.invoke(
               objective,
               main,
-              main.getCommandManager().getPaperCommandManager(),
+              main.getCommandManager().getNQCommandManager(),
               main.getCommandManager()
                   .getAdminEditAddRewardCommandBuilder()
                   .meta(CommandMeta.DESCRIPTION, "Creates a new " + identifier + " action")
@@ -250,7 +254,7 @@ public class ObjectiveManager {
           commandHandler.invoke(
               objective,
               main,
-              main.getCommandManager().getPaperCommandManager(),
+              main.getCommandManager().getNQCommandManager(),
               main.getCommandManager()
                   .getAdminEditObjectiveAddRewardCommandBuilder()
                   .meta(CommandMeta.DESCRIPTION, "Creates a new " + identifier + " action")
@@ -258,7 +262,7 @@ public class ObjectiveManager {
           commandHandler.invoke(
               objective,
               main,
-              main.getCommandManager().getPaperCommandManager(),
+              main.getCommandManager().getNQCommandManager(),
               main.getCommandManager()
                   .getAdminAddActionCommandBuilder()
                   .meta(CommandMeta.DESCRIPTION, "Creates a new " + identifier + " action")

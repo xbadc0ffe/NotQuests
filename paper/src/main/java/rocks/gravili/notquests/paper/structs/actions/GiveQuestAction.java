@@ -20,18 +20,18 @@ package rocks.gravili.notquests.paper.structs.actions;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.incendo.cloud.Command;
-import org.incendo.cloud.description.Description;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.PaperCommandManager;
 import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
+import rocks.gravili.notquests.paper.commands.framework.NQDescription;
+import rocks.gravili.notquests.paper.commands.framework.NQFlag;
 import rocks.gravili.notquests.paper.structs.Quest;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static rocks.gravili.notquests.paper.commands.arguments.QuestParser.questParser;
+import static rocks.gravili.notquests.paper.commands.arguments.QuestArgument.questArgument;
 
 public class GiveQuestAction extends Action {
 
@@ -44,14 +44,14 @@ public class GiveQuestAction extends Action {
 
   public static void handleCommands(
       NotQuests main,
-      PaperCommandManager<CommandSender> manager,
-      Command.Builder<CommandSender> builder,
+      NQCommandManager manager,
+      NQCommandBuilder builder,
       ActionFor actionFor) {
     manager.command(
         builder
-            .required("quest to give", questParser(main), Description.of("Name of the Quest which should be given to the player."))
-            .flag(manager.flagBuilder("forceGive").withDescription(
-                        Description.of("Force-gives the Quest to the player, disregarding most Quest requirements/cooldowns/...")))
+            .required("quest to give", questArgument(main), NQDescription.of("Name of the Quest which should be given to the player."))
+            .flag(NQFlag.presence("forceGive",
+                        NQDescription.of("Force-gives the Quest to the player, disregarding most Quest requirements/cooldowns/...")))
             .handler(
                 (context) -> {
                   final Quest foundQuest = context.get("quest to give");

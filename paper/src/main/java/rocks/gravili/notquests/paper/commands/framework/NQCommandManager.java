@@ -1,0 +1,337 @@
+/*
+ * NotQuests - A Questing plugin for Minecraft Servers
+ * Copyright (C) 2021-2022 Alessio Gravili
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package rocks.gravili.notquests.paper.commands.framework;
+
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.command.CommandSender;
+import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder.Kind;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder.Step;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+
+/**
+ * High-level command manager — our replacement for Cloud's {@code CommandManager}. Accepts
+ * {@link NQCommandBuilder}s, merges them into one command tree (so commands sharing a prefix, e.g.
+ * everything under {@code /qa edit}, end up under one root), and compiles that tree to native
+ * Brigadier nodes registered through {@link NQCommands} when Paper fires its {@code COMMANDS} event.
+ *
+ * <p>Flags (Brigadier has no native concept) are modelled as a single optional trailing greedy
+ * argument appended to a flag-bearing command; {@link #parseFlags} turns it into the flag map handed
+ * to the handler via {@link NQCommandContext}.
+ */
+public final class NQCommandManager {
+    private static final String FLAG_ARG = "nqFlags";
+
+    private final NotQuests main;
+    private final Map<String, Node> roots = new LinkedHashMap<>();
+
+    public NQCommandManager(final NotQuests main, final NQCommands registrar) {
+        this.main = main;
+        registrar.register(this::registerAll);
+    }
+
+    /** Start a new root command. Mirrors Cloud's {@code commandManager.commandBuilder(...)}. */
+    public NQCommandBuilder commandBuilder(final String name, final NQDescription description, final String... aliases) {
+        return NQCommandBuilder.root(name, description, aliases);
+    }
+
+    /** Register a built command. Mirrors Cloud's {@code commandManager.command(builder)}. */
+    public void command(final NQCommandBuilder builder) {
+        final List<Step> steps = builder.steps();
+        if (steps.isEmpty()) {
+            return;
+        }
+        final Step rootStep = steps.get(0);
+        final Node root = roots.computeIfAbsent(rootStep.name(), n -> new Node(Kind.LITERAL, rootStep.name()));
+        addAliases(root, rootStep.aliases());
+        if (root.description.isEmpty() && !rootStep.description().isEmpty()) {
+            root.description = rootStep.description();
+        }
+        Node current = root;
+        for (int i = 1; i < steps.size(); i++) {
+            final Step step = steps.get(i);
+            final Node child = current.children.computeIfAbsent(step.name(), n -> new Node(step.kind(), step.name()));
+            addAliases(child, step.aliases());
+            if (step.argument() != null) {
+                child.argument = step.argument();
+            }
+            if (!step.description().isEmpty()) {
+                child.description = step.description();
+            }
+            if (step.suggestionOverride() != null) {
+                child.suggestionOverride = step.suggestionOverride();
+            }
+            current = child;
+        }
+        current.handler = builder.handler();
+        current.permission = builder.permission();
+        current.senderType = builder.senderType();
+        current.flags = builder.flags();
+        if (current.description.isEmpty() && builder.commandDescription() != null) {
+            current.description = builder.commandDescription();
+        }
+    }
+
+    /** Builder-based self-test proving tree-merge + compile + execute + flags through the framework. */
+    public void registerSelfTest() {
+        final NQArgumentType<String> echo =
+                new NQArgumentType<>() {
+                    @Override
+                    public String convert(final String nativeType) {
+                        return nativeType;
+                    }
+
+                    @Override
+                    protected List<String> suggest(final CommandContext<?> context, final String remaining) {
+                        return List.of("alpha", "beta");
+                    }
+                };
+        final NQCommandBuilder base =
+                commandBuilder("nqnative2", NQDescription.of("NotQuests framework self-test"), "nqn2")
+                        .permission("notquests.admin");
+        command(base.literal("foo").handler(ctx -> main.sendMessage(ctx.sender(), "<main>foo ok (native framework)")));
+        command(
+                base.literal("bar")
+                        .required("text", echo, NQDescription.of("some text"))
+                        .flag(NQFlag.presence("verbose", NQDescription.of("be verbose")))
+                        .handler(
+                                ctx ->
+                                        main.sendMessage(
+                                                ctx.sender(),
+                                                "<main>bar: <highlight>"
+                                                        + ctx.get("text")
+                                                        + (ctx.flags().isPresent("verbose") ? " <unimportant>(verbose)" : ""))));
+    }
+
+    private void registerAll(final Commands commands) {
+        for (final Node root : roots.values()) {
+            try {
+                final LiteralCommandNode<CommandSourceStack> node = (LiteralCommandNode<CommandSourceStack>) compile(root);
+                commands.register(node, root.description.textDescription(), new ArrayList<>(root.aliases));
+            } catch (final Throwable t) {
+                main.getLogManager().warn("Failed to register native command /" + root.name + ": " + t.getMessage());
+            }
+        }
+    }
+
+    private CommandNode<CommandSourceStack> compile(final Node node) {
+        if (node.kind == Kind.LITERAL) {
+            final LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(node.name);
+            populate(builder, node);
+            return builder.build();
+        }
+        final ArgumentType<?> type = node.argument;
+        final RequiredArgumentBuilder<CommandSourceStack, ?> builder = Commands.argument(node.name, type);
+        if (node.suggestionOverride != null) {
+            builder.suggests(overrideSuggestions(node));
+        }
+        populate(builder, node);
+        return builder.build();
+    }
+
+    private void populate(final ArgumentBuilder<CommandSourceStack, ?> builder, final Node node) {
+        if (node.permission != null) {
+            final String permission = node.permission;
+            builder.requires(source -> source.getSender().hasPermission(permission));
+        }
+        for (final Node child : node.children.values()) {
+            final CommandNode<CommandSourceStack> built = compile(child);
+            builder.then(built);
+            for (final String alias : child.aliases) {
+                builder.then(Commands.literal(alias).redirect(built).build());
+            }
+        }
+        if (node.handler != null) {
+            builder.executes(ctx -> execute(node, ctx, ""));
+            if (!node.flags.isEmpty()) {
+                final RequiredArgumentBuilder<CommandSourceStack, String> flagsArg =
+                        Commands.argument(FLAG_ARG, StringArgumentType.greedyString());
+                flagsArg.suggests(flagSuggestions(node));
+                flagsArg.executes(ctx -> execute(node, ctx, StringArgumentType.getString(ctx, FLAG_ARG)));
+                builder.then(flagsArg.build());
+            }
+        }
+    }
+
+    private int execute(final Node node, final CommandContext<CommandSourceStack> ctx, final String flagString) {
+        final CommandSender sender = ctx.getSource().getSender();
+        if (node.senderType != null && !node.senderType.isInstance(sender)) {
+            main.sendMessage(sender, "<error>This command can only be used by a " + node.senderType.getSimpleName() + ".");
+            return Command.SINGLE_SUCCESS;
+        }
+        final Map<String, Object> flagValues = new HashMap<>();
+        final Set<String> presentFlags = new HashSet<>();
+        if (!node.flags.isEmpty() && flagString != null && !flagString.isBlank()) {
+            parseFlags(node, flagString, flagValues, presentFlags);
+        }
+        try {
+            node.handler.accept(new NQCommandContext(ctx, flagValues, presentFlags, ctx.getInput()));
+        } catch (final Throwable t) {
+            final String message = t.getMessage();
+            main.sendMessage(sender, "<error>" + (message != null ? message : t.getClass().getSimpleName()));
+            if (main.getConfiguration().debug) {
+                t.printStackTrace();
+            }
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private void parseFlags(
+            final Node node, final String flagString, final Map<String, Object> values, final Set<String> present) {
+        final String[] tokens = flagString.trim().split("\\s+");
+        for (int i = 0; i < tokens.length; i++) {
+            final String token = tokens[i];
+            if (!token.startsWith("--")) {
+                continue;
+            }
+            final String flagName = token.substring(2);
+            final NQFlag flag = findFlag(node, flagName);
+            if (flag == null) {
+                continue;
+            }
+            present.add(flag.name());
+            if (!flag.isPresence() && i + 1 < tokens.length) {
+                final String raw = tokens[++i];
+                try {
+                    values.put(flag.name(), flag.valueArgument().convert(raw));
+                } catch (final Exception ignored) {
+                    // bad flag value -> leave unset; the handler can fall back to a default
+                }
+            }
+        }
+    }
+
+    private SuggestionProvider<CommandSourceStack> overrideSuggestions(final Node node) {
+        final NQSuggestionProvider override = node.suggestionOverride;
+        return (ctx, suggestionsBuilder) -> {
+            try {
+                final NQCommandContext context = new NQCommandContext(ctx, Map.of(), Set.of(), ctx.getInput());
+                final String remaining = suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT);
+                for (final String suggestion : override.suggest(context, suggestionsBuilder.getRemaining())) {
+                    if (suggestion != null && suggestion.toLowerCase(Locale.ROOT).startsWith(remaining)) {
+                        suggestionsBuilder.suggest(suggestion);
+                    }
+                }
+            } catch (final Throwable ignored) {
+                // suggestions must never break the command
+            }
+            return suggestionsBuilder.buildFuture();
+        };
+    }
+
+    private SuggestionProvider<CommandSourceStack> flagSuggestions(final Node node) {
+        return (ctx, suggestionsBuilder) -> {
+            try {
+                final String remaining = suggestionsBuilder.getRemaining();
+                final int lastSpace = remaining.lastIndexOf(' ');
+                final String token = remaining.substring(lastSpace + 1);
+                final SuggestionsBuilder offset = suggestionsBuilder.createOffset(suggestionsBuilder.getStart() + lastSpace + 1);
+                final String before = remaining.substring(0, lastSpace + 1).trim();
+                NQFlag awaitingValue = null;
+                if (!before.isEmpty()) {
+                    final String[] previous = before.split("\\s+");
+                    final String prev = previous[previous.length - 1];
+                    if (prev.startsWith("--")) {
+                        final NQFlag flag = findFlag(node, prev.substring(2));
+                        if (flag != null && !flag.isPresence()) {
+                            awaitingValue = flag;
+                        }
+                    }
+                }
+                final String lower = token.toLowerCase(Locale.ROOT);
+                if (awaitingValue != null && awaitingValue.valueSuggestions() != null) {
+                    final NQCommandContext context = new NQCommandContext(ctx, Map.of(), Set.of(), ctx.getInput());
+                    for (final String suggestion : awaitingValue.valueSuggestions().suggest(context, token)) {
+                        if (suggestion != null && suggestion.toLowerCase(Locale.ROOT).startsWith(lower)) {
+                            offset.suggest(suggestion);
+                        }
+                    }
+                } else {
+                    for (final NQFlag flag : node.flags) {
+                        final String option = "--" + flag.name();
+                        if (option.toLowerCase(Locale.ROOT).startsWith(lower)) {
+                            offset.suggest(option);
+                        }
+                    }
+                }
+                return offset.buildFuture();
+            } catch (final Throwable ignored) {
+                return suggestionsBuilder.buildFuture();
+            }
+        };
+    }
+
+    private static NQFlag findFlag(final Node node, final String name) {
+        for (final NQFlag flag : node.flags) {
+            if (flag.name().equalsIgnoreCase(name)) {
+                return flag;
+            }
+        }
+        return null;
+    }
+
+    private static void addAliases(final Node node, final List<String> aliases) {
+        for (final String alias : aliases) {
+            if (!node.aliases.contains(alias)) {
+                node.aliases.add(alias);
+            }
+        }
+    }
+
+    /** A merged node in the command tree. */
+    private static final class Node {
+        private final Kind kind;
+        private final String name;
+        private final List<String> aliases = new ArrayList<>();
+        private final Map<String, Node> children = new LinkedHashMap<>();
+        private NQArgumentType<?> argument;
+        private NQDescription description = NQDescription.EMPTY;
+        private NQSuggestionProvider suggestionOverride;
+        private Consumer<NQCommandContext> handler;
+        private String permission;
+        private Class<?> senderType;
+        private List<NQFlag> flags = List.of();
+
+        private Node(final Kind kind, final String name) {
+            this.kind = kind;
+            this.name = name;
+        }
+    }
+}

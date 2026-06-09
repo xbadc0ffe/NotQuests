@@ -129,10 +129,10 @@ dependencies {
     implementation("net.kyori:adventure-api:4.26.1") {}
 
     //CloudCommands
-    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT") {
+    implementation("org.incendo:cloud-paper:2.0.0-beta.15") {
         exclude(group = "org.incendo.cloud", module = "cloud-bukkit")
     }
-    implementation("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT")
+    implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.15")
 
     //Else it errors (kept on the 1.3.x line cloud expects):
     implementation("io.leangen.geantyref:geantyref:1.3.16")
