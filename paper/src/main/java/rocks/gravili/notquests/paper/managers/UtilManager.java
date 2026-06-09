@@ -192,7 +192,12 @@ public class UtilManager {
     private Component renderCommandHint(final String fullInput, final String hint) {
         final int maxPreviousArgs = main.getConfiguration().getFancyCommandCompletionMaxPreviousArgumentsDisplayed();
         final boolean trailingSpace = fullInput.endsWith(" ");
-        final String trimmed = fullInput.strip();
+        // Brigadier's getInput() keeps the leading "/", but we prepend our own "/" below when
+        // rendering the path — strip it here so the bar shows "/notquestsadmin", not "//notquestsadmin".
+        String trimmed = fullInput.strip();
+        if (trimmed.startsWith("/")) {
+            trimmed = trimmed.substring(1);
+        }
         final String[] tokens = trimmed.isEmpty() ? new String[0] : trimmed.split("\\s+");
         // The last token is still being typed unless the input ends with a space.
         final int completed = trailingSpace ? tokens.length : Math.max(0, tokens.length - 1);
