@@ -24,11 +24,15 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.entity.Player;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.framework.NQArgumentType;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
+import rocks.gravili.notquests.paper.commands.framework.NQSuggestionProvider;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 import rocks.gravili.notquests.paper.structs.variables.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Native-framework port of {@code StringVariableValueParser}: a generic "variable value" argument
@@ -62,21 +66,56 @@ public final class StringVariableArgument extends NQArgumentType<String> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
         final List<String> completions = new ArrayList<>();
-        completions.add("<Enter String>");
 
-        QuestPlayer questPlayer = null;
-        if (context.getSource() instanceof CommandSourceStack source
-                && source.getSender() instanceof Player player) {
-            questPlayer = main.getQuestPlayerManager().getOrCreateQuestPlayer(player.getUniqueId());
-        }
-        final List<String> possibleValues = variable.getPossibleValues(questPlayer);
-        if (possibleValues != null) {
-            for (final String suggestion : possibleValues) {
-                completions.add(suggestion);
+        // A variable's required-string argument (e.g. the IntegerTag "TagName") carries its own
+        // suggestion provider on the matching StringVariableValueParser — that is where the real
+        // values live (existing integer tags, block materials, ...). Such variables typically leave
+        // getPossibleValues() null, so prefer the parser's provider and only fall back to
+        // getPossibleValues() when there is none.
+        final NQSuggestionProvider provider = parserSuggestionProvider();
+        if (provider != null) {
+            final NQCommandContext nqContext = context.getSource() instanceof CommandSourceStack
+                    ? new NQCommandContext(
+                            (CommandContext<CommandSourceStack>) context, Map.of(), Set.of(),
+                            ((CommandContext<CommandSourceStack>) context).getInput())
+                    : null;
+            final List<String> provided = provider.suggest(nqContext, remaining);
+            if (provided != null) {
+                completions.addAll(provided);
+            }
+        } else {
+            QuestPlayer questPlayer = null;
+            if (context.getSource() instanceof CommandSourceStack source
+                    && source.getSender() instanceof Player player) {
+                questPlayer = main.getQuestPlayerManager().getOrCreateQuestPlayer(player.getUniqueId());
+            }
+            final List<String> possibleValues = variable.getPossibleValues(questPlayer);
+            if (possibleValues != null) {
+                completions.addAll(possibleValues);
             }
         }
+
+        // Only show the "type free text" placeholder when there are no concrete values to choose
+        // from, so real suggestions (blocks, tags, ...) aren't cluttered by an unselectable entry.
+        if (completions.isEmpty()) {
+            completions.add("<Enter String>");
+        }
         return completions;
+    }
+
+    /** The suggestion provider declared on this variable's matching required-string parser, if any. */
+    private NQSuggestionProvider parserSuggestionProvider() {
+        if (variable.getRequiredStrings() == null) {
+            return null;
+        }
+        for (final var parser : variable.getRequiredStrings()) {
+            if (identifier.equals(parser.getIdentifier())) {
+                return parser.getSuggestionProvider();
+            }
+        }
+        return null;
     }
 }

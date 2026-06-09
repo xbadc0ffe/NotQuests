@@ -257,19 +257,22 @@ public class VariablesManager {
 
         Variable<?> variable = getVariableFromString(variableString);
         if (variable != null) {
+            // Descriptions left empty so the fancy completion bar falls back to each argument's own
+            // identifier (e.g. "TagName", "Block", "Field") — far more useful than the old generic,
+            // and incorrect ("Optional"), labels. These are all required() arguments.
             if (variable.getRequiredStrings() != null) {
                 for (StringVariableValueParser<CommandSender> stringParser : variable.getRequiredStrings()) {
-                    newBuilder = newBuilder.required(stringParser.getIdentifier(), stringVariableArgument(stringParser.getIdentifier(), variable), NQDescription.of("Optional String Argument"));
+                    newBuilder = newBuilder.required(stringParser.getIdentifier(), stringVariableArgument(stringParser.getIdentifier(), variable), NQDescription.EMPTY);
                 }
             }
             if (variable.getRequiredNumbers() != null) {
                 for (NumberVariableValueParser<CommandSender> numberParser : variable.getRequiredNumbers()) {
-                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberVariableArgument(numberParser.getIdentifier(), variable), NQDescription.of("Optional Number Argument"));
+                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberVariableArgument(numberParser.getIdentifier(), variable), NQDescription.EMPTY);
                 }
             }
             if (variable.getRequiredBooleans() != null) {
                 for (BooleanVariableValueParser<CommandSender> booleanParser : variable.getRequiredBooleans()) {
-                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanVariableArgument(booleanParser.getIdentifier(), variable), NQDescription.of("Optional Boolean Argument"));
+                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanVariableArgument(booleanParser.getIdentifier(), variable), NQDescription.EMPTY);
                 }
             }
             if (variable.getRequiredBooleanFlags() != null) {

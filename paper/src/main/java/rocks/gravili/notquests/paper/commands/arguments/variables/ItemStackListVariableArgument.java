@@ -64,7 +64,6 @@ public final class ItemStackListVariableArgument extends NQArgumentType<String> 
     @Override
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
         final List<String> completions = new ArrayList<>();
-        completions.add("<Enter String>");
 
         for (final Material value : Material.values()) {
             completions.add(value.name().toLowerCase());
@@ -79,9 +78,13 @@ public final class ItemStackListVariableArgument extends NQArgumentType<String> 
         }
         final List<String> possibleValues = variable.getPossibleValues(questPlayer);
         if (possibleValues != null) {
-            for (final String suggestion : possibleValues) {
-                completions.add(suggestion);
-            }
+            completions.addAll(possibleValues);
+        }
+
+        // Only show the "type free text" placeholder when there is nothing concrete to choose from,
+        // so the material list isn't cluttered by an unselectable entry.
+        if (completions.isEmpty()) {
+            completions.add("<Enter String>");
         }
         return completions;
     }
