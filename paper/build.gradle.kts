@@ -219,7 +219,13 @@ tasks {
         exclude("plugin.yml")
         exclude("paper-plugin.yml")
 
-        archiveClassifier.set("")
+        // Give the shaded jar a distinct classifier so it does NOT overwrite the thin `:paper:jar`
+        // (both would otherwise be paper-<version>.jar). When the thin jar wins that race, the
+        // consuming :plugin module bundles un-relocated paper classes WITHOUT the shaded libraries
+        // (e.g. packetevents), and the plugin crashes at enable with NoClassDefFoundError. The
+        // shadowRuntimeElements configuration that :plugin depends on tracks this task's output by
+        // task, not filename, so it still resolves to this (now collision-free) shaded jar.
+        archiveClassifier.set("all")
 
     }
 
