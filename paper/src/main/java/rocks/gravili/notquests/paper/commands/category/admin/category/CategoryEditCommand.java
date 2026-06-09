@@ -146,7 +146,7 @@ public class CategoryEditCommand extends BaseCommand {
         commandManager.command(builder.commandDescription(NQDescription.of("Sets the new display name of the Category."))
                 .literal("displayName")
                 .literal("set")
-                .required("display-name", NQArguments.stringArgument(), NQDescription.of("New Category display name"),
+                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New Category display name"),
                         (context, input) -> {
                             final List<String> completions = new ArrayList<>();
 
