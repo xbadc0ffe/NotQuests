@@ -124,11 +124,20 @@ public final class NQCommandManager {
         if (root == null) {
             return List.of();
         }
+        return usageLines(root, rootName);
+    }
+
+    /**
+     * Usage lines for a node's direct children, each rendered as {@code /<path> <child>}. Literal
+     * children show their name; argument children show {@code <name>}; a child with its own children
+     * is suffixed with {@code " ..."} to signal that more input follows. Sorted for stable output.
+     */
+    private List<String> usageLines(final Node node, final String path) {
         final List<String> usages = new ArrayList<>();
-        for (final Node child : root.children.values()) {
+        for (final Node child : node.children.values()) {
             final String label = child.kind == Kind.LITERAL ? child.name : "<" + child.name + ">";
             final String more = child.children.isEmpty() ? "" : " ...";
-            usages.add("/" + rootName + " " + label + more);
+            usages.add("/" + path + " " + label + more);
         }
         usages.sort(null);
         return usages;
@@ -137,7 +146,7 @@ public final class NQCommandManager {
     private void registerAll(final Commands commands) {
         for (final Node root : roots.values()) {
             try {
-                final LiteralCommandNode<CommandSourceStack> node = (LiteralCommandNode<CommandSourceStack>) compile(root);
+                final LiteralCommandNode<CommandSourceStack> node = (LiteralCommandNode<CommandSourceStack>) compile(root, root.name);
                 commands.register(node, root.description.textDescription(), new ArrayList<>(root.aliases));
             } catch (final Throwable t) {
                 main.getLogManager().warn("Failed to register native command /" + root.name + ": " + t.getMessage());
@@ -145,10 +154,10 @@ public final class NQCommandManager {
         }
     }
 
-    private CommandNode<CommandSourceStack> compile(final Node node) {
+    private CommandNode<CommandSourceStack> compile(final Node node, final String path) {
         if (node.kind == Kind.LITERAL) {
             final LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(node.name);
-            populate(builder, node);
+            populate(builder, node, path);
             return builder.build();
         }
         final ArgumentType<?> type = node.argument;
@@ -156,17 +165,18 @@ public final class NQCommandManager {
         // Always route arg suggestions through suggestionsWithHint: it pushes the action-bar hint for
         // this argument, then delegates to the override (if any) or the argument type's own suggestions.
         builder.suggests(suggestionsWithHint(node));
-        populate(builder, node);
+        populate(builder, node, path);
         return builder.build();
     }
 
-    private void populate(final ArgumentBuilder<CommandSourceStack, ?> builder, final Node node) {
+    private void populate(final ArgumentBuilder<CommandSourceStack, ?> builder, final Node node, final String path) {
         if (node.permission != null) {
             final String permission = node.permission;
             builder.requires(source -> source.getSender().hasPermission(permission));
         }
         for (final Node child : node.children.values()) {
-            final CommandNode<CommandSourceStack> built = compile(child);
+            final String childLabel = child.kind == Kind.LITERAL ? child.name : "<" + child.name + ">";
+            final CommandNode<CommandSourceStack> built = compile(child, path + " " + childLabel);
             builder.then(built);
             for (final String alias : child.aliases) {
                 builder.then(Commands.literal(alias).redirect(built).build());
@@ -181,7 +191,24 @@ public final class NQCommandManager {
                 flagsArg.executes(ctx -> execute(node, ctx, StringArgumentType.getString(ctx, FLAG_ARG)));
                 builder.then(flagsArg.build());
             }
+        } else if (!node.children.isEmpty()) {
+            // Branch node with no handler of its own: when the user stops here (e.g. `/qa actions`),
+            // print the valid continuations instead of Brigadier's raw "Unknown or incomplete
+            // command". This restores the Cloud-style contextual help the user expects. Nodes gated
+            // by a permission are already filtered by requires() above, so help only shows reachable
+            // subcommands.
+            builder.executes(ctx -> printBranchHelp(node, path, ctx));
         }
+    }
+
+    /** Default executor for handler-less branch nodes: lists the node's valid continuations. */
+    private int printBranchHelp(final Node node, final String path, final CommandContext<CommandSourceStack> ctx) {
+        final CommandSender sender = ctx.getSource().getSender();
+        main.sendMessage(sender, "<main>/" + path + " <unimportant>— available subcommands:");
+        for (final String usageLine : usageLines(node, path)) {
+            main.sendMessage(sender, "<unimportant>" + usageLine);
+        }
+        return Command.SINGLE_SUCCESS;
     }
 
     private int execute(final Node node, final CommandContext<CommandSourceStack> ctx, final String flagString) {
