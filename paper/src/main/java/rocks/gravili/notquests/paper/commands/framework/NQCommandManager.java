@@ -65,6 +65,9 @@ public final class NQCommandManager {
     public NQCommandManager(final NotQuests main, final NQCommands registrar) {
         this.main = main;
         registrar.register(this::registerAll);
+        // Keep the action-bar command hint alive across typing pauses (action bars fade after a few
+        // seconds). The hint itself is pushed from suggestionsWithHint() on every completion request.
+        main.getUtilManager().startCommandHintRefreshTask();
     }
 
     /** Start a new root command. Mirrors Cloud's {@code commandManager.commandBuilder(...)}. */
@@ -150,9 +153,9 @@ public final class NQCommandManager {
         }
         final ArgumentType<?> type = node.argument;
         final RequiredArgumentBuilder<CommandSourceStack, ?> builder = Commands.argument(node.name, type);
-        if (node.suggestionOverride != null) {
-            builder.suggests(overrideSuggestions(node));
-        }
+        // Always route arg suggestions through suggestionsWithHint: it pushes the action-bar hint for
+        // this argument, then delegates to the override (if any) or the argument type's own suggestions.
+        builder.suggests(suggestionsWithHint(node));
         populate(builder, node);
         return builder.build();
     }
@@ -226,6 +229,35 @@ public final class NQCommandManager {
                     // bad flag value -> leave unset; the handler can fall back to a default
                 }
             }
+        }
+    }
+
+    /**
+     * Wraps an argument node's suggestions so the action-bar command hint (e.g. {@code [Quest Name]})
+     * is pushed to the player on every completion request, then delegates to the node's override
+     * suggestions or the argument type's own suggestions.
+     */
+    private SuggestionProvider<CommandSourceStack> suggestionsWithHint(final Node node) {
+        final SuggestionProvider<CommandSourceStack> delegate =
+                node.suggestionOverride != null
+                        ? overrideSuggestions(node)
+                        : (ctx, suggestionsBuilder) -> node.argument.listSuggestions(ctx, suggestionsBuilder);
+        return (ctx, suggestionsBuilder) -> {
+            pushHint(node, ctx);
+            return delegate.getSuggestions(ctx, suggestionsBuilder);
+        };
+    }
+
+    private void pushHint(final Node node, final CommandContext<CommandSourceStack> ctx) {
+        try {
+            if (!(ctx.getSource().getSender() instanceof org.bukkit.entity.Player player)) {
+                return;
+            }
+            final String description = node.description == null ? null : node.description.textDescription();
+            final String hint = "[" + (description != null && !description.isBlank() ? description : node.name) + "]";
+            main.getUtilManager().sendCommandHint(player, ctx.getInput(), hint);
+        } catch (final Throwable ignored) {
+            // a hint must never break suggestions
         }
     }
 
