@@ -25,11 +25,6 @@ import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
-import org.incendo.cloud.Command;
-import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.description.Description;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.PaperCommandManager;
 import org.jetbrains.annotations.NotNull;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.structs.objectives.*;
@@ -224,8 +219,8 @@ public class ObjectiveManager {
                         objective.getMethod(
                                 "handleCommands",
                                 main.getClass(),
-                                PaperCommandManager.class,
-                                Command.Builder.class);
+                                NQCommandManager.class,
+                                NQCommandBuilder.class);
                 if (identifier != null && objective == NumberVariableObjective.class) {
 
                     main.getLogManager()

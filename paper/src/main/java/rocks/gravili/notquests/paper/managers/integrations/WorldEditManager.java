@@ -31,7 +31,6 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.context.CommandContext;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.structs.objectives.ReachLocationObjective;
 

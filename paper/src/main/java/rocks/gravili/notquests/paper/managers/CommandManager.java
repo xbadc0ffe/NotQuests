@@ -73,7 +73,6 @@ public class CommandManager {
     // suggestion bridges) still build Cloud CommandFlags / construct a Cloud CommandContext via this
     // manager. It is kept only so those files compile until they are migrated. Fully-qualified on
     // purpose so the only Cloud reference in this file is this single, clearly-marked accessor.
-    private org.incendo.cloud.paper.PaperCommandManager<org.bukkit.command.CommandSender> legacyCloudCommandManager;
 
     // Builders
     private NQCommandBuilder adminCommandBuilder;
@@ -219,22 +218,7 @@ public class CommandManager {
     }
 
     public void preSetupCommands() {
-        // Sole remaining Cloud usage: build the legacy manager that the six not-yet-migrated variable
-        // classes still depend on (see the legacyCloudCommandManager field comment). Nothing else in
-        // this class uses Cloud anymore.
-        try {
-            legacyCloudCommandManager = org.incendo.cloud.paper.PaperCommandManager.builder(
-                            org.incendo.cloud.SenderMapper.<io.papermc.paper.command.brigadier.CommandSourceStack, org.bukkit.command.CommandSender>create(
-                                    io.papermc.paper.command.brigadier.CommandSourceStack::getSender, CommandSenderSourceStack::new))
-                    .executionCoordinator(org.incendo.cloud.execution.ExecutionCoordinator.simpleCoordinator())
-                    .buildOnEnable(main.getMain());
-        } catch (final Exception e) {
-            main.getLogManager().severe("There was an error setting up the commands.");
-            return;
-        }
-
-        // NotQuests' own native-Brigadier command framework (migration target off Cloud).
-        // See commands.framework package.
+        // NotQuests' own native-Brigadier command framework (commands.framework package).
         try {
             nqCommands = new NQCommands(main);
             nqCommands.hook();
@@ -405,9 +389,6 @@ public class CommandManager {
      * still construct Cloud CommandFlags / a Cloud CommandContext from this manager. Do not add new
      * callers; migrate them to the native framework instead.
      */
-    public final org.incendo.cloud.paper.PaperCommandManager<org.bukkit.command.CommandSender> getPaperCommandManager() {
-        return legacyCloudCommandManager;
-    }
 
     public final NQCommandBuilder getAdminCommandBuilder() {
         return adminCommandBuilder;

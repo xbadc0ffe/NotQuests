@@ -32,7 +32,6 @@ import rocks.gravili.notquests.paper.managers.items.NQItem;
 
 import java.util.Arrays;
 
-import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 import static rocks.gravili.notquests.paper.commands.arguments.ItemStackSelectionArgument.itemStackSelectionArgument;
 import static rocks.gravili.notquests.paper.commands.arguments.NQNPCArgument.nqNPCArgument;
 

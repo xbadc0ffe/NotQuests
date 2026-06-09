@@ -28,11 +28,6 @@ import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.incendo.cloud.Command;
-import org.incendo.cloud.component.CommandComponent;
-import org.incendo.cloud.component.TypedCommandComponent;
-import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.description.Description;
 import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 import redempt.crunch.functional.EvaluationEnvironment;
@@ -51,7 +46,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 
 public class VariablesManager {
     private final NotQuests main;
