@@ -26,6 +26,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
@@ -179,7 +181,7 @@ public final class NQCommandManager {
             final CommandNode<CommandSourceStack> built = compile(child, path + " " + childLabel);
             builder.then(built);
             for (final String alias : child.aliases) {
-                builder.then(Commands.literal(alias).redirect(built).build());
+                builder.then(hiddenAlias(alias, built));
             }
         }
         if (node.handler != null) {
@@ -346,6 +348,36 @@ public final class NQCommandManager {
                 return suggestionsBuilder.buildFuture();
             }
         };
+    }
+
+    /**
+     * Builds a sub-command alias node that mirrors {@code target} — same executor, permission, and
+     * children — under the {@code alias} literal, and hides itself from tab-completion.
+     *
+     * <p>A Brigadier <em>redirect</em> is deliberately NOT used: a redirect starts a fresh parse
+     * context, so handlers reached through the alias would lose arguments parsed before it (e.g. the
+     * {@code <quest>} in {@code /qa edit <quest> o list} would be invisible to the objectives
+     * handler, and bare {@code /qa edit <quest> o} would not inherit the target's help executor).
+     * Sharing the target's child nodes keeps the whole parse on one continuous context, so the alias
+     * behaves identically to its canonical name. The alias literal's own suggestion is suppressed so
+     * short aliases (e.g. {@code o} for {@code objectives}, {@code t} for {@code tags}) don't clutter
+     * the completion list; the target's children still suggest normally once the alias is typed.
+     */
+    private static LiteralCommandNode<CommandSourceStack> hiddenAlias(
+            final String alias, final CommandNode<CommandSourceStack> target) {
+        final LiteralCommandNode<CommandSourceStack> aliasNode =
+                new LiteralCommandNode<CommandSourceStack>(
+                        alias, target.getCommand(), target.getRequirement(), null, null, false) {
+                    @Override
+                    public CompletableFuture<Suggestions> listSuggestions(
+                            final CommandContext<CommandSourceStack> context, final SuggestionsBuilder builder) {
+                        return Suggestions.empty();
+                    }
+                };
+        for (final CommandNode<CommandSourceStack> child : target.getChildren()) {
+            aliasNode.addChild(child);
+        }
+        return aliasNode;
     }
 
     private static NQFlag findFlag(final Node node, final String name) {
