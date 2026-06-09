@@ -18,8 +18,6 @@
 
 package rocks.gravili.notquests.paper.commands.arguments;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -54,10 +52,12 @@ public final class ItemStackSelectionArgument extends NQArgumentType<ItemStackSe
         return new ItemStackSelectionArgument(main);
     }
 
-    @Override
-    public ArgumentType<String> getNativeType() {
-        return StringArgumentType.greedyString();
-    }
+    // NB: deliberately NOT a greedyString(). An item selection is a single, space-free,
+    // comma-separated token (e.g. "grass_block,dirt" or quoted "my item"); a greedy native type
+    // would swallow following arguments — e.g. in `/qa ... rewards add GiveItem grass_block 1` it
+    // captured "grass_block 1" and then failed to parse that as a material. The base class default
+    // (StringArgumentType.string(): single token, quote-aware) is exactly what's needed, so the
+    // getNativeType() override is intentionally omitted.
 
     @Override
     public ItemStackSelection convert(final String input) throws CommandSyntaxException {
