@@ -18,6 +18,7 @@
 
 package rocks.gravili.notquests.paper.commands.arguments;
 
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -52,12 +53,33 @@ public final class ItemStackSelectionArgument extends NQArgumentType<ItemStackSe
         return new ItemStackSelectionArgument(main);
     }
 
-    // NB: deliberately NOT a greedyString(). An item selection is a single, space-free,
-    // comma-separated token (e.g. "grass_block,dirt" or quoted "my item"); a greedy native type
-    // would swallow following arguments — e.g. in `/qa ... rewards add GiveItem grass_block 1` it
-    // captured "grass_block 1" and then failed to parse that as a material. The base class default
-    // (StringArgumentType.string(): single token, quote-aware) is exactly what's needed, so the
-    // getNativeType() override is intentionally omitted.
+    // An item selection is a comma-separated run of materials/NotQuests-items (e.g.
+    // "grass_block,acacia_boat", plus the "hand"/"any" keywords). A comma is NOT a legal character
+    // in an unquoted Brigadier string, so the default string() tokenizer stops at the first comma and
+    // leaves the rest as "trailing data". We therefore read the token ourselves: the whole run up to
+    // the next space (commas included), or a quoted phrase for NotQuests item names that contain
+    // spaces. This does NOT swallow following arguments (it stops at the space before e.g. <amount>).
+    // getNativeType() stays string() only as the client-facing argument shape.
+    @Override
+    public <S> ItemStackSelection parse(final StringReader reader, final S source) throws CommandSyntaxException {
+        return convert(readSelectionToken(reader), source);
+    }
+
+    @Override
+    public ItemStackSelection parse(final StringReader reader) throws CommandSyntaxException {
+        return convert(readSelectionToken(reader), null);
+    }
+
+    private static String readSelectionToken(final StringReader reader) throws CommandSyntaxException {
+        if (reader.canRead() && (reader.peek() == '"' || reader.peek() == '\'')) {
+            return reader.readQuotedString();
+        }
+        final int start = reader.getCursor();
+        while (reader.canRead() && reader.peek() != ' ') {
+            reader.skip();
+        }
+        return reader.getString().substring(start, reader.getCursor());
+    }
 
     @Override
     public ItemStackSelection convert(final String input) throws CommandSyntaxException {
