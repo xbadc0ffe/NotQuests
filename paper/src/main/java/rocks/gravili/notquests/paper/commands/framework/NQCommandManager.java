@@ -109,35 +109,26 @@ public final class NQCommandManager {
         }
     }
 
-    /** Builder-based self-test proving tree-merge + compile + execute + flags through the framework. */
-    public void registerSelfTest() {
-        final NQArgumentType<String> echo =
-                new NQArgumentType<>() {
-                    @Override
-                    public String convert(final String nativeType) {
-                        return nativeType;
-                    }
-
-                    @Override
-                    protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-                        return List.of("alpha", "beta");
-                    }
-                };
-        final NQCommandBuilder base =
-                commandBuilder("nqnative2", NQDescription.of("NotQuests framework self-test"), "nqn2")
-                        .permission("notquests.admin");
-        command(base.literal("foo").handler(ctx -> main.sendMessage(ctx.sender(), "<main>foo ok (native framework)")));
-        command(
-                base.literal("bar")
-                        .required("text", echo, NQDescription.of("some text"))
-                        .flag(NQFlag.presence("verbose", NQDescription.of("be verbose")))
-                        .handler(
-                                ctx ->
-                                        main.sendMessage(
-                                                ctx.sender(),
-                                                "<main>bar: <highlight>"
-                                                        + ctx.get("text")
-                                                        + (ctx.flags().isPresent("verbose") ? " <unimportant>(verbose)" : ""))));
+    /**
+     * One-level-deep usage lines for the root command {@code rootName} (looked up by name in the
+     * internal {@code roots} map), used to render the {@code /qa help} / {@code /nq help} menus.
+     * For each direct child of the root, produces {@code "/" + rootName + " " + childName} (argument
+     * children are shown as {@code <name>}), appending {@code " ..."} when that child has its own
+     * children. Returns an empty list if no root with that name is registered.
+     */
+    public List<String> rootUsage(final String rootName) {
+        final Node root = roots.get(rootName);
+        if (root == null) {
+            return List.of();
+        }
+        final List<String> usages = new ArrayList<>();
+        for (final Node child : root.children.values()) {
+            final String label = child.kind == Kind.LITERAL ? child.name : "<" + child.name + ">";
+            final String more = child.children.isEmpty() ? "" : " ...";
+            usages.add("/" + rootName + " " + label + more);
+        }
+        usages.sort(null);
+        return usages;
     }
 
     private void registerAll(final Commands commands) {

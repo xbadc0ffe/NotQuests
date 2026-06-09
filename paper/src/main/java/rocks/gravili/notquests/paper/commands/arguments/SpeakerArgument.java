@@ -36,7 +36,7 @@ import java.util.List;
  * Brigadier does not hand {@code convert} a context, so resolution is delegated to
  * {@link #convert(CommandContext, String)}.
  */
-public final class SpeakerArgument extends NQArgumentType<Speaker> {
+public final class SpeakerArgument extends NQArgumentType<String> {
     private final NotQuests main;
     private final String conversationContext;
 
@@ -50,20 +50,21 @@ public final class SpeakerArgument extends NQArgumentType<Speaker> {
     }
 
     @Override
-    public Speaker convert(final String input) throws CommandSyntaxException {
-        // The owning Conversation lives on a prior positional argument; without a CommandContext here
-        // we cannot reach it, so resolution is delegated to convert(context, input).
-        throw fail("Speaker '" + input + "' was not found!");
+    public String convert(final String input) {
+        return input; // raw speaker name; resolved by the handler via resolveSpeaker(conversation, name)
     }
 
-    public Speaker convert(final CommandContext<?> context, final String input) throws CommandSyntaxException {
-        final Conversation conversation = (Conversation) context.getArgument(conversationContext, Object.class);
+    /** Finds a speaker by name within a conversation (the conversation comes from the handler's context). */
+    public static Speaker resolveSpeaker(final Conversation conversation, final String name) {
+        if (conversation == null || conversation.getSpeakers() == null) {
+            return null;
+        }
         for (final Speaker speaker : conversation.getSpeakers()) {
-            if (speaker.getSpeakerName().equalsIgnoreCase(input)) {
+            if (speaker.getSpeakerName().equalsIgnoreCase(name)) {
                 return speaker;
             }
         }
-        throw fail("Speaker '" + input + "' was not found in conversation " + conversation.getIdentifier() + "!");
+        return null;
     }
 
     @Override

@@ -19,7 +19,6 @@
 package rocks.gravili.notquests.paper.commands.arguments;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.framework.NQArgumentType;
 import rocks.gravili.notquests.paper.structs.objectives.Objective;
@@ -29,14 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Native-framework port of {@code ObjectiveParser}: resolves an {@link Objective} (by id) within the
- * {@link ObjectiveHolder} carried by a prior positional argument at the configured {@code level}.
- *
- * <p>NOTE: the Cloud parser read the holder from the command context inside {@code parse}. Brigadier
- * does not hand {@code convert} a context, so the holder must be supplied to {@link #convert} via the
- * Brigadier context in {@link #suggest}. See {@link #convert} for the implication on resolution.
+ * Native-framework port of {@code ObjectiveParser}. Native Brigadier argument types parse in
+ * isolation and cannot see prior positional arguments, so this argument parses only the raw objective
+ * <b>id</b>. The actual {@link Objective} is resolved from the id chain (quest → objectiveId →
+ * objectiveId2 → …) by {@link #resolveHolder} at the point of consumption (the command handler, via
+ * {@code CommandManager#getObjectiveFromContextAndLevel}) and for tab-completion in {@link #suggest}.
  */
-public final class ObjectiveArgument extends NQArgumentType<Objective> {
+public final class ObjectiveArgument extends NQArgumentType<String> {
     private final NotQuests main;
     private final int level;
 
@@ -50,40 +48,61 @@ public final class ObjectiveArgument extends NQArgumentType<Objective> {
     }
 
     @Override
-    public Objective convert(final String input) throws CommandSyntaxException {
-        // The owning ObjectiveHolder lives on a prior positional argument; without a CommandContext
-        // here we cannot reach it, so resolution is delegated to convert(context, input).
-        throw fail("No Objective found: " + input);
-    }
-
-    public Objective convert(final CommandContext<?> context, final String input) throws CommandSyntaxException {
-        final List<Objective> entries = getObjectiveHolderForLevel(context, level).getObjectives();
-        for (final Objective objective : entries) {
-            if (String.valueOf(objective.getObjectiveID()).equalsIgnoreCase(input)) {
-                return objective;
-            }
-        }
-        throw fail("No Objective found: " + input);
+    public String convert(final String input) {
+        return input; // raw objective id; resolved against the prior args by resolveHolder()
     }
 
     @Override
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-        final List<String> entries = new ArrayList<>();
-        for (final Objective objective : getObjectiveHolderForLevel(context, level).getObjectives()) {
-            entries.add(String.valueOf(objective.getObjectiveID()));
+        final ObjectiveHolder holder = resolveHolder(context, level);
+        final List<String> ids = new ArrayList<>();
+        if (holder != null) {
+            for (final Objective objective : holder.getObjectives()) {
+                ids.add(String.valueOf(objective.getObjectiveID()));
+            }
         }
-        return entries;
+        return ids;
     }
 
-    private ObjectiveHolder getObjectiveHolderForLevel(final CommandContext<?> context, final int level) {
-        final ObjectiveHolder objectiveHolder;
-        if (level == 0) {
-            objectiveHolder = (ObjectiveHolder) context.getArgument("quest", Object.class);
-        } else if (level == 1) {
-            objectiveHolder = (ObjectiveHolder) context.getArgument("objectiveId", Object.class);
-        } else {
-            objectiveHolder = (ObjectiveHolder) context.getArgument("objectiveId" + level, Object.class);
+    /**
+     * Resolves the {@link ObjectiveHolder} at {@code level} (0 = the quest) by walking the prior
+     * positional arguments: {@code quest}, then {@code objectiveId}, {@code objectiveId2}, … each of
+     * which is now a raw id string.
+     */
+    public static ObjectiveHolder resolveHolder(final CommandContext<?> context, final int level) {
+        ObjectiveHolder holder = arg(context, "quest");
+        for (int l = 1; l <= level; l++) {
+            final String key = (l == 1) ? "objectiveId" : ("objectiveId" + l);
+            final String rawId = arg(context, key);
+            if (rawId == null) {
+                return holder;
+            }
+            holder = findObjective(holder, rawId);
+            if (holder == null) {
+                return null;
+            }
         }
-        return objectiveHolder;
+        return holder;
+    }
+
+    public static Objective findObjective(final ObjectiveHolder holder, final String rawId) {
+        if (holder == null) {
+            return null;
+        }
+        for (final Objective objective : holder.getObjectives()) {
+            if (String.valueOf(objective.getObjectiveID()).equalsIgnoreCase(rawId)) {
+                return objective;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T arg(final CommandContext<?> context, final String name) {
+        try {
+            return (T) context.getArgument(name, Object.class);
+        } catch (final IllegalArgumentException notPresent) {
+            return null;
+        }
     }
 }

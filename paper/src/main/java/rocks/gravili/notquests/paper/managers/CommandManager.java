@@ -222,9 +222,7 @@ public class CommandManager {
         try {
             nqCommands = new NQCommands(main);
             nqCommands.hook();
-            nqCommands.registerSelfTest();
             nqCommandManager = new NQCommandManager(main, nqCommands);
-            nqCommandManager.registerSelfTest();
         } catch (final Throwable t) {
             main.getLogManager().warn("Could not initialize the native command framework: " + t.getMessage());
         }
@@ -343,7 +341,12 @@ public class CommandManager {
                 userCommandBuilder
                         .literal("help")
                         .required("query", NQArguments.greedyStringArgument())
-                        .handler(context -> main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— use tab-completion to explore the commands.")));
+                        .handler(context -> {
+                            main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— available commands:");
+                            for (final String usageLine : nqCommandManager.rootUsage("nq")) {
+                                main.sendMessage(context.sender(), "<unimportant>" + usageLine);
+                            }
+                        }));
 
         userCommands = new UserCommands(main, nqCommandManager, userCommandBuilder);
 
@@ -351,13 +354,21 @@ public class CommandManager {
         // Help Menu
         nqCommandManager.command(adminCommandBuilder.commandDescription(NQDescription.of("Opens the help menu"))
                 .handler((context) -> {
-                    main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— use tab-completion to explore the commands.");
+                    main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— available admin commands:");
+                    for (final String usageLine : nqCommandManager.rootUsage("nqa")) {
+                        main.sendMessage(context.sender(), "<unimportant>" + usageLine);
+                    }
                     main.getUtilManager().sendFancyCommandCompletion(context.sender(), context.rawInput().input().split(" "), "[What would you like to do?]", "[...]");
                 }));
         nqCommandManager.command(adminCommandBuilder
                 .literal("help")
                 .optional("query", NQArguments.greedyStringArgument())
-                .handler(context -> main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— use tab-completion to explore the commands.")));
+                .handler(context -> {
+                    main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— available admin commands:");
+                    for (final String usageLine : nqCommandManager.rootUsage("nqa")) {
+                        main.sendMessage(context.sender(), "<unimportant>" + usageLine);
+                    }
+                }));
 
         adminCommands = new AdminCommands(main, nqCommandManager, adminCommandBuilder);
 
@@ -504,26 +515,11 @@ public class CommandManager {
     }
 
     public final ObjectiveHolder getObjectiveHolderFromContextAndLevel(final NQCommandContext context, final int level) {
-        final ObjectiveHolder objectiveHolder;
-        if (level == 0) {
-            objectiveHolder = context.get("quest");
-        } else if (level == 1) {
-            objectiveHolder = context.get("objectiveId");
-        } else {
-            objectiveHolder = context.get("objectiveId" + level);
-        }
-        return objectiveHolder;
+        return rocks.gravili.notquests.paper.commands.arguments.ObjectiveArgument.resolveHolder(context.brigadier(), level);
     }
 
     public final Objective getObjectiveFromContextAndLevel(final NQCommandContext context, final int level) {
-        final Objective objective;
-        main.getLogManager().debug(context.get("objectiveId"));
-        main.getLogManager().debug(context.get("objectiveId" + (level + 1)));
-        if (level == 0) {
-            objective = context.get("objectiveId");
-        } else {
-            objective = context.get("objectiveId" + (level + 1));
-        }
-        return objective;
+        final ObjectiveHolder holder = rocks.gravili.notquests.paper.commands.arguments.ObjectiveArgument.resolveHolder(context.brigadier(), level + 1);
+        return holder instanceof Objective ? (Objective) holder : null;
     }
 }

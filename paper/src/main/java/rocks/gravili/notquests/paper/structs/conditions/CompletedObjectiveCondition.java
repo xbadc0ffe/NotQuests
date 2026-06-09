@@ -53,7 +53,7 @@ public class CompletedObjectiveCondition extends Condition {
 
                         final Quest quest = context.get("quest");
                         for (final Objective objective : quest.getObjectives()) {
-                            if (objective.getObjectiveID() != ((Objective) context.get("objectiveId")).getObjectiveID()) { //TODO: Support nested objectives
+                            if (objective.getObjectiveID() != main.getCommandManager().getObjectiveFromContextAndLevel(context, 0).getObjectiveID()) { //TODO: Support nested objectives
                                 completions.add("" + objective.getObjectiveID());
                             }
                         }
@@ -63,9 +63,9 @@ public class CompletedObjectiveCondition extends Condition {
                             (context) -> {
                                 final Quest quest = context.get("quest");
 
-                                final Objective objective = context.get("objectiveId"); //TODO: Support nested objectives
+                                final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, 0); //TODO: Support nested objectives
 
-                                final Objective dependingObjective = context.get("dependingObjectiveId");
+                                final Objective dependingObjective = rocks.gravili.notquests.paper.commands.arguments.ObjectiveArgument.findObjective(quest, context.get("dependingObjectiveId"));
                                 final int dependingObjectiveID = dependingObjective.getObjectiveID();
                                 if (dependingObjective != objective) {
 

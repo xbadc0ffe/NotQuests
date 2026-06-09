@@ -369,7 +369,7 @@ public class AdminConversationCommands {
                 .handler((context) -> {
                     final Conversation foundConversation = context.get("conversation");
 
-                    final Speaker speaker = context.get("speaker");
+                    final Speaker speaker = rocks.gravili.notquests.paper.commands.arguments.SpeakerArgument.resolveSpeaker(foundConversation, context.get("speaker"));
 
                     if (foundConversation.hasSpeaker(speaker) && foundConversation.removeSpeaker(speaker, true)) {
                         // TODO: Reload conversation here

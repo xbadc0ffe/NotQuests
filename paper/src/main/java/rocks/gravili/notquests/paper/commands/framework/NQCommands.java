@@ -18,8 +18,6 @@
 
 package rocks.gravili.notquests.paper.commands.framework;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -86,54 +84,5 @@ public final class NQCommands {
             final String description,
             final String... aliases) {
         register(commands -> commands.register(node, description, Arrays.asList(aliases)));
-    }
-
-    /**
-     * Proof-of-architecture command registered entirely through Paper-native Brigadier (zero Cloud):
-     * {@code /nqnative [text]}. Demonstrates registration, a permission requirement, an
-     * {@link NQArgumentType} with tab-completions, and execution. Coexists with the Cloud commands and
-     * is removed once the real command tree is migrated.
-     */
-    public void registerSelfTest() {
-        final NQArgumentType<String> echoArgument =
-                new NQArgumentType<>() {
-                    @Override
-                    public String convert(final String nativeType) {
-                        return nativeType;
-                    }
-
-                    @Override
-                    protected List<String> suggest(
-                            final CommandContext<?> context, final String remaining) {
-                        return List.of("hello", "world", "<text>");
-                    }
-                };
-
-        register(
-                commands -> {
-                    final LiteralCommandNode<CommandSourceStack> node =
-                            Commands.literal("nqnative")
-                                    .requires(source -> source.getSender().hasPermission("notquests.admin"))
-                                    .executes(
-                                            ctx -> {
-                                                main.sendMessage(
-                                                        ctx.getSource().getSender(),
-                                                        "<main>NotQuests <unimportant>native command framework is live. Try <highlight>/nqnative <text>");
-                                                return Command.SINGLE_SUCCESS;
-                                            })
-                                    .then(
-                                            Commands.argument("text", echoArgument)
-                                                    .executes(
-                                                            ctx -> {
-                                                                main.sendMessage(
-                                                                        ctx.getSource().getSender(),
-                                                                        "<main>echo: <highlight>"
-                                                                                + ctx.getArgument("text", String.class));
-                                                                return Command.SINGLE_SUCCESS;
-                                                            }))
-                                    .build();
-                    commands.register(
-                            node, "NotQuests native command framework self-test", List.of());
-                });
     }
 }

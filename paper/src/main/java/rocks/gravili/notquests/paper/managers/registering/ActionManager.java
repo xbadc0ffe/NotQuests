@@ -228,7 +228,7 @@ public class ActionManager {
         final Quest quest = context.getOrDefault("quest", null);
         Objective objectiveOfQuest = null;
         if (quest != null && context.<Objective>get("objectiveId") != null) {
-            objectiveOfQuest = context.get("objectiveId"); //TODO: Support nested objectives
+            objectiveOfQuest = main.getCommandManager().getObjectiveFromContextAndLevel(context, 0); //TODO: Support nested objectives
         }
         final String actionIdentifier =
                 context.getOrDefault("Action Identifier", context.getOrDefault("action", ""));

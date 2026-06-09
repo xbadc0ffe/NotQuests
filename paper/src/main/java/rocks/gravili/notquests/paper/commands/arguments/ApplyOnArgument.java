@@ -53,12 +53,16 @@ public final class ApplyOnArgument extends NQArgumentType<Integer> {
 
     @Override
     public Integer convert(final String input) throws CommandSyntaxException {
-        // The owning Quest lives on a prior positional argument; the literal "Quest" can still be
-        // resolved without a context, otherwise resolution is delegated to convert(context, input).
+        // applyOn is a small integer: 0 = Quest, 1 = Objective 1, ... Accept "Quest", "O1"/"O2"
+        // (objective shorthand) or a bare number. No prior-argument context is needed.
         if (input.equalsIgnoreCase("Quest")) {
             return 0;
         }
-        throw fail("ApplyOn Objective '" + input + "' is not a valid applyOn objective!");
+        try {
+            return Integer.parseInt(input.toLowerCase(Locale.ROOT).replace("o", "").trim());
+        } catch (final NumberFormatException e) {
+            throw fail("ApplyOn '" + input + "' is not valid (use 'Quest', 'O1', 'O2', ... or a number)");
+        }
     }
 
     public Integer convert(final CommandContext<?> context, final String input) throws CommandSyntaxException {

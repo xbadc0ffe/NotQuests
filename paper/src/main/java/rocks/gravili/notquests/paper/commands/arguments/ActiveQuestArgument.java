@@ -72,12 +72,34 @@ public final class ActiveQuestArgument extends NQArgumentType<ActiveQuest> {
 
     @Override
     public ActiveQuest convert(final String input) throws CommandSyntaxException {
-        // The target player is resolved from the command context / sender; without a CommandContext
-        // here we cannot reach it, so resolution is delegated to convert(context, input).
-        throw fail(
-                main.getLanguageManager()
-                        .getString("chat.quest-does-not-exist", (QuestPlayer) null)
-                        .replace("%QUESTNAME%", input));
+        return convert(input, null);
+    }
+
+    // Paper hands CustomArgumentType the command source, so we can resolve the sender's active quest
+    // here (covers /nq abort, /nq progress and admin-on-self). The explicit "player" target (a prior
+    // positional arg) isn't reachable at parse time and falls back to the sender.
+    @Override
+    public <S> ActiveQuest convert(final String input, final S source) throws CommandSyntaxException {
+        OfflinePlayer offlinePlayer = null;
+        if (source instanceof CommandSourceStack sourceStack
+                && sourceStack.getSender() instanceof Player player) {
+            offlinePlayer = player;
+        }
+        final QuestPlayer activeQuestPlayer =
+                offlinePlayer == null
+                        ? null
+                        : main.getQuestPlayerManager().getActiveQuestPlayer(offlinePlayer.getUniqueId());
+        final ActiveQuest activeQuest =
+                activeQuestPlayer == null
+                        ? null
+                        : activeQuestPlayer.getActiveQuest(main.getQuestManager().getQuest(input));
+        if (activeQuest == null) {
+            throw fail(
+                    main.getLanguageManager()
+                            .getString("chat.quest-does-not-exist", (QuestPlayer) null)
+                            .replace("%QUESTNAME%", input));
+        }
+        return activeQuest;
     }
 
     public ActiveQuest convert(final CommandContext<?> context, final String input) throws CommandSyntaxException {
