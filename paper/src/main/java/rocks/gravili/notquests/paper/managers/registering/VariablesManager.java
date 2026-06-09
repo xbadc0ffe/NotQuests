@@ -267,12 +267,14 @@ public class VariablesManager {
             }
             if (variable.getRequiredNumbers() != null) {
                 for (NumberVariableValueParser<CommandSender> numberParser : variable.getRequiredNumbers()) {
-                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberVariableArgument(numberParser.getIdentifier(), variable), NQDescription.EMPTY);
+                    // Positional (non-greedy): these required numbers (e.g. a Block variable's x/y/z)
+                    // are followed by further arguments, so they must not greedily swallow the rest.
+                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberVariableArgument(numberParser.getIdentifier(), variable, false), NQDescription.EMPTY);
                 }
             }
             if (variable.getRequiredBooleans() != null) {
                 for (BooleanVariableValueParser<CommandSender> booleanParser : variable.getRequiredBooleans()) {
-                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanVariableArgument(booleanParser.getIdentifier(), variable), NQDescription.EMPTY);
+                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanVariableArgument(booleanParser.getIdentifier(), variable, false), NQDescription.EMPTY);
                 }
             }
             if (variable.getRequiredBooleanFlags() != null) {

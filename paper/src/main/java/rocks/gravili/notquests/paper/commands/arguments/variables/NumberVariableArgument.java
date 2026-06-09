@@ -40,15 +40,27 @@ public final class NumberVariableArgument extends NQArgumentType<String> {
 
     private final String identifier;
     private final Variable<?> variable;
+    private final boolean greedy;
 
     public NumberVariableArgument(final String identifier, final Variable<?> variable) {
+        this(identifier, variable, true);
+    }
+
+    public NumberVariableArgument(final String identifier, final Variable<?> variable, final boolean greedy) {
         this.main = NotQuests.getInstance();
         this.identifier = identifier;
         this.variable = variable;
+        this.greedy = greedy;
     }
 
+    /** A trailing number/expression argument (greedy: it is the last argument and may contain commas). */
     public static NumberVariableArgument numberVariableArgument(final String identifier, final Variable<?> variable) {
-        return new NumberVariableArgument(identifier, variable);
+        return new NumberVariableArgument(identifier, variable, true);
+    }
+
+    /** A positional number argument (non-greedy single token, so it doesn't swallow following args). */
+    public static NumberVariableArgument numberVariableArgument(final String identifier, final Variable<?> variable, final boolean greedy) {
+        return new NumberVariableArgument(identifier, variable, greedy);
     }
 
     public String getIdentifier() {
@@ -57,7 +69,11 @@ public final class NumberVariableArgument extends NQArgumentType<String> {
 
     @Override
     public ArgumentType<String> getNativeType() {
-        return StringArgumentType.greedyString();
+        // Greedy ONLY for trailing number expressions: an expression may contain commas (variable
+        // function-args like "Block(world:w,x:1,y:2,z:3)"), and every non-greedy Brigadier string
+        // mode stops at a comma. Positional number args (x/y/z, min/max) are followed by more
+        // arguments, so they must be a single non-greedy token to avoid swallowing them.
+        return greedy ? StringArgumentType.greedyString() : StringArgumentType.string();
     }
 
     @Override

@@ -39,15 +39,27 @@ public final class BooleanVariableArgument extends NQArgumentType<String> {
 
     private final String identifier;
     private final Variable<?> variable;
+    private final boolean greedy;
 
     public BooleanVariableArgument(final String identifier, final Variable<?> variable) {
+        this(identifier, variable, true);
+    }
+
+    public BooleanVariableArgument(final String identifier, final Variable<?> variable, final boolean greedy) {
         this.main = NotQuests.getInstance();
         this.identifier = identifier;
         this.variable = variable;
+        this.greedy = greedy;
     }
 
+    /** A trailing boolean/expression argument (greedy: it is the last argument and may contain commas). */
     public static BooleanVariableArgument booleanVariableArgument(final String identifier, final Variable<?> variable) {
-        return new BooleanVariableArgument(identifier, variable);
+        return new BooleanVariableArgument(identifier, variable, true);
+    }
+
+    /** A positional boolean argument (non-greedy single token, so it doesn't swallow following args). */
+    public static BooleanVariableArgument booleanVariableArgument(final String identifier, final Variable<?> variable, final boolean greedy) {
+        return new BooleanVariableArgument(identifier, variable, greedy);
     }
 
     public String getIdentifier() {
@@ -56,7 +68,10 @@ public final class BooleanVariableArgument extends NQArgumentType<String> {
 
     @Override
     public ArgumentType<String> getNativeType() {
-        return StringArgumentType.greedyString();
+        // Greedy only for a trailing boolean expression (it may contain commas, which a non-greedy
+        // string would split on). Positional boolean args are non-greedy so they don't swallow the
+        // arguments that follow them.
+        return greedy ? StringArgumentType.greedyString() : StringArgumentType.string();
     }
 
     @Override
