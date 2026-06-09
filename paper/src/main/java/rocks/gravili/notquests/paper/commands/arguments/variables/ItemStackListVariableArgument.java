@@ -23,7 +23,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.incendo.cloud.suggestion.Suggestion;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.framework.NQArgumentType;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
@@ -78,10 +77,10 @@ public final class ItemStackListVariableArgument extends NQArgumentType<String> 
                 && source.getSender() instanceof Player player) {
             questPlayer = main.getQuestPlayerManager().getOrCreateQuestPlayer(player.getUniqueId());
         }
-        final List<Suggestion> possibleValues = variable.getPossibleValues(questPlayer);
+        final List<String> possibleValues = variable.getPossibleValues(questPlayer);
         if (possibleValues != null) {
-            for (final Suggestion suggestion : possibleValues) {
-                completions.add(suggestion.suggestion());
+            for (final String suggestion : possibleValues) {
+                completions.add(suggestion);
             }
         }
         return completions;

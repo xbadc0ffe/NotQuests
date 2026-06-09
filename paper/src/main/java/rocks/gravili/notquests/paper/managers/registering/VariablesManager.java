@@ -33,7 +33,6 @@ import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.component.TypedCommandComponent;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.description.Description;
-import org.incendo.cloud.parser.flag.CommandFlag;
 import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 import redempt.crunch.functional.EvaluationEnvironment;
@@ -224,7 +223,7 @@ public class VariablesManager {
                         for (BooleanVariableValueParser<CommandSender> booleanParser : variable.getRequiredBooleans()) {
                             additionalBooleanArguments.put(booleanParser.getIdentifier(), new NumberExpression(main, context.get(booleanParser.getIdentifier())));
                         }
-                        for (final CommandFlag<?> commandFlag : variable.getRequiredBooleanFlags()) {
+                        for (final rocks.gravili.notquests.paper.commands.framework.NQFlag commandFlag : variable.getRequiredBooleanFlags()) {
                             additionalBooleanArguments.put(commandFlag.name(), context.flags().isPresent(commandFlag.name()) ? NumberExpression.ofStatic(main, 1) : NumberExpression.ofStatic(main, 0));
                         }
                         variable.setAdditionalBooleanArguments(additionalBooleanArguments);
@@ -280,7 +279,7 @@ public class VariablesManager {
                 }
             }
             if (variable.getRequiredBooleanFlags() != null) {
-                for (CommandFlag<?> commandFlag : variable.getRequiredBooleanFlags()) {
+                for (rocks.gravili.notquests.paper.commands.framework.NQFlag commandFlag : variable.getRequiredBooleanFlags()) {
                     newBuilder = newBuilder.flag(rocks.gravili.notquests.paper.commands.framework.NQFlag.presence(commandFlag.name(), NQDescription.EMPTY));
                 }
             }
