@@ -48,8 +48,8 @@ public class BlockVariable extends Variable<String> {
         }));
 
         addRequiredNumber(NumberVariableValueParser.of("x", null));
-        addRequiredNumber(NumberVariableValueParser.of("x", null));
-        addRequiredNumber(NumberVariableValueParser.of("x", null));
+        addRequiredNumber(NumberVariableValueParser.of("y", null));
+        addRequiredNumber(NumberVariableValueParser.of("z", null));
     }
 
 
