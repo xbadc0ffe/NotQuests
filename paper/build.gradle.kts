@@ -53,13 +53,6 @@ repositories {
         }
     }
 
-    // cloud command framework — shaded library (2.x dev line)
-    maven("https://oss.sonatype.org/content/repositories/snapshots") {
-        content {
-            includeGroup("org.incendo")
-        }
-    }
-
     // Mojang libraries (brigadier / authlib / datafixerupper transitives)
     maven("https://libraries.minecraft.net/") {
         content {
@@ -128,15 +121,6 @@ dependencies {
     // 5.x — Paper provides 4.x at runtime, so a 5.x compile target would break against the server.
     implementation("net.kyori:adventure-api:4.26.1") {}
 
-    //CloudCommands
-    implementation("org.incendo:cloud-paper:2.0.0-beta.15") {
-        exclude(group = "org.incendo.cloud", module = "cloud-bukkit")
-    }
-    implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.15")
-
-    //Else it errors (kept on the 1.3.x line cloud expects):
-    implementation("io.leangen.geantyref:geantyref:1.3.16")
-
     //InvUI
     implementation("xyz.xenondevs.invui:invui:2.1.0")
 
@@ -185,9 +169,6 @@ tasks {
         // DO NOT minimize the jar, since cloud doesnt like it
         // Reference: https://discord.com/channels/766366162388123678/1170254709722984460/1242027222773006376
 
-        relocate("cloud.commandframework", "$shadowPath.cloud")
-        relocate("cloud.commandframework.bukkit.internal", "$shadowPath.cloud.bukkit.internal")
-        relocate("io.leangen.geantyref", "$shadowPath.geantyref")
         relocate("de.themoep", "$shadowPath.de.themoep")
 
         relocate("org.apache.commons.io", "$shadowPath.commons.io")
@@ -214,8 +195,6 @@ tasks {
             include(dependency("commons-io:commons-io:.*"))
             include(dependency("xyz.xenondevs.invui:.*:.*"))
 
-            include(dependency("org.incendo:.*:.*"))
-            include(dependency("io.leangen.geantyref:.*:.*"))
             include(dependency("me.lucko:.*:.*"))
 
             include(dependency("com.github.retrooper:.*:.*"))
