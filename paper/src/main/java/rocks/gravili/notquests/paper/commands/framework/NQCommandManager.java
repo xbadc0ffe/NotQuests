@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -252,12 +251,15 @@ public final class NQCommandManager {
                 continue;
             }
             present.add(flag.name());
-            if (!flag.isPresence() && i + 1 < tokens.length) {
+            // Only consume the next token as this flag's value if it isn't itself a flag: with
+            // "--min --max 3", a missing value for --min must not swallow --max (which would
+            // silently drop the second flag entirely).
+            if (!flag.isPresence() && i + 1 < tokens.length && !tokens[i + 1].startsWith("--")) {
                 final String raw = tokens[++i];
                 try {
                     values.put(flag.name(), flag.valueArgument().convert(raw));
                 } catch (final Exception ignored) {
-                    // bad flag value -> leave unset; the handler can fall back to a default
+                    // bad flag value -> leave unset; getValue(flag, fallback) then returns the fallback
                 }
             }
         }
@@ -297,9 +299,9 @@ public final class NQCommandManager {
         return (ctx, suggestionsBuilder) -> {
             try {
                 final NQCommandContext context = new NQCommandContext(ctx, Map.of(), Set.of(), ctx.getInput());
-                final String remaining = suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT);
-                for (final String suggestion : override.suggest(context, suggestionsBuilder.getRemaining())) {
-                    if (suggestion != null && suggestion.toLowerCase(Locale.ROOT).startsWith(remaining)) {
+                final String remaining = suggestionsBuilder.getRemaining();
+                for (final String suggestion : override.suggest(context, remaining)) {
+                    if (suggestion != null && suggestion.regionMatches(true, 0, remaining, 0, remaining.length())) {
                         suggestionsBuilder.suggest(suggestion);
                     }
                 }
@@ -329,18 +331,17 @@ public final class NQCommandManager {
                         }
                     }
                 }
-                final String lower = token.toLowerCase(Locale.ROOT);
                 if (awaitingValue != null && awaitingValue.valueSuggestions() != null) {
                     final NQCommandContext context = new NQCommandContext(ctx, Map.of(), Set.of(), ctx.getInput());
                     for (final String suggestion : awaitingValue.valueSuggestions().suggest(context, token)) {
-                        if (suggestion != null && suggestion.toLowerCase(Locale.ROOT).startsWith(lower)) {
+                        if (suggestion != null && suggestion.regionMatches(true, 0, token, 0, token.length())) {
                             offset.suggest(suggestion);
                         }
                     }
                 } else {
                     for (final NQFlag flag : node.flags) {
                         final String option = "--" + flag.name();
-                        if (option.toLowerCase(Locale.ROOT).startsWith(lower)) {
+                        if (option.regionMatches(true, 0, token, 0, token.length())) {
                             offset.suggest(option);
                         }
                     }

@@ -29,8 +29,8 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 /**
  * Base class for NotQuests custom command arguments built on Paper's native Brigadier API. This is
@@ -76,21 +76,25 @@ public abstract class NQArgumentType<T> implements CustomArgumentType.Converted<
         return List.of();
     }
 
+    private static final Pattern MINIMESSAGE_TAG = Pattern.compile("<[^>]+>");
+
     /**
      * Build a {@link CommandSyntaxException} to reject input from {@link #convert}. MiniMessage tags
      * in the message are stripped, since Brigadier renders the failure as plain text.
      */
     protected static CommandSyntaxException fail(final String message) {
-        final String plain = message == null ? "" : message.replaceAll("<[^>]+>", "");
+        final String plain = message == null ? "" : MINIMESSAGE_TAG.matcher(message).replaceAll("");
         return new SimpleCommandExceptionType(new LiteralMessage(plain)).create();
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(
             final CommandContext<S> context, final SuggestionsBuilder builder) {
-        final String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
-        for (final String suggestion : suggest(context, builder.getRemaining())) {
-            if (suggestion != null && suggestion.toLowerCase(Locale.ROOT).startsWith(remaining)) {
+        // Suggestions run on every keystroke of every player; regionMatches(true, ...) filters
+        // case-insensitively without allocating a lowercase copy of each candidate.
+        final String remaining = builder.getRemaining();
+        for (final String suggestion : suggest(context, remaining)) {
+            if (suggestion != null && suggestion.regionMatches(true, 0, remaining, 0, remaining.length())) {
                 builder.suggest(suggestion);
             }
         }

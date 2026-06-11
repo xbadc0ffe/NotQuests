@@ -128,35 +128,48 @@ public final class ItemStackSelectionArgument extends NQArgumentType<ItemStackSe
         }
     }
 
+    // Material is a static enum, but suggestions run on every keystroke of every player — build the
+    // ~2800 material entries (plain + trailing-comma variants for chaining) once and reuse them.
+    // NQItems are appended per call because admins can create them at runtime.
+    private static volatile List<String> cachedMaterialSuggestions;
+
+    private static List<String> materialSuggestions() {
+        List<String> cached = cachedMaterialSuggestions;
+        if (cached == null) {
+            final List<String> list = new ArrayList<>(Material.values().length * 2 + 4);
+            for (final Material value : Material.values()) {
+                final String name = value.name().toLowerCase(Locale.ROOT);
+                list.add(name);
+                list.add(name + ",");
+            }
+            list.add("hand");
+            list.add("hand,");
+            list.add("any");
+            list.add("any,");
+            cached = List.copyOf(list);
+            cachedMaterialSuggestions = cached; // benign race: computation is idempotent
+        }
+        return cached;
+    }
+
     @Override
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-        final List<String> possibleMaterials = new ArrayList<>();
-        for (final Material value : Material.values()) {
-            possibleMaterials.add(value.name().toLowerCase());
-            possibleMaterials.add(value.name().toLowerCase() + ",");
-        }
-
+        final List<String> possibleMaterials = new ArrayList<>(materialSuggestions());
         for (final NQItem nqItem : main.getItemsManager().getItems()) {
             possibleMaterials.add(nqItem.getItemName());
             possibleMaterials.add(nqItem.getItemName() + ",");
         }
 
-        possibleMaterials.add("hand");
-        possibleMaterials.add("hand,");
-        possibleMaterials.add("any");
-        possibleMaterials.add("any,");
-
-        final String rawInput = remaining;
-        if (!rawInput.contains(",")) {
+        if (!remaining.contains(",")) {
             return possibleMaterials;
-        } else {
-            final List<String> completions = new ArrayList<>();
-            final String partAfterLastCommaInInput = rawInput.substring((rawInput.lastIndexOf(",") > rawInput.length() - 1) ? (rawInput.lastIndexOf(",")) : (rawInput.lastIndexOf(",") + 1));
-            for (final String possibleMaterial : possibleMaterials) {
-                final String string = rawInput.substring(0, rawInput.length() - 1 - partAfterLastCommaInInput.length()) + "," + possibleMaterial;
-                completions.add(string);
-            }
-            return completions;
         }
+        // Mid-list (after a comma): suggest the already-typed selection up to the last comma with
+        // each candidate appended, so accepting a suggestion extends the list instead of replacing it.
+        final String prefix = remaining.substring(0, remaining.lastIndexOf(','));
+        final List<String> completions = new ArrayList<>(possibleMaterials.size());
+        for (final String possibleMaterial : possibleMaterials) {
+            completions.add(prefix + "," + possibleMaterial);
+        }
+        return completions;
     }
 }

@@ -57,6 +57,7 @@ public class UtilManager {
             new java.util.concurrent.ConcurrentHashMap<>();
     private static final int HINT_REFRESH_INTERVAL_TICKS = 10; // re-send every ~0.5s
     private static final int HINT_PERSIST_CYCLES = 12;         // keep alive ~6s after the last keystroke
+    private boolean commandHintRefreshTaskStarted;             // guard: never stack a second repeating task
     private final ArrayList<String> miniMessageTokens;
     
     public UtilManager(NotQuests main) {
@@ -261,6 +262,10 @@ public class UtilManager {
      * the window). Started once when the command system is set up.
      */
     public void startCommandHintRefreshTask() {
+        if (commandHintRefreshTaskStarted) {
+            return;
+        }
+        commandHintRefreshTaskStarted = true;
         Bukkit.getScheduler().runTaskTimer(main.getMain(), () -> {
             if (commandHintRefreshCycles.isEmpty()) {
                 return;

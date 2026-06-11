@@ -30,6 +30,7 @@ import rocks.gravili.notquests.paper.structs.variables.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Native-framework port of {@code ItemStackListVariableValueParser}: a generic "variable value"
@@ -61,15 +62,27 @@ public final class ItemStackListVariableArgument extends NQArgumentType<String> 
         return input;
     }
 
+    // Material is a static enum; suggestions run on every keystroke — build the name list once.
+    private static volatile List<String> cachedMaterialNames;
+
+    private static List<String> materialNames() {
+        List<String> cached = cachedMaterialNames;
+        if (cached == null) {
+            final List<String> list = new ArrayList<>(Material.values().length + 2);
+            for (final Material value : Material.values()) {
+                list.add(value.name().toLowerCase(Locale.ROOT));
+            }
+            list.add("hand");
+            list.add("any");
+            cached = List.copyOf(list);
+            cachedMaterialNames = cached; // benign race: computation is idempotent
+        }
+        return cached;
+    }
+
     @Override
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-        final List<String> completions = new ArrayList<>();
-
-        for (final Material value : Material.values()) {
-            completions.add(value.name().toLowerCase());
-        }
-        completions.add("hand");
-        completions.add("any");
+        final List<String> completions = new ArrayList<>(materialNames());
 
         QuestPlayer questPlayer = null;
         if (context.getSource() instanceof CommandSourceStack source
