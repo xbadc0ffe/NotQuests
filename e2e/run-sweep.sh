@@ -84,13 +84,24 @@ fi
   done < "$CMDS"
 } > "$FIFO"
 
-# Let queued commands (and any async saves) finish.
-sleep 12
+# Deterministic completion instead of a fixed sleep: console commands execute in order, so once
+# save-all's "Saved the game" appears, every sweep command before it has run. Timeout as fallback.
+echo "save-all flush" > "$FIFO"
+for i in $(seq 1 60); do
+  grep -q 'Saved the game' "$LOG" 2>/dev/null && break
+  sleep 1
+done
 
 echo "=== SWEEP DONE; analyzing ==="
 # Analyze before teardown so the exit code is produced even if shutdown is slow.
 python3 "$E2E/analyze.py" "$LOG"; rc=$?
 
+# Graceful teardown: ask the server to stop and wait for the gradle process to exit, so no orphaned
+# server JVM lingers (an abruptly killed server can leave a half-written world that hangs the next
+# boot). The EXIT trap force-kills only as a last resort.
 echo "stop" > "$FIFO" 2>/dev/null
-sleep 5
+for i in $(seq 1 30); do
+  kill -0 "$GPID" 2>/dev/null || break
+  sleep 1
+done
 exit "$rc"

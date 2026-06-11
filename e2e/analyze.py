@@ -37,11 +37,9 @@ TOLERANT_TAGS = ("PLAYER-ONLY", "NEEDS-ECONOMY", "UNSURE", "OBJECTIVE-SCOPED")
 
 HERE = re.compile(r"<--\[HERE\]\s*$")
 TS = re.compile(r"^\[\d\d:\d\d:\d\d INFO\]:\s*")
-# echo-less hard errors (crashes / custom parser failures) — never expected, always fail
-CRASH = re.compile(
-    r"Cannot parse|NullPointerException|Cannot invoke|\bException\b"
-    r"|^\s*at (rocks\.gravili|net\.minecraft|io\.papermc)"
-)
+# echo-less hard errors (crashes / custom parser failures) — never expected, always fail.
+# Stack-frame lines ("at com.example...") are skipped separately; flagging the headline is enough.
+CRASH = re.compile(r"Cannot parse|NullPointerException|Cannot invoke|\bException\b")
 
 
 def registered_types():
@@ -97,10 +95,14 @@ def main():
     # ---------- correctness ----------
     ready = any("Done (" in l for l in log)
     real_fails, tolerated = [], []
-    for i, line in enumerate(log):
+    for line in log:
         if HERE.search(line):                       # Brigadier parse failure (has the command echo)
+            # The echo shows the input UP TO the failure cursor (then truncated from the left with
+            # "..."), so the visible tail is a SUBSTRING of the command — not necessarily a suffix
+            # (mid-command failures cut before the end). Match by containment; with several matches
+            # stay conservative: only tolerate if every matching command is tolerated.
             tail = echo_command(line)
-            matches = [c for c in all_cmds if tail and c.endswith(tail)]
+            matches = [c for c in all_cmds if tail and tail in c]
             if matches:
                 tol = all(tol_by_cmd[c] for c in matches)
                 rec = (matches[0], line.strip())
