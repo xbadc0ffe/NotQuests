@@ -81,6 +81,6 @@ public final class BooleanVariableArgument extends NQArgumentType<String> {
 
     @Override
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-        return List.of();
+        return List.of("true", "false");
     }
 }
