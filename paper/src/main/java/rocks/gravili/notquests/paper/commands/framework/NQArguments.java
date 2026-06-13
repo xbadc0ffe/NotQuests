@@ -157,6 +157,11 @@ public final class NQArguments {
                     default -> Duration.ofMillis(amount);
                 };
             }
+
+            @Override
+            protected List<String> suggest(final CommandContext<?> context, final String remaining) {
+                return List.of("1s", "5s", "10s", "30s", "1m", "5m", "1h");
+            }
         };
     }
 

@@ -331,13 +331,17 @@ public final class NQCommandManager {
                         }
                     }
                 }
-                if (awaitingValue != null && awaitingValue.valueSuggestions() != null) {
-                    final NQCommandContext context = new NQCommandContext(ctx, Map.of(), Set.of(), ctx.getInput());
-                    for (final String suggestion : awaitingValue.valueSuggestions().suggest(context, token)) {
-                        if (suggestion != null && suggestion.regionMatches(true, 0, token, 0, token.length())) {
-                            offset.suggest(suggestion);
+                if (awaitingValue != null) {
+                    if (awaitingValue.valueSuggestions() != null) {
+                        final NQCommandContext context = new NQCommandContext(ctx, Map.of(), Set.of(), ctx.getInput());
+                        for (final String suggestion : awaitingValue.valueSuggestions().suggest(context, token)) {
+                            if (suggestion != null && suggestion.regionMatches(true, 0, token, 0, token.length())) {
+                                offset.suggest(suggestion);
+                            }
                         }
+                        return offset.buildFuture();
                     }
+                    return awaitingValue.valueArgument().listSuggestions(ctx, offset);
                 } else {
                     for (final NQFlag flag : node.flags) {
                         final String option = "--" + flag.name();
