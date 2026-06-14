@@ -33,6 +33,7 @@ import rocks.gravili.notquests.paper.commands.arguments.wrappers.ItemStackSelect
 import rocks.gravili.notquests.paper.commands.arguments.wrappers.NQNPCResult;
 import rocks.gravili.notquests.paper.commands.framework.NQArguments;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
 import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.commands.framework.NQFlag;
@@ -51,6 +52,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static rocks.gravili.notquests.paper.commands.arguments.CategoryArgument.categoryArgument;
 import static rocks.gravili.notquests.paper.commands.arguments.ItemStackSelectionArgument.itemStackSelectionArgument;
@@ -838,17 +840,21 @@ public class AdminEditCommands {
                     context.sender().sendMessage(main.parse("<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now showing the location to the player!"));
                 }));
 
+        final Consumer<NQCommandContext> disableLocationHandler = context -> {
+            final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+
+            objective.setShowLocation(false, true);
+
+            context.sender().sendMessage(main.parse(
+                    "<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now no longer showing the location to the player!"
+            ));
+        };
         manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
-                .literal("disables", NQDescription.of("Stops showing the selected objective's location to players.")).commandDescription(NQDescription.of("Disables showing the location to the player."))
-                .handler((context) -> {
-                    final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
-
-                    objective.setShowLocation(false, true);
-
-                    context.sender().sendMessage(main.parse(
-                            "<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now no longer showing the location to the player!"
-                    ));
-                }));
+                .literal("disable", NQDescription.of("Stops showing the selected objective's location to players.")).commandDescription(NQDescription.of("Disables showing the location to the player."))
+                .handler(disableLocationHandler));
+        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
+                .literal("disables", NQDescription.of("Legacy alias for disabling the selected objective's location marker.")).commandDescription(NQDescription.of("Disables showing the location to the player."))
+                .handler(disableLocationHandler));
 
         manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
                 .literal("set", NQDescription.of("Sets the location shown to players for the selected objective."))
