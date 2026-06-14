@@ -78,6 +78,7 @@ dependencies {
  * Configure NotQuests for shading
  */
 val shadowPath = "rocks.gravili.notquests"
+val minecraftTargetVersion = "26.1.2"
 
 /*processResources {
     def props = [version: version]
@@ -95,8 +96,8 @@ tasks {
         dependsOn(shadowJar)
     }
     // Don't emit the thin (un-shaded) plugin jar into build/libs: it has a valid plugin.yml but
-    // none of the shaded code, so loading it would crash at enable. NotQuests-<version>.jar
-    // (the shadowJar) is the only server-ready artifact.
+    // none of the shaded code, so loading it would crash at enable. The shadowJar is the only
+    // server-ready artifact.
     jar {
         enabled = false
     }
@@ -104,9 +105,9 @@ tasks {
         // DO NOT minimize the jar, since cloud doesnt like it
         // Reference: https://discord.com/channels/766366162388123678/1170254709722984460/1242027222773006376
 
-        // The :plugin module produces the real, server-ready jar. Name it NotQuests-<version>.jar so
-        // it is never confused with the intermediate :paper / :common library jars in build/libs.
-        archiveBaseName.set("NotQuests")
+        // The :plugin module produces the real, server-ready jar. Include the Minecraft target in
+        // the filename so release artifacts and local build outputs use the same naming convention.
+        archiveFileName.set("notquests-${project.version}-$minecraftTargetVersion.jar")
         archiveClassifier.set("")
 
         relocate("io.papermc.lib", "$shadowPath.paperlib")
@@ -129,7 +130,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.1.2")
+        minecraftVersion(minecraftTargetVersion)
     }
 
     register<Copy>("copyToServer") {
