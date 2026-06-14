@@ -97,8 +97,12 @@ qa edit TestQuest objectives add TalkToNPC -1                           # PLAYER
 
 # ---- objective location marker commands ----
 qa edit TestQuest objectives edit 1 location set world 100 64 100
+qa edit TestQuest objectives edit 1 location status
 qa edit TestQuest objectives edit 1 location enable
 qa edit TestQuest objectives edit 1 location disable
+qa edit TestQuest objectives edit 1 location clear
+qa edit TestQuest objectives edit 1 location status
+qa edit TestQuest objectives edit 1 location set world 100 64 100
 
 # ---- objective-scoped condition (needs an objective + a sibling objective id) ----
 qa edit TestQuest objectives edit 1 conditions add CompletedObjective 2  # OBJECTIVE-SCOPED

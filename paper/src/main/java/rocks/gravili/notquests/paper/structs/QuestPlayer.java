@@ -171,6 +171,27 @@ public class QuestPlayer {
         updateBeaconLocations(getPlayer(), true);
     }
 
+    public void showTemporaryBeacon(final String name, final Location location, final long durationTicks) {
+        final Player player = getPlayer();
+        if (player == null || name == null || location == null) {
+            return;
+        }
+
+        final Map<String, Location> previousLocations = cloneLocations(getLocationsAndBeacons());
+        clearBeacons();
+        getLocationsAndBeacons().put(name, location.clone());
+        updateBeaconLocations(player, true);
+
+        Bukkit.getScheduler().runTaskLater(main.getMain(), () -> {
+            if (getLocationsAndBeacons().size() != 1 || !getLocationsAndBeacons().containsKey(name)) {
+                return;
+            }
+            clearBeacons();
+            getLocationsAndBeacons().putAll(cloneLocations(previousLocations));
+            updateBeaconLocations(getPlayer(), true);
+        }, durationTicks);
+    }
+
     public void disableTrackingObjective(ActiveObjective activeObjective) {
         if(getTrackingObjective() != null && getTrackingObjective().equals(activeObjective)){
             //getPlayer().sendMessage("Removing 1!");
@@ -345,6 +366,16 @@ public class QuestPlayer {
                 location.getBlockX(),
                 location.getBlockY(),
                 location.getBlockZ());
+    }
+
+    private static Map<String, Location> cloneLocations(final Map<String, Location> locations) {
+        final Map<String, Location> clones = new HashMap<>();
+        for (final Map.Entry<String, Location> entry : locations.entrySet()) {
+            if (entry.getValue() != null) {
+                clones.put(entry.getKey(), entry.getValue().clone());
+            }
+        }
+        return clones;
     }
 
     private boolean isBeaconMode() {

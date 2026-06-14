@@ -42,6 +42,7 @@ import rocks.gravili.notquests.paper.managers.expressions.NumberExpression;
 import rocks.gravili.notquests.paper.managers.npc.NQNPC;
 import rocks.gravili.notquests.paper.structs.PredefinedProgressOrder;
 import rocks.gravili.notquests.paper.structs.Quest;
+import rocks.gravili.notquests.paper.structs.QuestPlayer;
 import rocks.gravili.notquests.paper.structs.actions.Action;
 import rocks.gravili.notquests.paper.structs.conditions.Condition;
 import rocks.gravili.notquests.paper.structs.objectives.Objective;
@@ -832,33 +833,72 @@ public class AdminEditCommands {
         main.getLogManager().debug("Handling EDIT objectives for level <highlight>" + level + "</highlight>... objectiveIDIdentifier: " + objectiveIDIdentifier);
 
 
-        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
-                .literal("enable", NQDescription.of("Turns this setting on.")).commandDescription(NQDescription.of("Shows the location to the player."))
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("enable", NQDescription.of("Turns on this objective's saved guiding marker.")).commandDescription(NQDescription.of("Shows this objective's saved location marker to players tracking the objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+                    if (objective.getLocation() == null) {
+                        context.sender().sendMessage(main.parse("<error>This objective has no marker location yet. Use <highlight>location set here</highlight> in-game while editing this objective, or set exact coordinates from console."));
+                        return;
+                    }
                     objective.setShowLocation(true, true);
-                    context.sender().sendMessage(main.parse("<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now showing the location to the player!"));
+                    context.sender().sendMessage(main.parse("<success>Objective <highlight>" + objective.getObjectiveID() + "</highlight> now shows its guiding marker at <highlight2>" + formatLocation(objective.getLocation()) + "</highlight2>."));
                 }));
 
         final Consumer<NQCommandContext> disableLocationHandler = context -> {
             final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
             objective.setShowLocation(false, true);
+            if (objective.getLocation() == null) {
+                context.sender().sendMessage(main.parse(
+                        "<success>Objective <highlight>" + objective.getObjectiveID() + "</highlight> has no saved guiding marker location, so there is nothing to show."
+                ));
+                return;
+            }
 
             context.sender().sendMessage(main.parse(
-                    "<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now no longer showing the location to the player!"
+                    "<success>Objective <highlight>" + objective.getObjectiveID() + "</highlight> keeps its saved marker location, but no longer shows it to players."
             ));
         };
-        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
-                .literal("disable", NQDescription.of("Stops showing the selected objective's location to players.")).commandDescription(NQDescription.of("Disables showing the location to the player."))
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("disable", NQDescription.of("Stops showing this objective's saved guiding marker to players.")).commandDescription(NQDescription.of("Turns off the objective marker without deleting the saved marker location."))
                 .handler(disableLocationHandler));
-        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
-                .literal("disables", NQDescription.of("Legacy alias for disabling the selected objective's location marker.")).commandDescription(NQDescription.of("Disables showing the location to the player."))
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("disables", NQDescription.of("Legacy alias for disabling the selected objective's location marker.")).commandDescription(NQDescription.of("Legacy spelling of location disable; turns off the marker without deleting saved coordinates."))
                 .handler(disableLocationHandler));
 
-        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
-                .literal("set", NQDescription.of("Sets the location shown to players for the selected objective."))
-                .required("world", NQArguments.worldArgument(), NQDescription.of("World where this quest respawn location should be placed."))
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("set", NQDescription.of("Sets this objective's guiding marker location and turns it on."))
+                .literal("here", NQDescription.of("Uses your current in-game block position as the guiding marker location.")).commandDescription(NQDescription.of("Sets this objective's marker to your current location and enables it."))
+                .handler((context) -> {
+                    final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+                    if (!(context.sender() instanceof final Player player)) {
+                        sendPlayerOnlyMessage(context.sender(), "location set here");
+                        return;
+                    }
+                    setObjectiveLocation(objective, player.getLocation(), context.sender(), "your current location");
+                }));
+
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("set", NQDescription.of("Sets this objective's guiding marker location and turns it on."))
+                .literal("looking", NQDescription.of("Uses the block you are looking at as the guiding marker location.")).commandDescription(NQDescription.of("Sets this objective's marker to the targeted block and enables it."))
+                .handler((context) -> {
+                    final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+                    if (!(context.sender() instanceof final Player player)) {
+                        sendPlayerOnlyMessage(context.sender(), "location set looking");
+                        return;
+                    }
+                    final org.bukkit.block.Block targetBlock = player.getTargetBlockExact(120);
+                    if (targetBlock == null) {
+                        context.sender().sendMessage(main.parse("<error>No block found in your line of sight. Move closer or use <highlight>location set here</highlight>."));
+                        return;
+                    }
+                    setObjectiveLocation(objective, targetBlock.getLocation(), context.sender(), "the block you are looking at");
+                }));
+
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("set", NQDescription.of("Sets this objective's guiding marker location and turns it on."))
+                .required("world", NQArguments.worldArgument(), NQDescription.of("World where this objective marker should point."))
                 /* .argumentTriplet(
                          "coords",
                          TypeToken.get(Vector.class),
@@ -869,19 +909,53 @@ public class AdminEditCommands {
                          ),
                          Description.of("Coordinates")
                  )*/ //Commented out, because this somehow breaks flags
-                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate for the quest respawn location."))
-                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate for the quest respawn location."))
-                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate for the quest respawn location."))
-                .commandDescription(NQDescription.of("Disables showing the location to the player."))
+                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate where this objective marker should point."))
+                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate where this objective marker should point."))
+                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate where this objective marker should point."))
+                .commandDescription(NQDescription.of("Sets this objective's marker to exact coordinates and enables it."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     final World world = context.get("world");
                     final Vector coordinates = new Vector(context.get("x"), context.get("y"), context.get("z"));
                     final Location location = coordinates.toLocation(world);
-                    objective.setLocation(location, true);
-                    objective.setShowLocation(true, true);
-                    context.sender().sendMessage(main.parse("<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now has a location!"
-                    ));
+                    setObjectiveLocation(objective, location, context.sender(), "exact coordinates");
+                }));
+
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("clear", NQDescription.of("Deletes this objective's saved guiding marker location and turns it off.")).commandDescription(NQDescription.of("Removes the saved objective marker location."))
+                .handler((context) -> {
+                    final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+                    objective.setShowLocation(false, true);
+                    objective.setLocation(null, true);
+                    context.sender().sendMessage(main.parse("<success>Objective <highlight>" + objective.getObjectiveID() + "</highlight> no longer has a saved guiding marker location."));
+                }));
+
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("status", NQDescription.of("Shows whether this objective has a saved guiding marker and whether it is enabled.")).commandDescription(NQDescription.of("Shows the selected objective's marker status."))
+                .handler((context) -> {
+                    final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+                    sendObjectiveLocationStatus(context.sender(), objective);
+                }));
+
+        manager.command(builder.literal("location", NQDescription.of("Manages the guiding marker shown while players track this objective."))
+                .literal("preview", NQDescription.of("Shows this objective's saved guiding marker to you for a short preview.")).commandDescription(NQDescription.of("Previews this objective marker for the command sender."))
+                .handler((context) -> {
+                    final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
+                    if (!(context.sender() instanceof final Player player)) {
+                        sendPlayerOnlyMessage(context.sender(), "location preview");
+                        return;
+                    }
+                    if (objective.getLocation() == null) {
+                        context.sender().sendMessage(main.parse("<error>This objective has no marker location yet. Use <highlight>location set here</highlight> first."));
+                        return;
+                    }
+                    final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+                    if (questPlayer == null) {
+                        context.sender().sendMessage(main.parse("<error>Your player data has not finished loading yet. Try again in a moment."));
+                        return;
+                    }
+                    questPlayer.showTemporaryBeacon("preview-objective-" + objective.getObjectiveID(), objective.getLocation(), 20L * 10L);
+                    context.sender().sendMessage(main.parse("<success>Previewing objective <highlight>" + objective.getObjectiveID() + "</highlight>'s guiding marker for 10 seconds."));
                 }));
 
         manager.command(builder.literal("completionNPC", NQDescription.of("Manages the NPC used to complete this quest."))
@@ -2260,6 +2334,41 @@ public class AdminEditCommands {
 
                 }));
 
+    }
+
+    private void setObjectiveLocation(
+            final Objective objective,
+            final Location location,
+            final CommandSender sender,
+            final String sourceDescription) {
+        final Location blockLocation = location.getBlock().getLocation();
+        objective.setLocation(blockLocation, true);
+        objective.setShowLocation(true, true);
+        sender.sendMessage(main.parse("<success>Objective <highlight>" + objective.getObjectiveID()
+                + "</highlight> now points to <highlight2>" + formatLocation(blockLocation)
+                + "</highlight2> using <highlight>" + sourceDescription + "</highlight>."));
+    }
+
+    private void sendObjectiveLocationStatus(final CommandSender sender, final Objective objective) {
+        if (objective.getLocation() == null) {
+            sender.sendMessage(main.parse("<main>Objective <highlight>" + objective.getObjectiveID()
+                    + "</highlight> has no saved guiding marker location."));
+            return;
+        }
+        final String state = objective.isShowLocation() ? "<success>enabled</success>" : "<warn>disabled</warn>";
+        sender.sendMessage(main.parse("<main>Objective <highlight>" + objective.getObjectiveID()
+                + "</highlight> marker is " + state + "<main> at <highlight2>"
+                + formatLocation(objective.getLocation()) + "</highlight2>."));
+    }
+
+    private void sendPlayerOnlyMessage(final CommandSender sender, final String subcommand) {
+        sender.sendMessage(main.parse("<error><highlight>" + subcommand
+                + "</highlight> must be run in-game by a player. Console can use exact coordinates instead."));
+    }
+
+    private String formatLocation(final Location location) {
+        final String worldName = location.getWorld() == null ? "unknown-world" : location.getWorld().getName();
+        return worldName + " " + location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ();
     }
 
 }
