@@ -161,14 +161,10 @@ public class ConversationPlayer {
     main.sendMessage(player, chooseAnswerPrefixMiniMessage);
 
     if (main.getConfiguration().deletePreviousConversations) {
-      final ArrayList<Component> hist =
-              main.getConversationManager().getConversationChatHistory().getOrDefault(player.getUniqueId(), new ArrayList<>());
-
       if (!chooseAnswerPrefixMiniMessage.isBlank()) {
-        hist.add(main.parse(chooseAnswerPrefixMiniMessage));
+        main.getConversationManager()
+            .rememberConversationChatMessage(player.getUniqueId(), main.parse(chooseAnswerPrefixMiniMessage));
       }
-
-      main.getConversationManager().getConversationChatHistory().put(player.getUniqueId(), hist);
     }
 
     for (final ConversationLine playerLine : playerLines) {
@@ -176,11 +172,7 @@ public class ConversationPlayer {
     }
 
     if (main.getConfiguration().deletePreviousConversations) {
-      final ArrayList<Component> hist =
-              main.getConversationManager().getConversationChatHistory().getOrDefault(player.getUniqueId(), new ArrayList<>());
-
-      hist.add(Component.empty());
-      main.getConversationManager().getConversationChatHistory().put(player.getUniqueId(), hist);
+      main.getConversationManager().rememberConversationChatMessage(player.getUniqueId(), Component.empty());
     }
 
     player.sendMessage(Component.empty());

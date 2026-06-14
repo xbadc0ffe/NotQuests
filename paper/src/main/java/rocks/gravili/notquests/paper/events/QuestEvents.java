@@ -1461,24 +1461,8 @@ public class QuestEvents implements Listener {
                     audience
                 );
 
-                final ArrayList<Component> convHist = main.getConversationManager().getConversationChatHistory().get(playerViewer.getUniqueId());
-                if (convHist != null && convHist.contains(adventureComponent)) {
-                    return;
-                }
-
-                final ArrayList<Component> hist = main.getConversationManager().getChatHistory().getOrDefault(playerViewer.getUniqueId(), new ArrayList<>());
-                hist.add(adventureComponent);
-
-                //main.getLogManager().debug("Registering chat message with Message: " + PlainTextComponentSerializer.plainText().serialize(adventureComponent));
-                final int toRemove = hist.size() - main.getConversationManager().getMaxChatHistory();
-                if (toRemove > 0) {
-                    //main.getLogManager().log(Level.WARNING, "ToRemove: " + i);
-                    hist.subList(0, toRemove).clear();
-                }
-                //main.getLogManager().log(Level.WARNING, "After: " + hist.size());
-
-
-                main.getConversationManager().getChatHistory().put(playerViewer.getUniqueId(), hist);
+                main.getConversationManager()
+                    .rememberNonConversationChatMessage(playerViewer.getUniqueId(), adventureComponent);
             }
         }
 

@@ -24,8 +24,6 @@ import org.betonquest.betonquest.conversation.interceptor.Interceptor;
 import org.bukkit.entity.Player;
 import rocks.gravili.notquests.paper.NotQuests;
 
-import java.util.ArrayList;
-
 public class NotQuestsInterceptor implements Interceptor {
   private final NotQuests main;
   private final Player player;
@@ -43,12 +41,7 @@ public class NotQuestsInterceptor implements Interceptor {
   @Override
   public void sendMessage(final Component message) {
     if (main.getConfiguration().deletePreviousConversations && main.getConversationManager() != null) {
-      final ArrayList<Component> history =
-          main.getConversationManager()
-              .getConversationChatHistory()
-              .getOrDefault(player.getUniqueId(), new ArrayList<>());
-      history.add(message);
-      main.getConversationManager().getConversationChatHistory().put(player.getUniqueId(), history);
+      main.getConversationManager().rememberConversationChatMessage(player.getUniqueId(), message);
     }
     if (player.isOnline()) {
       main.sendMessage(player, message);

@@ -11,7 +11,6 @@ import rocks.gravili.notquests.paper.conversation.ConversationPlayer;
 import rocks.gravili.notquests.paper.conversation.Speaker;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class SendClickableText implements
@@ -41,10 +40,7 @@ public class SendClickableText implements
     }
 
     if (main.getConfiguration().deletePreviousConversations) {
-      final ArrayList<Component> hist =
-          main.getConversationManager().getConversationChatHistory().getOrDefault(player.getUniqueId(), new ArrayList<>());
-      hist.add(line);
-      main.getConversationManager().getConversationChatHistory().put(player.getUniqueId(), hist);
+      main.getConversationManager().rememberConversationChatMessage(player.getUniqueId(), line);
     }
 
     player.sendMessage(line);
@@ -101,10 +97,7 @@ public class SendClickableText implements
                                 conversationLine))));
 
     if (main.getConfiguration().deletePreviousConversations) {
-      final ArrayList<Component> hist =
-          main.getConversationManager().getConversationChatHistory().getOrDefault(player.getUniqueId(), new ArrayList<>());
-      hist.add(toSend);
-      main.getConversationManager().getConversationChatHistory().put(player.getUniqueId(), hist);
+      main.getConversationManager().rememberConversationChatMessage(player.getUniqueId(), toSend);
     }
 
     player.sendMessage(toSend);

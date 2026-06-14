@@ -21,15 +21,13 @@ package rocks.gravili.notquests.paper.managers.packets.ownpacketstuff.modern;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import org.bukkit.entity.Player;
 import rocks.gravili.notquests.paper.NotQuests;
-
-import java.util.ArrayList;
 
 public class NQPacketListener extends ChannelDuplexHandler {
     private final NotQuests main;
@@ -43,7 +41,8 @@ public class NQPacketListener extends ChannelDuplexHandler {
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception { //TODO: 1.19 check
         super.write(ctx, msg, promise);
-        if (!main.getPacketManager().getModernPacketInjector().isPacketStuffEnabled()) {
+        final PacketInjector packetInjector = main.getPacketManager().getModernPacketInjector();
+        if (packetInjector == null || !packetInjector.isPacketStuffEnabled()) {
             return;
         }
         if (msg instanceof ClientboundSystemChatPacket clientboundSystemChatPacket) {
@@ -87,69 +86,14 @@ public class NQPacketListener extends ChannelDuplexHandler {
                 return;
             }
 
-            String json = clientboundSystemChatPacket.content().getString();
-
-            Component adventureComponent = GsonComponentSerializer.gson().deserialize(json); // TODO: Not sure if this works in 1.20.6
-            //Component adventureComponent = clientboundSystemChatPacket.adventure$content();
-
-
-
-
-            if (json == null && adventureComponent == null) {
-                main.getLogManager().debug("All null :o");
+            final Component adventureComponent = toAdventure(clientboundSystemChatPacket);
+            if (adventureComponent == null) {
                 return;
-            }
-
-
-            if (adventureComponent == null) { //Spigot shit
-
-                if (json != null) {
-                    adventureComponent = GsonComponentSerializer.gson().deserialize(json);
-
-                } else {//vanilla shit
-                    /*try {//paper only
-                        adventureComponent = PaperAdventure.asAdventure(vanillaMessage);
-
-                        main.getLogManager().debug("vanilla serializer: " + adventureComponent.getClass().toString());
-                    } catch (Exception e) {
-                        if (main.getConfiguration().debug) {
-                            e.printStackTrace();
-                        }
-                    }*/
-
-                    main.getLogManager().debug("AUh json AND adventureComponent is null! Wtf?");
-
-
-                }
             }
 
             //main.getLogManager().info("cspacket overlay: " + clientboundSystemChatPacket.overlay() + " content: " + PlainTextComponentSerializer.plainText().serialize(adventureComponent).replace("§", "").replace("&", "") );
 
-
-
-            final ArrayList<Component> convHist = main.getConversationManager().getConversationChatHistory().get(player.getUniqueId());
-            if (convHist != null && convHist.contains(adventureComponent)) {
-                return;
-            }
-
-            ArrayList<Component> hist = main.getConversationManager().getChatHistory().get(player.getUniqueId());
-            if (hist != null) {
-                hist.add(adventureComponent);
-            } else {
-                hist = new ArrayList<>();
-                hist.add(adventureComponent);
-            }
-
-            //main.getLogManager().debug("Registering chat message with Message: " + PlainTextComponentSerializer.plainText().serialize(adventureComponent).replace("&", "").replace("§", ""));
-            final int toRemove = hist.size() - main.getConversationManager().getMaxChatHistory();
-            if (toRemove > 0) {
-                //main.getLogManager().log(Level.WARNING, "ToRemove: " + i);
-                hist.subList(0, toRemove).clear();
-            }
-            //main.getLogManager().log(Level.WARNING, "After: " + hist.size());
-
-
-            main.getConversationManager().getChatHistory().put(player.getUniqueId(), hist);
+            main.getConversationManager().rememberNonConversationChatMessage(player.getUniqueId(), adventureComponent);
 
 
         } catch (Throwable e) {
@@ -164,6 +108,13 @@ public class NQPacketListener extends ChannelDuplexHandler {
         //}
 
 
+    }
+
+    static Component toAdventure(final ClientboundSystemChatPacket clientboundSystemChatPacket) {
+        if (clientboundSystemChatPacket.content() == null) {
+            return null;
+        }
+        return PaperAdventure.asAdventure(clientboundSystemChatPacket.content());
     }
 
 

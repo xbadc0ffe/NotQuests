@@ -24,11 +24,8 @@ import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.entity.Player;
 import rocks.gravili.notquests.paper.NotQuests;
-
-import java.util.ArrayList;
 
 public class PacketEventsPacketListener implements PacketListener {
   private final NotQuests main;
@@ -44,27 +41,7 @@ public class PacketEventsPacketListener implements PacketListener {
     }
 
     try {
-      final ArrayList<Component> convHist =
-          main.getConversationManager().getConversationChatHistory().get(player.getUniqueId());
-      if (convHist != null && convHist.contains(component)) {
-        return;
-      }
-
-      ArrayList<Component> hist =
-          main.getConversationManager().getChatHistory().get(player.getUniqueId());
-      if (hist != null) {
-        hist.add(component);
-      } else {
-        hist = new ArrayList<>();
-        hist.add(component);
-      }
-
-      int toRemove = hist.size() - main.getConversationManager().getMaxChatHistory();
-      if (toRemove > 0) {
-        hist.subList(0, toRemove).clear();
-      }
-
-      main.getConversationManager().getChatHistory().put(player.getUniqueId(), hist);
+      main.getConversationManager().rememberNonConversationChatMessage(player.getUniqueId(), component);
     } catch (Exception ignored) {
     }
   }

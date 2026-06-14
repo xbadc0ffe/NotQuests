@@ -540,6 +540,61 @@ public class ConversationManager {
     return conversationChatHistory;
   }
 
+  public void rememberConversationChatMessage(final UUID playerId, final Component component) {
+    rememberConversationChatMessage(conversationChatHistory, playerId, component);
+  }
+
+  static void rememberConversationChatMessage(
+      final Map<UUID, ArrayList<Component>> conversationChatHistory,
+      final UUID playerId,
+      final Component component) {
+    if (component == null) {
+      return;
+    }
+    conversationChatHistory.compute(playerId, (uuid, history) -> {
+      final ArrayList<Component> mutableHistory = history == null ? new ArrayList<>() : history;
+      synchronized (mutableHistory) {
+        mutableHistory.add(component);
+      }
+      return mutableHistory;
+    });
+  }
+
+  public void rememberNonConversationChatMessage(final UUID playerId, final Component component) {
+    rememberNonConversationChatMessage(
+        chatHistory, conversationChatHistory, getMaxChatHistory(), playerId, component);
+  }
+
+  static void rememberNonConversationChatMessage(
+      final Map<UUID, ArrayList<Component>> chatHistory,
+      final Map<UUID, ArrayList<Component>> conversationChatHistory,
+      final int maxChatHistory,
+      final UUID playerId,
+      final Component component) {
+    if (component == null) {
+      return;
+    }
+    final ArrayList<Component> conversationHistory = conversationChatHistory.get(playerId);
+    if (conversationHistory != null) {
+      synchronized (conversationHistory) {
+        if (conversationHistory.contains(component)) {
+          return;
+        }
+      }
+    }
+    chatHistory.compute(playerId, (uuid, history) -> {
+      final ArrayList<Component> mutableHistory = history == null ? new ArrayList<>() : history;
+      synchronized (mutableHistory) {
+        mutableHistory.add(component);
+        final int toRemove = mutableHistory.size() - Math.max(0, maxChatHistory);
+        if (toRemove > 0) {
+          mutableHistory.subList(0, toRemove).clear();
+        }
+      }
+      return mutableHistory;
+    });
+  }
+
   public final ArrayList<Conversation> getAllConversations() {
     return conversations;
   }
@@ -1034,17 +1089,23 @@ public class ConversationManager {
 
 
     Component collectiveComponent = Component.text("");
-    for (int i = 0; i < allChatHistory.size(); i++) {
-      Component component = allChatHistory.get(i);
-      if (component != null) {
-        // audience.sendMessage(component.append(Component.text("fg9023zf729ofz")));
-        collectiveComponent = collectiveComponent.append(component).append(Component.newline());
+    synchronized (allChatHistory) {
+      for (int i = 0; i < allChatHistory.size(); i++) {
+        Component component = allChatHistory.get(i);
+        if (component != null) {
+          // audience.sendMessage(component.append(Component.text("fg9023zf729ofz")));
+          collectiveComponent = collectiveComponent.append(component).append(Component.newline());
+        }
       }
     }
     player.sendMessage(collectiveComponent);
 
-    allChatHistory.removeAll(allConversationHistory);
-    allConversationHistory.clear();
+    synchronized (allChatHistory) {
+      synchronized (allConversationHistory) {
+        allChatHistory.removeAll(allConversationHistory);
+        allConversationHistory.clear();
+      }
+    }
     main.getConversationManager()
         .getChatHistory()
         .put(player.getUniqueId(), allChatHistory);
@@ -1053,7 +1114,9 @@ public class ConversationManager {
         .put(player.getUniqueId(), allConversationHistory);
 
     // maybe this won't send the huge, 1-component-chat-history again
-    allConversationHistory.add(collectiveComponent);
+    synchronized (allConversationHistory) {
+      allConversationHistory.add(collectiveComponent);
+    }
   }
 
   public Map<Integer, List<UUID>> getActiveConversationsOfNPCWithPlayerCache() {

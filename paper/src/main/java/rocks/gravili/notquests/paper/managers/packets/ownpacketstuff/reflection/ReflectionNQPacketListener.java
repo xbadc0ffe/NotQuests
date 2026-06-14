@@ -30,7 +30,6 @@ import rocks.gravili.notquests.paper.managers.packets.ownpacketstuff.reflection.
 import rocks.gravili.notquests.paper.managers.packets.ownpacketstuff.reflection.wrappers.WrappedChatType;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class ReflectionNQPacketListener extends ChannelDuplexHandler {
@@ -130,33 +129,7 @@ public class ReflectionNQPacketListener extends ChannelDuplexHandler {
         }
       }
 
-      final ArrayList<Component> convHist =
-          main.getConversationManager().getConversationChatHistory().get(player.getUniqueId());
-      if (convHist != null && convHist.contains(component)) {
-        return;
-      }
-
-      ArrayList<Component> hist =
-          main.getConversationManager().getChatHistory().get(player.getUniqueId());
-      if (hist != null) {
-        hist.add(component);
-      } else {
-        hist = new ArrayList<>();
-        hist.add(component);
-      }
-
-      /*main.getLogManager()
-          .debug(
-              "Registering chat message with Message: "
-                  + MiniMessage.builder().build().serialize(component));*/
-      int toRemove = hist.size() - main.getConversationManager().getMaxChatHistory();
-      if (toRemove > 0) {
-        // main.getLogManager().log(Level.WARNING, "ToRemove: " + i);
-        hist.subList(0, toRemove).clear();
-      }
-      // main.getLogManager().log(Level.WARNING, "After: " + hist.size());
-
-      main.getConversationManager().getChatHistory().put(player.getUniqueId(), hist);
+      main.getConversationManager().rememberNonConversationChatMessage(player.getUniqueId(), component);
 
     } catch (Exception e) {
       if (main.getConfiguration().debug) {
