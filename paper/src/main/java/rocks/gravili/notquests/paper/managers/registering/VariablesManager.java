@@ -156,6 +156,9 @@ public class VariablesManager {
         if (main.getIntegrationsManager().isFloodgateEnabled()) {
             registerVariable("FloodgateIsFloodgatePlayer", FloodgateIsFloodgatePlayerVariable.class);
         }
+        if (main.getIntegrationsManager().isBetonQuestEnabled()) {
+            registerVariable("BetonQuestCondition", BetonQuestConditionVariable.class);
+        }
         registerVariableCheckCommands();
     }
 

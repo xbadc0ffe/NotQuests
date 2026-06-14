@@ -176,7 +176,8 @@ bukkit {
 
         "EcoMobs",
         "eco",
-        "Floodgate"
+        "Floodgate",
+        "BetonQuest"
     )
 
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD
@@ -274,6 +275,10 @@ paper {
         }
         register("Floodgate") {
             required = false
+        }
+        register("BetonQuest") {
+            required = false
+            load = net.minecrell.pluginyml.paper.PaperPluginDescription.RelativeLoadOrder.BEFORE
         }
     }
 

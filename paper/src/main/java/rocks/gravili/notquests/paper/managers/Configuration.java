@@ -126,6 +126,7 @@ public class Configuration {
   private boolean integrationTownyEnabled = true;
   private boolean integrationJobsRebornEnabled = true;
   private boolean integrationEcoMobsEnabled = true;
+  private boolean integrationBetonQuestEnabled = true;
 
 
 
@@ -800,6 +801,14 @@ public class Configuration {
 
   public void setIntegrationEcoMobsEnabled(boolean integrationEcoMobsEnabled) {
     this.integrationEcoMobsEnabled = integrationEcoMobsEnabled;
+  }
+
+  public boolean isIntegrationBetonQuestEnabled() {
+    return integrationBetonQuestEnabled;
+  }
+
+  public void setIntegrationBetonQuestEnabled(boolean integrationBetonQuestEnabled) {
+    this.integrationBetonQuestEnabled = integrationBetonQuestEnabled;
   }
 
   public boolean isActionBarFancyCommandCompletionEnabled() {

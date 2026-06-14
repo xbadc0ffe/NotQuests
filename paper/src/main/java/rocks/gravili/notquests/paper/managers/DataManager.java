@@ -1118,6 +1118,11 @@ public class DataManager {
                 true
         ));
 
+        configuration.setIntegrationBetonQuestEnabled(getGeneralConfigBoolean(
+                "integrations.betonquest.enabled",
+                true
+        ));
+
         configuration.setIntegrationFloodgateEnabled(getGeneralConfigBoolean(
             "integrations.floodgate.enabled",
             true

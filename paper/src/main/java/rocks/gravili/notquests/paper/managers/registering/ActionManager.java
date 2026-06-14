@@ -32,6 +32,8 @@ import rocks.gravili.notquests.paper.managers.data.Category;
 import rocks.gravili.notquests.paper.structs.Quest;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 import rocks.gravili.notquests.paper.structs.actions.*;
+import rocks.gravili.notquests.paper.structs.actions.hooks.betonquest.BetonQuestFireEventAction;
+import rocks.gravili.notquests.paper.structs.actions.hooks.betonquest.BetonQuestFireInlineEventAction;
 import rocks.gravili.notquests.paper.structs.conditions.Condition;
 import rocks.gravili.notquests.paper.structs.conditions.Condition.ConditionResult;
 import rocks.gravili.notquests.paper.structs.objectives.Objective;
@@ -95,6 +97,11 @@ public class ActionManager {
 
         registerAction("OpenGui", OpenGuiAction.class);
         registerAction("CloseInventory", CloseInventoryAction.class);
+
+        if (main.getIntegrationsManager().isBetonQuestEnabled()) {
+            registerAction("BetonQuestFireEvent", BetonQuestFireEventAction.class);
+            registerAction("BetonQuestFireInlineEvent", BetonQuestFireInlineEventAction.class);
+        }
     }
 
     public void registerAction(final String identifier, final Class<? extends Action> action) {

@@ -109,6 +109,7 @@ dependencies {
     compileOnly(files("libs/floodgate-api-2.2.5-SNAPSHOT.jar"))
     compileOnly(files("libs/EcoMobs-11.7.0.jar"))
     compileOnly(files("libs/eco-7.6.3.jar"))
+    compileOnly(files("libs/BetonQuest-3.0.0.jar"))
     // libreforge-loader provides com.willfp.libreforge.loader.configs.RegistrableCategory, which
     // EcoMobs' registry (EcoMobs.INSTANCE) extends; needed on the compile classpath. Vendored like
     // the other eco-ecosystem plugins.

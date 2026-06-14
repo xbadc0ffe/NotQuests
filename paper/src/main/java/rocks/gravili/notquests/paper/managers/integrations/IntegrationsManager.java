@@ -23,6 +23,8 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.jetbrains.annotations.Nullable;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.events.hooks.*;
+import rocks.gravili.notquests.paper.managers.integrations.betonquest.BetonQuestManager;
+import rocks.gravili.notquests.paper.managers.integrations.betonquest.BetonQuestVersionSupport;
 import rocks.gravili.notquests.paper.managers.integrations.citizens.CitizensManager;
 import rocks.gravili.notquests.paper.managers.integrations.fancynpcs.FancyNPCsManager;
 import rocks.gravili.notquests.paper.placeholders.QuestPlaceholders;
@@ -53,6 +55,7 @@ public class IntegrationsManager {
   private boolean ecoMobsEnabled = false;
 
   private boolean floodgateEnabled = false;
+  private boolean betonQuestEnabled = false;
 
 
 
@@ -67,6 +70,7 @@ public class IntegrationsManager {
 
   private EcoMobsManager ecoMobsManager;
   private FloodgateManager floodgateManager;
+  private BetonQuestManager betonQuestManager;
 
 
 
@@ -323,6 +327,37 @@ public class IntegrationsManager {
                 })
     );
 
+    integrations.add(
+        new Integration(main, "BetonQuest")
+            .setEnableCondition(() -> main.getConfiguration().isIntegrationBetonQuestEnabled())
+            .setRunWhenEnabled(
+                () -> {
+                  final org.bukkit.plugin.Plugin plugin =
+                      Bukkit.getPluginManager().getPlugin("BetonQuest");
+                  final String version =
+                      plugin == null ? "" : plugin.getDescription().getVersion();
+                  if (!BetonQuestVersionSupport.isSupported(version)) {
+                    main.getLogManager()
+                        .warn(
+                            "BetonQuest "
+                                + (version.isBlank() ? "with unknown version" : version)
+                                + " was detected, but NotQuests only supports BetonQuest 3.0.0 or newer. BetonQuest support was not enabled.");
+                    return false;
+                  }
+                  betonQuestManager = new BetonQuestManager(main);
+                  if (!betonQuestManager.enable()) {
+                    return false;
+                  }
+                  betonQuestEnabled = true;
+                  return true;
+                })
+            .setRunWhenRegisteringEventsOnTime(
+                () ->
+                    main.getMain()
+                        .getServer()
+                        .getPluginManager()
+                        .registerEvents(new BetonQuestEvents(main), main.getMain())));
+
     integrationsNotEnabled.addAll(integrations);
   }
 
@@ -472,6 +507,10 @@ public class IntegrationsManager {
     return floodgateEnabled;
   }
 
+  public final boolean isBetonQuestEnabled() {
+    return betonQuestEnabled;
+  }
+
   public final MythicMobsManager getMythicMobsManager() {
     return mythicMobsManager;
   }
@@ -502,6 +541,10 @@ public class IntegrationsManager {
 
   public final FloodgateManager getFloodgateManager() {
     return floodgateManager;
+  }
+
+  public final BetonQuestManager getBetonQuestManager() {
+    return betonQuestManager;
   }
 
 
