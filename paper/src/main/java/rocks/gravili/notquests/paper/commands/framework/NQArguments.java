@@ -28,6 +28,7 @@ import rocks.gravili.notquests.paper.NotQuests;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +39,15 @@ import java.util.regex.Pattern;
  * {@code commands.arguments} instead.
  */
 public final class NQArguments {
-    private static final Pattern DURATION = Pattern.compile("(\\d+)\\s*(ms|s|m|h|d)?");
+    private static final Pattern DURATION = Pattern.compile(
+            "(\\d+)\\s*("
+                    + "ms|msec|msecs|millis|millisecond|milliseconds|milisecond|miliseconds|"
+                    + "s|sec|secs|second|seconds|"
+                    + "m|min|mins|minute|minutes|"
+                    + "h|hr|hrs|hour|hours|"
+                    + "d|day|days"
+                    + ")?",
+            Pattern.CASE_INSENSITIVE);
 
     private NQArguments() {}
 
@@ -185,27 +194,29 @@ public final class NQArguments {
             public Duration convert(final String input) throws CommandSyntaxException {
                 final Matcher matcher = DURATION.matcher(input.trim());
                 if (!matcher.matches()) {
-                    throw fail("'" + input + "' is not a valid duration (e.g. 30s, 5m, 2h, 1d)");
+                    throw fail("'" + input + "' is not a valid duration (e.g. 500ms, 30s, 5m, 2h, 1d)");
                 }
                 final long amount = Long.parseLong(matcher.group(1));
-                final String unit = matcher.group(2) == null ? "ms" : matcher.group(2);
+                final String unit = matcher.group(2) == null
+                        ? "ms"
+                        : matcher.group(2).toLowerCase(Locale.ROOT);
                 return switch (unit) {
-                    case "s" -> Duration.ofSeconds(amount);
-                    case "m" -> Duration.ofMinutes(amount);
-                    case "h" -> Duration.ofHours(amount);
-                    case "d" -> Duration.ofDays(amount);
+                    case "s", "sec", "secs", "second", "seconds" -> Duration.ofSeconds(amount);
+                    case "m", "min", "mins", "minute", "minutes" -> Duration.ofMinutes(amount);
+                    case "h", "hr", "hrs", "hour", "hours" -> Duration.ofHours(amount);
+                    case "d", "day", "days" -> Duration.ofDays(amount);
                     default -> Duration.ofMillis(amount);
                 };
             }
 
             @Override
             protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-                return List.of("1s", "5s", "10s", "30s", "1m", "5m", "1h");
+                return List.of("250ms", "500ms", "1s", "5s", "10s", "30s", "1m", "5m", "1h");
             }
 
             @Override
             public String valueTypeName() {
-                return "duration such as 1s, 5m, or 2h";
+                return "duration such as 500ms, 1s, 5m, or 2h";
             }
         };
     }

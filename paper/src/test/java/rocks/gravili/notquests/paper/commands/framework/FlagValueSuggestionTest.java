@@ -71,6 +71,7 @@ class FlagValueSuggestionTest {
     @Test
     void delayFlagSuggestsDurationsInsteadOfFlagNamesWhenAwaitingValue() throws Exception {
         final List<String> suggestions = completionsFor("root action --delay ");
+        assertTrue(suggestions.contains("500ms"), "delay value suggestions should include millisecond examples: " + suggestions);
         assertTrue(suggestions.contains("1s"), "delay value suggestions should include duration examples: " + suggestions);
         assertFalse(suggestions.contains("--delay"), "delay value position must not re-suggest flags: " + suggestions);
         assertFalse(suggestions.contains("--player"), "delay value position must not re-suggest flags: " + suggestions);

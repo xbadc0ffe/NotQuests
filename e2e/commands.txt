@@ -26,7 +26,7 @@ qa actions add ActCompleteQuest CompleteQuest TestQuest
 qa actions add ActFailQuest FailQuest TestQuest
 qa actions add ActTriggerCmd TriggerCommand mytrigger
 qa actions add ActGiveItem GiveItem stone,dirt 5
-qa actions add ActGiveItemBoat GiveItem acacia_boat 2
+qa actions add ActGiveItemBoat GiveItem acacia_boat 2 --delay 500ms
 qa actions add ActSpawnMob SpawnMob zombie 3 Location world 100 64 100
 qa actions add ActPlaySound PlaySound entity.experience_orb.pickup
 qa actions add ActBeam Beam mybeam spawn world 100 70 100               # UNSURE
