@@ -212,11 +212,16 @@ public class ActionAction extends Action {
                     final Action actionToExecute = getActions().get(i);
 
                     if (!isIgnoreConditions() && isOnlyCountForRandomIfConditionsFulfilled()) {
+                        boolean conditionsFulfilled = true;
                         for (final Condition condition : actionToExecute.getConditions()) {
                             if (!condition.check(questPlayer).fulfilled()) {
                                 amountOfActionsToExecute++;
-                                continue;
+                                conditionsFulfilled = false;
+                                break;
                             }
+                        }
+                        if (!conditionsFulfilled) {
+                            continue;
                         }
                         actionToExecute.execute(questPlayer, getExecutedActionDelay(), objects);
                     } else if (!isIgnoreConditions()) {

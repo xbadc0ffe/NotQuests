@@ -552,7 +552,7 @@ public class QuestEvents implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onCraftItemEvent(CraftItemEvent e) {
         final Entity entity = e.getWhoClicked();
         if (entity instanceof final Player player && e.getInventory().getResult() != null) {
@@ -719,7 +719,7 @@ public class QuestEvents implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void interactEvent(final PlayerInteractEvent e) {
         final Player player = e.getPlayer();
         final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
@@ -730,6 +730,7 @@ public class QuestEvents implements Listener {
             final ConversationPlayer currentOpenConversationPlayer = main.getConversationManager().getOpenConversation(player.getUniqueId());
             if (currentOpenConversationPlayer != null) {
                 e.setCancelled(true);
+                return;
             }
         }
 
@@ -1013,7 +1014,7 @@ public class QuestEvents implements Listener {
                 + block.getZ();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onFishItemEvent(PlayerFishEvent e) {
         if (e.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
             return;
@@ -1049,7 +1050,7 @@ public class QuestEvents implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPickupItemEvent(EntityPickupItemEvent e) {
         final Entity entity = e.getEntity();
         if (entity instanceof final Player player) {
@@ -1077,7 +1078,7 @@ public class QuestEvents implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onDropItemEvent(PlayerDropItemEvent e) { //DEFAULT ENABLED FOR ITEM DROPS UNLIKE FOR BLOCK BREAKS
         final Entity player = e.getPlayer();
 
@@ -1199,7 +1200,7 @@ public class QuestEvents implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onConsumeItemEvent(PlayerItemConsumeEvent e) { //DEFAULT ENABLED FOR ITEM DROPS UNLIKE FOR BLOCK BREAKS
         final Player player = e.getPlayer();
 
@@ -1535,7 +1536,7 @@ public class QuestEvents implements Listener {
 
 
     // Enchants
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEnchantItem(final EnchantItemEvent e) {
         final Player player = e.getEnchanter();
         final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
