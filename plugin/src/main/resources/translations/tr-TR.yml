@@ -161,6 +161,8 @@ chat:
         base: <main>%AMOUNTOFSNEAKS%</main> kez eğil
       smelt:
         base: 'Eşyaları Pişir: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Gömülü hazineleri aç
       shearSheep:

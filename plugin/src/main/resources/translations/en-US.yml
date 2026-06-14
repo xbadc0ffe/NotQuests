@@ -145,6 +145,8 @@ chat:
         base: 'Sneak <main>%AMOUNTOFSNEAKS%</main> times'
       smelt:
         base: 'Smelt Items: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: 'Open buried treasures'
       shearSheep:

@@ -161,6 +161,8 @@ chat:
         base: تسلّل <main>%AMOUNTOFSNEAKS%</main> مرة
       smelt:
         base: 'صهر العناصر: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: افتح الكنوز المدفونة
       shearSheep:

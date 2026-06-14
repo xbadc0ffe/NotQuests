@@ -161,6 +161,8 @@ chat:
         base: <main>%AMOUNTOFSNEAKS%を</main> 回スニークする
       smelt:
         base: 'アイテムを精錬: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: 埋蔵された宝物を開く
       shearSheep:

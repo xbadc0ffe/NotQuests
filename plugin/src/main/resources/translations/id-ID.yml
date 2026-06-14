@@ -161,6 +161,8 @@ chat:
         base: Mengendap <main>%AMOUNTOFSNEAKS%</main> kali
       smelt:
         base: 'Lebur Item: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Buka harta karun terkubur
       shearSheep:

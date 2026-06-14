@@ -181,6 +181,8 @@ chat:
         base: Guggolj <main>%AMOUNTOFSNEAKS%</main> alkalommal
       smelt:
         base: 'Kiégetett Tárgyak: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Nyiss ki egy elásott kincset
       shearSheep:

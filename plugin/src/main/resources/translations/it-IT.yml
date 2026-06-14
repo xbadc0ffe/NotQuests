@@ -161,6 +161,8 @@ chat:
         base: Accovacciati <main>%AMOUNTOFSNEAKS%</main> volte
       smelt:
         base: 'Fondi oggetti: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Apri tesori sepolti
       shearSheep:

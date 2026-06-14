@@ -161,6 +161,8 @@ chat:
         base: Ajup-te <main>%AMOUNTOFSNEAKS%</main> vegades
       smelt:
         base: 'Fon Objectes: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Obre tresors enterrats
       shearSheep:

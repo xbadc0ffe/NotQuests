@@ -149,6 +149,8 @@ chat:
         base: Lén lút <main>%AMOUNTOFSNEAKS%</main> lần
       smelt:
         base: 'Nung vật phẩm: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Mở kho báu bị chôn vùi
       shearSheep:

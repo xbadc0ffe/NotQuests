@@ -161,6 +161,8 @@ chat:
         base: Agacha-te <main>%AMOUNTOFSNEAKS%</main> vezes
       smelt:
         base: 'Fundir Itens: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Abrir tesouros enterrados
       shearSheep:

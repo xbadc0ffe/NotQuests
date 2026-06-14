@@ -161,6 +161,8 @@ chat:
         base: 蹲下 <main>%AMOUNTOFSNEAKS%</main> 次
       smelt:
         base: '冶煉物品: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: 打開埋藏的寶藏
       shearSheep:

@@ -161,6 +161,8 @@ chat:
         base: התגנב <main>%AMOUNTOFSNEAKS%</main> פעמים
       smelt:
         base: 'התך פריטים: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: פתח אוצרות קבורים
       shearSheep:

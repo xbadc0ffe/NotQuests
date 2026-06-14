@@ -161,6 +161,8 @@ chat:
         base: Se baisser (sneak) <main>%AMOUNTOFSNEAKS%</main> fois
       smelt:
         base: 'Fondre des items : <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Ouvrir des trésors enfouis
       shearSheep:

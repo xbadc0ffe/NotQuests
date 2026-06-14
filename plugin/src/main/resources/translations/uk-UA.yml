@@ -161,6 +161,8 @@ chat:
         base: Крастись <main>%AMOUNTOFSNEAKS%</main> разів
       smelt:
         base: 'Переплавити предмети: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Відкрити закопані скарби
       shearSheep:

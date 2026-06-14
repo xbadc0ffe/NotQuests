@@ -161,6 +161,8 @@ chat:
         base: Прыгнуть <main>%AMOUNTOFSNEAKS%</main> раз
       smelt:
         base: 'Создать Предметы: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Открытые захороненные сокровища
       shearSheep:

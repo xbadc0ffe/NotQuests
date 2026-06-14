@@ -74,6 +74,7 @@ qa edit TestQuest objectives add PickupItems acacia_boat,oak_boat 5
 qa edit TestQuest objectives add ConsumeItems apple,bread 5
 qa edit TestQuest objectives add CraftItems torch,stick 5
 qa edit TestQuest objectives add SmeltItems iron_ingot,gold_ingot 5
+qa edit TestQuest objectives add BrewItems potion 5
 qa edit TestQuest objectives add FishItems cod,salmon 5
 qa edit TestQuest objectives add Enchant sharpness diamond_sword,iron_sword 5
 qa edit TestQuest objectives add KillMobs zombie 5

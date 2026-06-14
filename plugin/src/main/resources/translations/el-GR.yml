@@ -147,6 +147,8 @@ chat:
         base: Σύρσου <main>%AMOUNTOFSNEAKS%</main> φορές
       smelt:
         base: 'Λιώσε αντικείμενα: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Άνοιξε θαμμένους θησαυρούς
       shearSheep:

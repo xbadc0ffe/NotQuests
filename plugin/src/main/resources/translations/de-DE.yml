@@ -161,6 +161,8 @@ chat:
         base: Schleiche <main>%AMOUNTOFSNEAKS%</main> mal
       smelt:
         base: 'Items schmelzen: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Öffne vergrabene Schätze
       shearSheep:

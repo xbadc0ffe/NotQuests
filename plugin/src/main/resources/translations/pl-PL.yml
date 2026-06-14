@@ -165,6 +165,8 @@ chat:
         base: Skradaj się <main>%AMOUNTOFSNEAKS%</main> razy
       smelt:
         base: 'Przepal w piecu: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Otwórz zakopane skarby
       shearSheep:

@@ -161,6 +161,8 @@ chat:
         base: Snig <main>%AMOUNTOFSNEAKS%</main> gange
       smelt:
         base: 'Smelt genstande: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Åbn begravede skatte
       shearSheep:

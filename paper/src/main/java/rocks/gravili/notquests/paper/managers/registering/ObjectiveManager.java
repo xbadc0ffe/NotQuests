@@ -89,6 +89,7 @@ public class ObjectiveManager {
         registerObjective("Jump", JumpObjective.class);
         registerObjective("Sneak", SneakObjective.class);
         registerObjective("SmeltItems", SmeltObjective.class);
+        registerObjective("BrewItems", BrewItemsObjective.class);
         registerObjective("OpenBuriedTreasure", OpenBuriedTreasureObjective.class);
         registerObjective("ShearSheep", ShearSheepObjective.class);
         registerObjective("MilkCow", MilkCowObjective.class);

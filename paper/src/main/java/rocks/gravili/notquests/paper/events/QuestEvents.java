@@ -28,6 +28,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -43,12 +44,14 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -81,6 +84,7 @@ public class QuestEvents implements Listener {
 
     private final HashMap<QuestPlayer, String> beaconsToUpdate;
     private final Set<String> playerPlacedHarvestBlocks;
+    private final Map<String, ArrayList<ItemStack>> freshlyBrewedItems;
 
     int beaconCounter = 0;
     int objectiveUnlockConditionCheckCounter = 0;
@@ -91,6 +95,7 @@ public class QuestEvents implements Listener {
         this.main = main;
         beaconsToUpdate = new HashMap<>();
         playerPlacedHarvestBlocks = new HashSet<>();
+        freshlyBrewedItems = new HashMap<>();
 
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main.getMain(), () -> { //Main Loop
@@ -491,6 +496,87 @@ public class QuestEvents implements Listener {
 
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onBrewEvent(final BrewEvent e) {
+        final ArrayList<ItemStack> brewedResults = new ArrayList<>();
+        for (final ItemStack result : e.getResults()) {
+            if (!main.getUtilManager().isItemEmpty(result)) {
+                brewedResults.add(result.clone());
+            }
+        }
+
+        final String brewingStandKey = blockKey(e.getBlock());
+        if (brewedResults.isEmpty()) {
+            freshlyBrewedItems.remove(brewingStandKey);
+        } else {
+            freshlyBrewedItems.put(brewingStandKey, brewedResults);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onBrewingStandResultTake(final InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof final Player player)) {
+            return;
+        }
+
+        final ItemStack currentItem = e.getCurrentItem();
+        if (main.getUtilManager().isItemEmpty(currentItem)) {
+            return;
+        }
+        if (!(e.getClickedInventory() instanceof final BrewerInventory brewerInventory)
+                || e.getSlot() < 0
+                || e.getSlot() > 2
+                || !(brewerInventory.getHolder() instanceof final BrewingStand brewingStand)) {
+            return;
+        }
+
+        final int amount = consumeFreshBrewedAmount(blockKey(brewingStand.getBlock()), currentItem);
+        if (amount == 0) {
+            return;
+        }
+
+        final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+        if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
+            return;
+        }
+
+        questPlayer.queueObjectiveCheck(activeObjective -> {
+            if (activeObjective.getObjective() instanceof final BrewItemsObjective brewItemsObjective
+                    && brewItemsObjective.countsBrewedItem(currentItem)) {
+                activeObjective.addProgress(amount);
+            }
+        });
+        questPlayer.checkQueuedObjectives();
+    }
+
+    private int consumeFreshBrewedAmount(final String brewingStandKey, final ItemStack takenItem) {
+        final ArrayList<ItemStack> brewedItems = freshlyBrewedItems.get(brewingStandKey);
+        if (brewedItems == null || brewedItems.isEmpty()) {
+            return 0;
+        }
+
+        int remaining = takenItem.getAmount();
+        int consumed = 0;
+        for (int i = 0; i < brewedItems.size() && remaining > 0; i++) {
+            final ItemStack brewedItem = brewedItems.get(i);
+            if (!brewedItem.isSimilar(takenItem)) {
+                continue;
+            }
+            final int take = Math.min(remaining, brewedItem.getAmount());
+            remaining -= take;
+            consumed += take;
+            brewedItem.setAmount(brewedItem.getAmount() - take);
+            if (brewedItem.getAmount() <= 0) {
+                brewedItems.remove(i);
+                i--;
+            }
+        }
+        if (brewedItems.isEmpty()) {
+            freshlyBrewedItems.remove(brewingStandKey);
+        }
+        return consumed;
+    }
+
 
 
     public final int getInventorySpaceLeftForItem(final Inventory inventory, final ItemStack item) {
@@ -855,6 +941,9 @@ public class QuestEvents implements Listener {
     private void onBlockBreak(BlockBreakEvent e) {
         if (!e.isCancelled()) {
             final Player player = e.getPlayer();
+            if (e.getBlock().getType() == Material.BREWING_STAND) {
+                freshlyBrewedItems.remove(blockKey(e.getBlock()));
+            }
             final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
             if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
                 return;

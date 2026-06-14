@@ -155,6 +155,8 @@ chat:
         base: Přikrč se <main>%AMOUNTOFSNEAKS%</main> krát
       smelt:
         base: 'Vypeč itemy: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Otevři zakopaný poklad
       shearSheep:

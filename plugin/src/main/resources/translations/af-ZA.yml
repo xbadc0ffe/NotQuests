@@ -161,6 +161,8 @@ chat:
         base: Sluip <main>%AMOUNTOFSNEAKS%</main> keer
       smelt:
         base: 'Smelt items: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Maak begrawe skatte oop
       shearSheep:

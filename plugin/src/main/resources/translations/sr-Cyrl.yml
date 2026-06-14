@@ -167,6 +167,8 @@ chat:
         base: Шуњај се <main>%AMOUNTOFSNEAKS%</main> пута
       smelt:
         base: 'Истопи предмете: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Откопај закопано благо
       shearSheep:

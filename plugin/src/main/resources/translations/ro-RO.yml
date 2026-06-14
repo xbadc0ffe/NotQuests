@@ -161,6 +161,8 @@ chat:
         base: Furișează-te de <main>%AMOUNTOFSNEAKS%</main> ori
       smelt:
         base: 'Topește obiecte: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Deschide comori îngropate
       shearSheep:

@@ -161,6 +161,8 @@ chat:
         base: Hiivi <main>%AMOUNTOFSNEAKS%</main> kertaa
       smelt:
         base: 'Sulata esineitä: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
       openBuriedTreasure:
         base: Avaa haudattuja aarteita
       shearSheep:
