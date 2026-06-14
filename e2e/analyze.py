@@ -32,7 +32,8 @@ COMMAND_SCHEMA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "gene
 EXCLUDE_INTEGRATION = {
     "EscortNPC", "JobsRebornReachJobLevel", "SlimefunResearch", "ReachLocation",
     "TownyNationReachTownCount", "TownyReachResidentCount", "TownyNationName",
-    "UltimateClansClanLevel",
+    "UltimateClansClanLevel", "BetonQuestObjectiveStateChange", "BetonQuestFireEvent",
+    "BetonQuestFireInlineEvent",
 }
 EXCLUDE_VARIABLE = {"Number", "String", "Boolean", "List", "ItemStackList"}
 TOLERANT_TAGS = ("PLAYER-ONLY", "NEEDS-ECONOMY", "UNSURE", "OBJECTIVE-SCOPED")

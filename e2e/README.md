@@ -27,6 +27,9 @@ In CI it runs as the **E2E command sweep** workflow on every push/PR.
 - `run-sweep.sh` — boots the server, feeds the commands (each tagged with an `NQE2E_MK` marker so
   output maps back to its command), stops, and calls the analyzer.
 - `analyze.py` — checks coverage (against the source registries) and correctness (against the log).
+- `run-betonquest-sweep.sh` — boots the server with the vendored BetonQuest 3.0.0 jar, loads a
+  tiny BetonQuest package containing every restored `nq_*` hook, and verifies the NotQuests
+  BetonQuest action / reward / objective / variable commands from the console.
 
 ## What it does *not* cover
 

@@ -16,7 +16,7 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,10 +33,15 @@ jobs:
       - name: Run server-side command sweep
         run: ./e2e/run-sweep.sh
 
+      - name: Run BetonQuest 3 server-side command sweep
+        run: ./e2e/run-betonquest-sweep.sh
+
       - name: Upload server log
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-server-log
-          path: /tmp/nq-e2e-server.log
+          name: e2e-server-logs
+          path: |
+            /tmp/nq-e2e-server.log
+            /tmp/nq-betonquest-server.log
           if-no-files-found: ignore

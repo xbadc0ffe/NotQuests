@@ -31,6 +31,8 @@ echo "eula=true" > "$RUN/eula.txt"
 # Fresh, deterministic state every run: a stale/half-written world from a previously killed server
 # can hang the next boot, and old plugin data makes "already exists" noise. Both regenerate.
 rm -rf "$RUN/world" "$RUN/world_nether" "$RUN/world_the_end" "$RUN/plugins/NotQuests" 2>/dev/null
+# Keep this base sweep integration-free. Focused integration sweeps install their own plugins.
+rm -rf "$RUN/plugins/BetonQuest" "$RUN/plugins"/BetonQuest*.jar 2>/dev/null || true
 
 # Fast, deterministic, offline boot: no auth round-trips, tiny flat world, no spawn protection.
 cat > "$RUN/server.properties" <<'PROPS'
