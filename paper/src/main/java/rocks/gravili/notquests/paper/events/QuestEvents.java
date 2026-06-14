@@ -82,7 +82,6 @@ import static rocks.gravili.notquests.paper.commands.NotQuestColors.debugHighlig
 public class QuestEvents implements Listener {
     private final NotQuests main;
 
-    private final HashMap<QuestPlayer, String> beaconsToUpdate;
     private final Set<String> playerPlacedHarvestBlocks;
     private final Map<String, ArrayList<ItemStack>> freshlyBrewedItems;
 
@@ -93,7 +92,6 @@ public class QuestEvents implements Listener {
 
     public QuestEvents(NotQuests main) {
         this.main = main;
-        beaconsToUpdate = new HashMap<>();
         playerPlacedHarvestBlocks = new HashSet<>();
         freshlyBrewedItems = new HashMap<>();
 
@@ -102,10 +100,6 @@ public class QuestEvents implements Listener {
             if(main.getDataManager().isDisabled()){
                 return;
             }
-            if(!main.getConfiguration().getBeamMode().equals("end_gateway")){
-                beaconsToUpdate.clear();
-            }
-
             final boolean updateBeacons;
             beaconCounter++;
             if(beaconCounter >= 4){
@@ -144,17 +138,15 @@ public class QuestEvents implements Listener {
             for(final Player player : Bukkit.getOnlinePlayers()) {
                 final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
                 if(questPlayer == null){
-                    return;
+                    continue;
                 }
 
                 if(questPlayer.getBossBar() != null){
                     questPlayer.increaseBossBarTimeByOneSecond();
                 }
 
-                if(main.getConfiguration().getBeamMode().equals("end_gateway")){
-                    if(updateBeacons){
-                        questPlayer.updateBeaconLocations(player);
-                    }
+                if(updateBeacons){
+                    questPlayer.updateBeaconLocations(player);
                 }
 
 
@@ -195,44 +187,8 @@ public class QuestEvents implements Listener {
         //final Location playerLocation = player.getLocation();
         //int maxDistance = 110;
 
-        for(final String locationName : questPlayer.getLocationsAndBeacons().keySet()) {
-            beaconsToUpdate.remove(questPlayer);
-            beaconsToUpdate.put(questPlayer, locationName);
-
-            /*final Location shouldLocation = questPlayer.getLocationsAndBeacons().get(locationName);
-
-            Location newChunkLocation = e.getChunk().getBlock(8, shouldLocation.getBlockY(), 8).getLocation();
-
-
-            //New Beacon Location should be cur player location + maxDistance blocks in direction of newChunkLocation - playerLocation
-            Vector normalizedDistanceBetweenPlayerAndNewChunk = newChunkLocation.toVector().subtract(playerLocation.toVector()).normalize();
-            Location newBeaconLocation = playerLocation.add(normalizedDistanceBetweenPlayerAndNewChunk.multiply(maxDistance));
-
-            newBeaconLocation.setY(newBeaconLocation.getWorld().getHighestBlockYAt(newBeaconLocation.getBlockX(), newBeaconLocation.getBlockZ()));
-
-
-            if(!questPlayer.getActiveLocationsAndBeacons().containsKey(locationName) || !questPlayer.getActiveLocationsAndBeacons().get(locationName).isChunkLoaded()){
-                beaconsToUpdate.remove(questPlayer);
-                beaconsToUpdate.put(questPlayer, locationName);
-            }else{
-               // (questPlayer.getActiveLocationsAndBeacons().get(locationName).distance(playerLocation) > maxDistance)
-
-
-                final Location currentActiveLocation = questPlayer.getActiveLocationsAndBeacons().get(locationName);
-
-                //Check if the new chunk is closer
-                double oldDistance = shouldLocation.distance(currentActiveLocation);
-                double newDistance = shouldLocation.distance(newBeaconLocation);
-                if(newDistance < oldDistance){
-                    beaconsToUpdate.remove(questPlayer);
-                    beaconsToUpdate.put(questPlayer, locationName);
-
-                }else{
-                    //main.sendMessage(player, "Ignored. Distance worse");
-                }
-
-            }*/
-
+        if (!questPlayer.getLocationsAndBeacons().isEmpty()) {
+            questPlayer.updateBeaconLocations(player, true);
         }
     }
 

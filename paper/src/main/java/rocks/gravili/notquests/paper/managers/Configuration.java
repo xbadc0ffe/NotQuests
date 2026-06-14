@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class Configuration {
 
-  private final String beamMode = "end_gateway"; // end_gateway, beacon, end_crystal
+  private final String beamMode = "end_gateway"; // end_gateway, beacon
 
   public boolean visualObjectiveTrackingShowProgressInActionBar = true;
   public boolean visualObjectiveTrackingShowProgressInBossBar = true;

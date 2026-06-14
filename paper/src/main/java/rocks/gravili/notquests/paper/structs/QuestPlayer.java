@@ -23,7 +23,6 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Player;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.NotQuestColors;
@@ -57,6 +56,8 @@ import java.util.function.Consumer;
 public class QuestPlayer {
 
     private final String profile;
+    static final int BEAM_MAX_DISTANCE = 88;
+    static final int END_GATEWAY_BEAM_MIN_Y = 192;
 
     private final NotQuests main;
 
@@ -163,12 +164,15 @@ public class QuestPlayer {
 
     public void trackBeacon(final String name, final Location location) {
         clearBeacons();
-        getLocationsAndBeacons().put(name, location);
-        updateBeaconLocations(getPlayer());
+        if (name == null || location == null) {
+            return;
+        }
+        getLocationsAndBeacons().put(name, location.clone());
+        updateBeaconLocations(getPlayer(), true);
     }
 
     public void disableTrackingObjective(ActiveObjective activeObjective) {
-        if(getTrackingObjective().equals(activeObjective)){
+        if(getTrackingObjective() != null && getTrackingObjective().equals(activeObjective)){
             //getPlayer().sendMessage("Removing 1!");
             clearBeacons();
         }
@@ -183,91 +187,89 @@ public class QuestPlayer {
     }
 
     public void clearBeacons(){
-        for(Location location : getActiveLocationsAndBeacons().values()){
-            scheduleBeaconRemovalAt(location, getPlayer());
-        }
-
+        clearActiveBeacons();
         getLocationsAndBeacons().clear();
-        getActiveLocationsAndBeacons().clear();
     }
 
     public void clearActiveBeacons(){
-        for(Location location : getActiveLocationsAndBeacons().values()){
-            scheduleBeaconRemovalAt(location, getPlayer());
+        clearActiveBeacons(getPlayer());
+    }
+
+    private void clearActiveBeacons(final Player player) {
+        if (player != null) {
+            for(Location location : getActiveLocationsAndBeacons().values()){
+                scheduleBeaconRemovalAt(location, player);
+            }
         }
 
         getActiveLocationsAndBeacons().clear();
     }
 
     public void scheduleBeaconRemovalAt(final Location location, final Player player){
-
-        if(main.getConfiguration().getBeamMode().equals("beacon")){
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(-1,-1,-1);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(1,0,0);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(1,0,0);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(0,0,1);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(-1,0,0);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(-1,0,0);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(0,0,1);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(1,0,0);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-            location.add(1,0,0);
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-        }else if(main.getConfiguration().getBeamMode().equals("end_gateway")){
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-        }else if(main.getConfiguration().getBeamMode().equals("end_crystal")){
-            player.sendBlockChange(location, location.getBlock().getBlockData());
+        if (player == null || location == null || location.getWorld() == null) {
+            return;
         }
 
+        if(isBeaconMode()){
+            sendRealBlock(player, location);
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    sendRealBlock(player, location.clone().add(x, -1, z));
+                }
+            }
+            return;
+        }
+
+        sendRealBlock(player, location);
     }
 
     public final boolean updateBeaconLocations(final Player player){
+        return updateBeaconLocations(player, false);
+    }
+
+    public final boolean updateBeaconLocations(final Player player, final boolean force){
 
         boolean toReturn = false;
-        clearActiveBeacons();
-        if(locationsAndBeacons.isEmpty() || player == null){
+        if(player == null){
+            getActiveLocationsAndBeacons().clear();
+            return false;
+        }
+        if(locationsAndBeacons.isEmpty()){
+            clearActiveBeacons(player);
             //player.sendMessage("Nothing to process!");
             return false;
         }
-        for(String locationName : locationsAndBeacons.keySet()){
+        final Location playerLocation = player.getLocation();
+        final Set<String> renderedLocations = new HashSet<>();
+        for(final String locationName : locationsAndBeacons.keySet()){
             sendDebugMessage("Processing " + locationName);
 
             final Location finalLocation = locationsAndBeacons.get(locationName);
 
-            if(!finalLocation.getWorld().getUID().equals(player.getWorld().getUID())){
+            if(finalLocation == null || finalLocation.getWorld() == null || !finalLocation.getWorld().getUID().equals(player.getWorld().getUID())){
                 continue;
             }
-            Location lowestDistanceLocation = player.getLocation();
+            Location lowestDistanceLocation = playerLocation.clone();
 
-            final int distance = 88; //Default: 96
-
-            if(finalLocation.distance(player.getLocation()) > distance){
+            if(finalLocation.distanceSquared(playerLocation) > BEAM_MAX_DISTANCE * BEAM_MAX_DISTANCE){
 
 
                 //New Beacon Location should be cur player location + maxDistance blocks in direction of newChunkLocation - playerLocation
-                org.bukkit.util.Vector normalizedDistanceBetweenPlayerAndNewChunk = finalLocation.toVector().subtract(player.getLocation().toVector()).normalize();
-                lowestDistanceLocation = player.getLocation().add(normalizedDistanceBetweenPlayerAndNewChunk.multiply(distance));
-                if(main.getConfiguration().getBeamMode().equals("beacon")){
+                org.bukkit.util.Vector normalizedDistanceBetweenPlayerAndNewChunk = finalLocation.toVector().subtract(playerLocation.toVector()).normalize();
+                lowestDistanceLocation = playerLocation.clone().add(normalizedDistanceBetweenPlayerAndNewChunk.multiply(BEAM_MAX_DISTANCE));
+                if(isBeaconMode()){
                     lowestDistanceLocation.setY(lowestDistanceLocation.getWorld().getHighestBlockYAt(lowestDistanceLocation.getBlockX(), lowestDistanceLocation.getBlockZ()));
                 }else{
-                    if(player.getLocation().getY() > 192){
-                        lowestDistanceLocation.setY(player.getLocation().getY());
+                    if(playerLocation.getY() > END_GATEWAY_BEAM_MIN_Y){
+                        lowestDistanceLocation.setY(playerLocation.getY());
                     }else {
-                        lowestDistanceLocation.setY(192);
+                        lowestDistanceLocation.setY(END_GATEWAY_BEAM_MIN_Y);
                     }
                 }
 
 
             }else{
-                lowestDistanceLocation = finalLocation;
+                lowestDistanceLocation = finalLocation.clone();
 
                 toReturn = true;
             }
@@ -275,7 +277,17 @@ public class QuestPlayer {
 
 
 
-            if(main.getConfiguration().getBeamMode().equals("beacon")){
+            lowestDistanceLocation = blockLocation(lowestDistanceLocation);
+            final Location activeLocation = activeLocationAndBeams.get(locationName);
+            if (!force && sameBlockLocation(activeLocation, lowestDistanceLocation)) {
+                renderedLocations.add(locationName);
+                continue;
+            }
+            if (activeLocation != null) {
+                scheduleBeaconRemovalAt(activeLocation, player);
+            }
+
+            if(isBeaconMode()){
                 BlockState beaconBlockState = lowestDistanceLocation.getBlock().getState();
                 beaconBlockState.setType(Material.BEACON);
 
@@ -283,53 +295,64 @@ public class QuestPlayer {
                 ironBlockState.setType(Material.IRON_BLOCK);
 
                 player.sendBlockChange(lowestDistanceLocation, beaconBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(-1,-1,-1), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(1,0,0), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(1,0,0), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(0,0,1), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(-1,0,0), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(-1,0,0), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(0,0,1), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(1,0,0), ironBlockState.getBlockData());
-                player.sendBlockChange(lowestDistanceLocation.add(1,0,0), ironBlockState.getBlockData());
+                for (int x = -1; x <= 1; x++) {
+                    for (int z = -1; z <= 1; z++) {
+                        player.sendBlockChange(lowestDistanceLocation.clone().add(x, -1, z), ironBlockState.getBlockData());
+                    }
+                }
 
-
-                activeLocationAndBeams.put(locationName, lowestDistanceLocation.add(-1, 1, -1));
-                //main.sendMessage(player, "<main> Initial Add: <highlight>" + lowestDistanceLocation.toVector().toString());
-
-
-                //Now send instant packet
-                main.getPacketManager().sendBeaconUpdatePacket(player, lowestDistanceLocation, beaconBlockState);
-            }else if(main.getConfiguration().getBeamMode().equals("end_gateway")){
+                activeLocationAndBeams.put(locationName, lowestDistanceLocation.clone());
+            }else{
                 BlockState beaconBlockState = lowestDistanceLocation.getBlock().getState();
                 beaconBlockState.setType(Material.END_GATEWAY);
 
                 player.sendBlockChange(lowestDistanceLocation, beaconBlockState.getBlockData());
 
-                activeLocationAndBeams.put(locationName, lowestDistanceLocation);
-
-
-            }else if(main.getConfiguration().getBeamMode().equals("end_crystal")){
-                BlockState beaconBlockState = lowestDistanceLocation.getBlock().getState();
-                beaconBlockState.setType(Material.END_CRYSTAL);
-
-
-
-                EnderCrystal enderCrystal = (EnderCrystal) beaconBlockState.getBlock();
-                enderCrystal.setShowingBottom(false);
-                enderCrystal.setBeamTarget(lowestDistanceLocation.add(0, 10, 0));
-
-                player.sendBlockChange(lowestDistanceLocation, beaconBlockState.getBlockData());
-
-                activeLocationAndBeams.put(locationName, lowestDistanceLocation);
+                activeLocationAndBeams.put(locationName, lowestDistanceLocation.clone());
             }
 
+            renderedLocations.add(locationName);
 
+        }
+
+        final Iterator<Map.Entry<String, Location>> activeIterator = activeLocationAndBeams.entrySet().iterator();
+        while (activeIterator.hasNext()) {
+            final Map.Entry<String, Location> activeEntry = activeIterator.next();
+            if (!renderedLocations.contains(activeEntry.getKey())) {
+                scheduleBeaconRemovalAt(activeEntry.getValue(), player);
+                activeIterator.remove();
+            }
         }
 
         return toReturn;
 
 
+    }
+
+    static boolean sameBlockLocation(final Location first, final Location second) {
+        if (first == null || second == null || first.getWorld() == null || second.getWorld() == null) {
+            return false;
+        }
+        return first.getWorld().getUID().equals(second.getWorld().getUID())
+                && first.getBlockX() == second.getBlockX()
+                && first.getBlockY() == second.getBlockY()
+                && first.getBlockZ() == second.getBlockZ();
+    }
+
+    private static Location blockLocation(final Location location) {
+        return new Location(
+                location.getWorld(),
+                location.getBlockX(),
+                location.getBlockY(),
+                location.getBlockZ());
+    }
+
+    private boolean isBeaconMode() {
+        return "beacon".equals(main.getConfiguration().getBeamMode());
+    }
+
+    private static void sendRealBlock(final Player player, final Location location) {
+        player.sendBlockChange(location, location.getBlock().getBlockData());
     }
 
     public final String getCooldownFormatted(final Quest quest) {
