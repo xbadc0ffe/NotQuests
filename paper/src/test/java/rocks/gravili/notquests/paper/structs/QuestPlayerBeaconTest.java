@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.AfterEach;
@@ -83,5 +84,22 @@ class QuestPlayerBeaconTest {
         assertTrue(QuestPlayer.sameBlockLocation(first, sameBlock));
         assertFalse(QuestPlayer.sameBlockLocation(first, differentBlock));
         assertFalse(QuestPlayer.sameBlockLocation(first, differentWorld));
+    }
+
+    @Test
+    void compassHelpersPointTowardTheMarker() {
+        assertEquals(0.0, QuestPlayer.yawTo(new Location(world, 0, 64, 0), new Location(world, 0, 64, 10)));
+        assertEquals(-90.0, QuestPlayer.yawTo(new Location(world, 0, 64, 0), new Location(world, 10, 64, 0)));
+        assertEquals(-170.0, QuestPlayer.wrappedDegrees(190.0));
+
+        assertEquals("^", QuestPlayer.compassDirection(0.0));
+        assertEquals("<", QuestPlayer.compassDirection(-45.0));
+        assertEquals(">>", QuestPlayer.compassDirection(120.0));
+        assertEquals("behind", QuestPlayer.compassDirection(179.0));
+        assertEquals(1.0f, QuestPlayer.compassProgress(0.0));
+        assertEquals(0.0f, QuestPlayer.compassProgress(180.0));
+        assertEquals(BossBar.Color.GREEN, QuestPlayer.compassColor(10.0));
+        assertEquals(BossBar.Color.YELLOW, QuestPlayer.compassColor(60.0));
+        assertEquals(BossBar.Color.RED, QuestPlayer.compassColor(120.0));
     }
 }

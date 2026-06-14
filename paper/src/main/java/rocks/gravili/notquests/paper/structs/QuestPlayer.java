@@ -20,6 +20,7 @@ package rocks.gravili.notquests.paper.structs;
 
 
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;
@@ -80,6 +81,7 @@ public class QuestPlayer {
     private long questPoints;
     private ActiveObjective trackingObjective;
     private BossBar bossBar;
+    private BossBar locationCompassBossBar;
     private int lastBossBarActiveTimeInSeconds = 0;
     private boolean hasActiveConditionObjectives = false;
     private boolean hasActiveVariableObjectives = false;
@@ -210,6 +212,7 @@ public class QuestPlayer {
     public void clearBeacons(){
         clearActiveBeacons();
         getLocationsAndBeacons().clear();
+        hideLocationCompass(getPlayer());
     }
 
     public void clearActiveBeacons(){
@@ -246,6 +249,61 @@ public class QuestPlayer {
 
     public final boolean updateBeaconLocations(final Player player){
         return updateBeaconLocations(player, false);
+    }
+
+    public void updateLocationCompass(final Player player) {
+        if (!main.getConfiguration().isVisualObjectiveTrackingLocationCompassEnabled()) {
+            hideLocationCompass(player);
+            return;
+        }
+        if (player == null || locationsAndBeacons.isEmpty()) {
+            hideLocationCompass(player);
+            return;
+        }
+
+        Location target = null;
+        for (final Location location : locationsAndBeacons.values()) {
+            if (location != null) {
+                target = location;
+                break;
+            }
+        }
+        if (target == null || target.getWorld() == null || player.getWorld() == null) {
+            hideLocationCompass(player);
+            return;
+        }
+
+        if (!target.getWorld().getUID().equals(player.getWorld().getUID())) {
+            showLocationCompass(
+                    player,
+                    main.parse("<warn>Objective marker is in world <highlight>" + target.getWorld().getName() + "</highlight>"),
+                    0.0f,
+                    BossBar.Color.RED);
+            return;
+        }
+
+        final Location playerLocation = player.getLocation();
+        final double distance = target.distance(playerLocation);
+        final double directionDelta = wrappedDegrees(yawTo(playerLocation, target) - playerLocation.getYaw());
+        final String direction = compassDirection(directionDelta);
+        final String objectiveLabel =
+                trackingObjective == null ? "Objective Marker" : trackingObjective.getObjective().getDisplayNameOrIdentifier();
+        showLocationCompass(
+                player,
+                main.parse("<highlight>" + direction + "</highlight> <positive>" + Math.round(distance)
+                        + "m</positive> <unimportant>-</unimportant> <main>" + objectiveLabel + "</main>"),
+                compassProgress(directionDelta),
+                compassColor(directionDelta));
+    }
+
+    public void hideLocationCompass(final Player player) {
+        if (locationCompassBossBar == null) {
+            return;
+        }
+        if (player != null) {
+            player.hideBossBar(locationCompassBossBar);
+        }
+        locationCompassBossBar = null;
     }
 
     public final boolean updateBeaconLocations(final Player player, final boolean force){
@@ -376,6 +434,69 @@ public class QuestPlayer {
             }
         }
         return clones;
+    }
+
+    static double yawTo(final Location from, final Location to) {
+        final double dx = to.getX() - from.getX();
+        final double dz = to.getZ() - from.getZ();
+        final double yaw = Math.toDegrees(Math.atan2(-dx, dz));
+        return Math.abs(yaw) < 0.000001 ? 0.0 : yaw;
+    }
+
+    static double wrappedDegrees(final double degrees) {
+        double wrapped = degrees % 360.0;
+        if (wrapped >= 180.0) {
+            wrapped -= 360.0;
+        }
+        if (wrapped < -180.0) {
+            wrapped += 360.0;
+        }
+        return wrapped;
+    }
+
+    static String compassDirection(final double directionDelta) {
+        final double absolute = Math.abs(directionDelta);
+        if (absolute <= 12.0) {
+            return "^";
+        }
+        if (absolute >= 165.0) {
+            return "behind";
+        }
+        if (directionDelta < 0.0) {
+            return absolute >= 90.0 ? "<<" : "<";
+        }
+        return absolute >= 90.0 ? ">>" : ">";
+    }
+
+    static float compassProgress(final double directionDelta) {
+        return (float) Math.max(0.0, 1.0 - (Math.abs(directionDelta) / 180.0));
+    }
+
+    static BossBar.Color compassColor(final double directionDelta) {
+        final double absolute = Math.abs(directionDelta);
+        if (absolute <= 15.0) {
+            return BossBar.Color.GREEN;
+        }
+        if (absolute <= 75.0) {
+            return BossBar.Color.YELLOW;
+        }
+        return BossBar.Color.RED;
+    }
+
+    private void showLocationCompass(
+            final Player player,
+            final Component title,
+            final float progress,
+            final BossBar.Color color) {
+        if (locationCompassBossBar == null) {
+            locationCompassBossBar = BossBar.bossBar(title, progress, color, BossBar.Overlay.PROGRESS);
+            player.showBossBar(locationCompassBossBar);
+            return;
+        }
+        locationCompassBossBar.name(title);
+        locationCompassBossBar.progress(progress);
+        locationCompassBossBar.color(color);
+        player.showBossBar(locationCompassBossBar);
     }
 
     private boolean isBeaconMode() {
@@ -1172,6 +1293,7 @@ public class QuestPlayer {
 
     public void onQuitAsync(final Player player){
         bossBar = null;
+        hideLocationCompass(player);
         main.getTagManager().onQuit(this, player);
     }
 

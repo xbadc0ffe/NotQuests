@@ -390,8 +390,11 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
         //Hide existing bossbars
         for(Player player : Bukkit.getOnlinePlayers()){
             QuestPlayer questPlayer = getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
-            if(questPlayer != null && questPlayer.getBossBar() != null){
-                player.hideBossBar(questPlayer.getBossBar());
+            if(questPlayer != null){
+                if(questPlayer.getBossBar() != null){
+                    player.hideBossBar(questPlayer.getBossBar());
+                }
+                questPlayer.hideLocationCompass(player);
             }
         }
 

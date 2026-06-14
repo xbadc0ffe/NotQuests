@@ -905,6 +905,11 @@ public class DataManager {
                 false
         ));
 
+        configuration.setVisualObjectiveTrackingLocationCompassEnabled(getGeneralConfigBoolean(
+                "visual.objective-tracking.location-compass.enabled",
+                false
+        ));
+
 
         //GUI
         configuration.setQuestVisibilityEvaluationAlreadyAccepted(getGeneralConfigBoolean(

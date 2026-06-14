@@ -148,6 +148,7 @@ public class QuestEvents implements Listener {
                 if(updateBeacons){
                     questPlayer.updateBeaconLocations(player);
                 }
+                questPlayer.updateLocationCompass(player);
 
 
                 if(updateConditionObjectives){

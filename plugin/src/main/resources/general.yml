@@ -138,6 +138,8 @@ visual:
       enabled: true
       show-time: 10
       show-if-objective-is-completed: false
+    location-compass:
+      enabled: false
 gui:
   main-gui-name: 'main-base'
   npc-gui-name: 'npc-available-quests'

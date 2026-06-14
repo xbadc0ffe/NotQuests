@@ -36,6 +36,7 @@ public class Configuration {
   public boolean visualObjectiveTrackingShowProgressInActionBar = true;
   public boolean visualObjectiveTrackingShowProgressInBossBar = true;
   public boolean visualObjectiveTrackingShowProgressInBossBarIfObjectiveCompleted = false;
+  private boolean visualObjectiveTrackingLocationCompassEnabled = false;
   public int visualObjectiveTrackingBossBarTimer = 10;
 
   private String configurationVersion = "";
@@ -233,6 +234,15 @@ public class Configuration {
 
   public boolean isVisualObjectiveTrackingShowProgressInBossBarIfObjectiveCompleted() {
     return visualObjectiveTrackingShowProgressInBossBarIfObjectiveCompleted;
+  }
+
+  public boolean isVisualObjectiveTrackingLocationCompassEnabled() {
+    return visualObjectiveTrackingLocationCompassEnabled;
+  }
+
+  public void setVisualObjectiveTrackingLocationCompassEnabled(
+      boolean visualObjectiveTrackingLocationCompassEnabled) {
+    this.visualObjectiveTrackingLocationCompassEnabled = visualObjectiveTrackingLocationCompassEnabled;
   }
 
   public void setVisualObjectiveTrackingShowProgressInBossBarIfObjectiveCompleted(
