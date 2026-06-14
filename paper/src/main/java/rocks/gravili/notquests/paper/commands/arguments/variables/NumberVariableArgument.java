@@ -83,6 +83,6 @@ public final class NumberVariableArgument extends NQArgumentType<String> {
 
     @Override
     protected List<String> suggest(final CommandContext<?> context, final String remaining) {
-        return List.of();
+        return List.of("1", "2", "3", "5", "10", "25", "50", "100");
     }
 }
