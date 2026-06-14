@@ -122,7 +122,7 @@ dependencies {
     implementation("net.kyori:adventure-api:4.26.1") {}
 
     //InvUI
-    implementation("xyz.xenondevs.invui:invui:2.1.0")
+    implementation("xyz.xenondevs.invui:invui:2.1.1")
 
     implementation("com.github.retrooper:packetevents-spigot:2.12.2")
 
