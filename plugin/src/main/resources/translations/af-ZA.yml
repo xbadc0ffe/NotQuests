@@ -115,6 +115,8 @@ chat:
         base: 'Teel wesens: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Voer wesens: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Tel items op: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

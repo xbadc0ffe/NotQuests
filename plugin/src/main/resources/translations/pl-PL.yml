@@ -119,6 +119,8 @@ chat:
         base: 'Rozmnóż: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Nakarm moby: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Podnieś Przedmioty: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

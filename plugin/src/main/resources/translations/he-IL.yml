@@ -115,6 +115,8 @@ chat:
         base: 'רבה יצורים: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'האכל יצורים: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'אסוף פריטים: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

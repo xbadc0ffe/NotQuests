@@ -115,6 +115,8 @@ chat:
         base: 'Avl mobs: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Fôr mobs: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Plukk opp gjenstander: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

@@ -115,6 +115,8 @@ chat:
         base: 'Înmulțește creaturi: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Hrănește creaturi: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Ridică obiecte: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

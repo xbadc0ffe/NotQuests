@@ -68,8 +68,10 @@ import rocks.gravili.notquests.paper.structs.triggers.types.WorldLeaveTrigger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import static rocks.gravili.notquests.paper.commands.NotQuestColors.debugHighlightGradient;
 
@@ -78,6 +80,7 @@ public class QuestEvents implements Listener {
     private final NotQuests main;
 
     private final HashMap<QuestPlayer, String> beaconsToUpdate;
+    private final Set<String> playerPlacedHarvestBlocks;
 
     int beaconCounter = 0;
     int objectiveUnlockConditionCheckCounter = 0;
@@ -87,6 +90,7 @@ public class QuestEvents implements Listener {
     public QuestEvents(NotQuests main) {
         this.main = main;
         beaconsToUpdate = new HashMap<>();
+        playerPlacedHarvestBlocks = new HashSet<>();
 
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main.getMain(), () -> { //Main Loop
@@ -855,6 +859,8 @@ public class QuestEvents implements Listener {
             if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
                 return;
             }
+            final boolean playerPlacedHarvestBlock =
+                    playerPlacedHarvestBlocks.remove(blockKey(e.getBlock()));
 
             questPlayer.queueObjectiveCheck(activeObjective -> {
                 if (activeObjective.getObjective() instanceof final BreakBlocksObjective breakBlocksObjective) {
@@ -864,6 +870,13 @@ public class QuestEvents implements Listener {
                         activeObjective.addProgress(1);
                     }
 
+                }
+            });
+            questPlayer.queueObjectiveCheck(activeObjective -> {
+                if (activeObjective.getObjective() instanceof final HarvestObjective harvestObjective) {
+                    if (harvestObjective.countsHarvest(e.getBlock(), playerPlacedHarvestBlock)) {
+                        activeObjective.addProgress(1);
+                    }
                 }
             });
             questPlayer.queueObjectiveCheck(activeObjective -> {
@@ -886,6 +899,9 @@ public class QuestEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onBlockPlace(BlockPlaceEvent e) {
         if (!e.isCancelled()) {
+            if (HarvestObjective.shouldTrackAsPlayerPlacedHarvestBlock(e.getBlock())) {
+                playerPlacedHarvestBlocks.add(blockKey(e.getBlock()));
+            }
             final Player player = e.getPlayer();
             final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
             if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
@@ -939,6 +955,16 @@ public class QuestEvents implements Listener {
 
         }
 
+    }
+
+    private static String blockKey(final Block block) {
+        return block.getWorld().getUID()
+                + ":"
+                + block.getX()
+                + ":"
+                + block.getY()
+                + ":"
+                + block.getZ();
     }
 
     @EventHandler

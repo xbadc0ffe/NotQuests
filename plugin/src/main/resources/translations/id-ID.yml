@@ -115,6 +115,8 @@ chat:
         base: 'Kembangbiakkan Mob: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Beri Makan Mob: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Ambil Item: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

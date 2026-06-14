@@ -69,6 +69,7 @@ qa edit TestQuest category set TestCategory
 # ---- objectives (literal-typed) ----
 qa edit TestQuest objectives add BreakBlocks grass_block,dirt,stone 5
 qa edit TestQuest objectives add PlaceBlocks stone,cobblestone 5
+qa edit TestQuest objectives add Harvest wheat,carrot,potato,beetroot,melon,pumpkin,sugar_cane,cactus 5
 qa edit TestQuest objectives add PickupItems acacia_boat,oak_boat 5
 qa edit TestQuest objectives add ConsumeItems apple,bread 5
 qa edit TestQuest objectives add CraftItems torch,stick 5

@@ -115,6 +115,8 @@ chat:
         base: 'Cria Criatures: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Alimenta Criatures: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Recull Objectes: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

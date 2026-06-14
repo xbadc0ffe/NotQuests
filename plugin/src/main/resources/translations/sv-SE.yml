@@ -115,6 +115,8 @@ chat:
         base: 'Föd upp varelser: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Mata varelser: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Plocka upp föremål: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

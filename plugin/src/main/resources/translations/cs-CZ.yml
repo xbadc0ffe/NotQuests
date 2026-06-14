@@ -109,6 +109,8 @@ chat:
         base: 'Rozmnož zvířata: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Nakrm zvířata: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Seber itemy: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

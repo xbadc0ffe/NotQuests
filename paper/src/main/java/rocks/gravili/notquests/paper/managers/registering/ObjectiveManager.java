@@ -64,6 +64,7 @@ public class ObjectiveManager {
         registerObjective("Condition", ConditionObjective.class);
         registerObjective("BreakBlocks", BreakBlocksObjective.class);
         registerObjective("PlaceBlocks", PlaceBlocksObjective.class);
+        registerObjective("Harvest", HarvestObjective.class);
         registerObjective("PickupItems", PickupItemsObjective.class);
         registerObjective("FishItems", FishItemsObjective.class);
 

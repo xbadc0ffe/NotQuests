@@ -115,6 +115,8 @@ chat:
         base: 'Cins Yaratıklar: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Yaratıkları besle: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Teslim Alınacak Ürünler: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

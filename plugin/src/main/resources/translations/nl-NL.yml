@@ -115,6 +115,8 @@ chat:
         base: 'Fok Wezens: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Voer Wezens: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Raap Items op: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

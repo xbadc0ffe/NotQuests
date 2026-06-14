@@ -115,6 +115,8 @@ chat:
         base: 'モブ種: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'モブの餌付け: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'アイテムを拾う: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

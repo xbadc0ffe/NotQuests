@@ -115,6 +115,8 @@ chat:
         base: 'Розводити мобів: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Погодуйте мобів: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Підібрати предмети: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

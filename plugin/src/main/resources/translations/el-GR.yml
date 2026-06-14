@@ -101,6 +101,8 @@ chat:
         base: 'Αναπαραγωγή πλασμάτων: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Τάισμα πλασμάτων: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Μάζεψε αντικείμενα: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

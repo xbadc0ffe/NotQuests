@@ -133,6 +133,8 @@ chat:
         base: 'Megölt Szörnyek: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Lények etetése: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Felvett Tárgyak: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

@@ -115,6 +115,8 @@ chat:
         base: '몹 번식시키기: <main>%ENTITYTOBREED%'
       feedMobs:
         base: '몹 먹이주기: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: '아이템 줍기: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

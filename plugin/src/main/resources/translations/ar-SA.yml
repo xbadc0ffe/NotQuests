@@ -115,6 +115,8 @@ chat:
         base: 'تربية الوحوش: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'إطعام الوحوش: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'التقاط العناصر: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

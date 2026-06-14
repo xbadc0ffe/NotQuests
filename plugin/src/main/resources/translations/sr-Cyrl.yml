@@ -121,6 +121,8 @@ chat:
         base: 'Размножи створења: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Нахрани створења: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Покупи предмете: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

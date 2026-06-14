@@ -115,6 +115,8 @@ chat:
         base: '餵養生物: <main>%ENTITYTOBREED%'
       feedMobs:
         base: '餵食生物: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: '撿起物品: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)'
       consumeItems:

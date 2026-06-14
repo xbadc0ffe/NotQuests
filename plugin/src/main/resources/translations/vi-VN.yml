@@ -103,6 +103,8 @@ chat:
         base: 'Mobs giống: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Cho Mobs ăn: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Nhặt vật phẩm: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:

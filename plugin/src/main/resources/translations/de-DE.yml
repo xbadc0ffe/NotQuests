@@ -115,6 +115,8 @@ chat:
         base: 'Mobs züchten: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Mobs füttern: <main>%ENTITYTOFEED%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Items aufheben: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:
