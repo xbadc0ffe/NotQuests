@@ -48,17 +48,15 @@ public class PlaySoundAction extends Action {
             NQCommandBuilder builder,
             ActionFor actionFor) {
 
-        final NQFlag volumeFlag = NQFlag.builder("volume")
+        final NQFlag volumeFlag = NQFlag.builder("volume", NQDescription.of("Sound volume, usually between 0 and 1."))
                 .withArgument(NQArguments.doubleArgument())
-                .withDescription(NQDescription.of("Sound volume (between 0 and 1)"))
                 .build();
 
-        final NQFlag pitchFlag = NQFlag.builder("pitch")
+        final NQFlag pitchFlag = NQFlag.builder("pitch", NQDescription.of("Sound pitch multiplier used when playing the sound."))
                 .withArgument(NQArguments.doubleArgument())
-                .withDescription(NQDescription.of("Sound pitch"))
                 .build();
 
-        final NQFlag soundCategoryFlag = NQFlag.builder("SoundCategory")
+        final NQFlag soundCategoryFlag = NQFlag.builder("SoundCategory", NQDescription.of("Sound category. Default: master"))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> {
                     final List<String> completions = new ArrayList<>();
@@ -67,7 +65,6 @@ public class PlaySoundAction extends Action {
                     }
                     return completions;
                 })
-                .withDescription(NQDescription.of("Sound category. Default: master"))
                 .build();
 
         manager.command(builder.required("Sound", NQArguments.stringArgument(), NQDescription.of("Name of the sound which should be played"), (context, input) -> {
@@ -314,4 +311,3 @@ public class PlaySoundAction extends Action {
         this.soundCategory = soundCategory;
     }
 }
-

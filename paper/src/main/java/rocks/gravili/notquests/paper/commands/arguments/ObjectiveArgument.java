@@ -48,6 +48,11 @@ public final class ObjectiveArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "objective id";
+    }
+
+    @Override
     public String convert(final String input) {
         return input; // raw objective id; resolved against the prior args by resolveHolder()
     }

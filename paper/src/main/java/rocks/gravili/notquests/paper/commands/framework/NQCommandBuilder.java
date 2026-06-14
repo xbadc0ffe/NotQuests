@@ -20,6 +20,7 @@ package rocks.gravili.notquests.paper.commands.framework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -70,9 +71,9 @@ public final class NQCommandBuilder {
 
     static NQCommandBuilder root(final String name, final NQDescription description, final String... aliases) {
         return new NQCommandBuilder(
-                List.of(new Step(Kind.LITERAL, name, List.of(aliases), null, description, null)),
+                List.of(new Step(Kind.LITERAL, name, List.of(aliases), null, Objects.requireNonNull(description, "description"), null)),
                 List.of(),
-                description,
+                NQDescription.EMPTY,
                 null,
                 null,
                 null);
@@ -94,16 +95,12 @@ public final class NQCommandBuilder {
         return copy(next, flags, commandDescription, permission, senderType, handler);
     }
 
-    public NQCommandBuilder literal(final String name, final String... aliases) {
-        return withStep(new Step(Kind.LITERAL, name, List.of(aliases), null, NQDescription.EMPTY, null));
-    }
-
     public NQCommandBuilder literal(final String name, final NQDescription description, final String... aliases) {
-        return withStep(new Step(Kind.LITERAL, name, List.of(aliases), null, description, null));
+        return withStep(new Step(Kind.LITERAL, name, List.of(aliases), null, Objects.requireNonNull(description, "description"), null));
     }
 
     public NQCommandBuilder required(final String name, final NQArgumentType<?> argument, final NQDescription description) {
-        return withStep(new Step(Kind.REQUIRED, name, List.of(), argument, description, null));
+        return withStep(new Step(Kind.REQUIRED, name, List.of(), argument, Objects.requireNonNull(description, "description"), null));
     }
 
     public NQCommandBuilder required(
@@ -111,19 +108,11 @@ public final class NQCommandBuilder {
             final NQArgumentType<?> argument,
             final NQDescription description,
             final NQSuggestionProvider suggestionOverride) {
-        return withStep(new Step(Kind.REQUIRED, name, List.of(), argument, description, suggestionOverride));
-    }
-
-    public NQCommandBuilder required(final String name, final NQArgumentType<?> argument) {
-        return required(name, argument, NQDescription.EMPTY);
+        return withStep(new Step(Kind.REQUIRED, name, List.of(), argument, Objects.requireNonNull(description, "description"), suggestionOverride));
     }
 
     public NQCommandBuilder optional(final String name, final NQArgumentType<?> argument, final NQDescription description) {
-        return withStep(new Step(Kind.OPTIONAL, name, List.of(), argument, description, null));
-    }
-
-    public NQCommandBuilder optional(final String name, final NQArgumentType<?> argument) {
-        return optional(name, argument, NQDescription.EMPTY);
+        return withStep(new Step(Kind.OPTIONAL, name, List.of(), argument, Objects.requireNonNull(description, "description"), null));
     }
 
     public NQCommandBuilder flag(final NQFlag flag) {

@@ -40,6 +40,11 @@ public final class CategoryArgument extends NQArgumentType<Category> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "category name";
+    }
+
+    @Override
     public Category convert(final String input) throws CommandSyntaxException {
         for (final Category category : main.getDataManager().getCategories()) {
             if (category.getCategoryName().equalsIgnoreCase(input)) {

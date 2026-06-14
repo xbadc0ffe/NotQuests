@@ -41,9 +41,10 @@ public class AdminTagCommands {
         this.editBuilder = editBuilder;
 
         manager.command(editBuilder.commandDescription(NQDescription.of("Creates a new tag of given type"))
-                .literal("create")
-                .required("type", rocks.gravili.notquests.paper.commands.framework.NQArguments.enumArgument(TagType.class))
-                .required("name", NQArguments.stringArgument(), NQDescription.of("Tag Name"))
+                .literal("create", NQDescription.of("Creates a new player tag with the selected value type."))
+                .required("type", rocks.gravili.notquests.paper.commands.framework.NQArguments.enumArgument(TagType.class),
+                        NQDescription.of("Value type for the new tag: BOOLEAN, INTEGER, FLOAT, DOUBLE, or STRING."))
+                .required("name", NQArguments.stringArgument(), NQDescription.of("Unique name for the tag to create."))
                 .handler(commandContext -> {
                     var tagType = (TagType) commandContext.get("type");
                     var tagName = (String) commandContext.get("name");
@@ -72,7 +73,7 @@ public class AdminTagCommands {
         );
 
         manager.command(editBuilder.commandDescription(NQDescription.of("Lists all tags"))
-                .literal("list")
+                .literal("list", NQDescription.of("Lists every configured player tag."))
                 .handler((context) -> {
                     context.sender().sendMessage(main.parse("<highlight>All tags:"));
                     int counter = 1;
@@ -91,8 +92,8 @@ public class AdminTagCommands {
                 }));
 
         manager.command(editBuilder.commandDescription(NQDescription.of("Deletes an existing tag."))
-                .literal("delete", "remove")
-                .required("tag-name", NQArguments.stringArgument(), NQDescription.of("Tag Name"), (context, input) ->
+                .literal("delete", NQDescription.of("Deletes the selected player tag."), "remove")
+                .required("tag-name", NQArguments.stringArgument(), NQDescription.of("Name of the existing tag to delete."), (context, input) ->
                         main.getTagManager().getTags().stream().map(Tag::getTagName).toList())
                 .handler((context) -> {
                     final String tagName = context.get("tag-name");
@@ -117,11 +118,15 @@ public class AdminTagCommands {
                 }));
 
         final NQFlag tagCheckPlayerFlag =
-                NQFlag.builder("player").withArgument(rocks.gravili.notquests.paper.commands.framework.NQArguments.playerArgument()).build();
+                NQFlag.builder(
+                                "player",
+                                NQDescription.of("Player whose tag value should be checked; defaults to the command sender when possible."))
+                        .withArgument(rocks.gravili.notquests.paper.commands.framework.NQArguments.playerArgument())
+                        .build();
 
-        manager.command(editBuilder.commandDescription(NQDescription.of("Shows a player's current value for a tag."))
-                .literal("check")
-                .required("tag-name", NQArguments.stringArgument(), NQDescription.of("Tag Name"), (context, input) ->
+        manager.command(editBuilder.commandDescription(NQDescription.of("Displays a player's stored value for a tag."))
+                .literal("check", NQDescription.of("Displays the selected tag's stored value for a player."))
+                .required("tag-name", NQArguments.stringArgument(), NQDescription.of("Name of the tag whose stored value should be shown."), (context, input) ->
                         main.getTagManager().getTags().stream().map(Tag::getTagName).toList())
                 .flag(tagCheckPlayerFlag)
                 .handler((context) -> {

@@ -40,6 +40,11 @@ public final class ConditionArgument extends NQArgumentType<Condition> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "saved condition name";
+    }
+
+    @Override
     public Condition convert(final String input) throws CommandSyntaxException {
         final Condition foundCondition = main.getConditionsYMLManager().getCondition(input);
         if (foundCondition == null) {

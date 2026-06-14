@@ -28,11 +28,15 @@ public class OpenGuiAction extends Action {
 
     public static void handleCommands(NotQuests main, NQCommandManager manager, NQCommandBuilder builder, ActionFor actionFor) {
         manager.command(
-                builder.required("guiName", NQArguments.stringArgument(), NQDescription.of("Opens a gui for the player"))
-                        .flag(NQFlag.builder("player").withArgument(NQArguments.stringArgument()).withDescription(NQDescription.of("Target player")).build())
-                        .flag(NQFlag.builder("quest").withArgument(NQArguments.stringArgument()).build())
-                        .flag(NQFlag.builder("npc").withArgument(NQArguments.integerArgument()).build())
-                        .flag(NQFlag.builder("category").withArgument(NQArguments.stringArgument()).build())
+                builder.required("guiName", NQArguments.stringArgument(), NQDescription.of("Name of the NotQuests GUI file to open."))
+                        .flag(NQFlag.builder("player", NQDescription.of("Player who should see the GUI."))
+                                .withArgument(NQArguments.stringArgument()).build())
+                        .flag(NQFlag.builder("quest", NQDescription.of("Quest identifier used as context for quest-aware GUI placeholders and buttons."))
+                                .withArgument(NQArguments.stringArgument()).build())
+                        .flag(NQFlag.builder("npc", NQDescription.of("NPC id used as context for NPC-aware GUI placeholders and buttons."))
+                                .withArgument(NQArguments.integerArgument()).build())
+                        .flag(NQFlag.builder("category", NQDescription.of("Quest category identifier used as context for category-aware GUI placeholders and buttons."))
+                                .withArgument(NQArguments.stringArgument()).build())
 
                 .handler(commandContext -> {
                     String guiName = commandContext.get("guiName");

@@ -34,11 +34,11 @@ public class CategoryEditCommand extends BaseCommand {
 
     @Override
     public void apply(NQCommandManager commandManager) {
-        builder = builder.literal("categories")
-                .literal("edit")
+        builder = builder.literal("categories", NQDescription.of("Manages quest categories."))
+                .literal("edit", NQDescription.of("Opens subcommands for editing a quest category."))
                 .required("category", categoryArgument(notQuests), NQDescription.of("Category to edit"));
 
-        commandManager.command(builder.literal("predefinedProgressOrder")
+        commandManager.command(builder.literal("predefinedProgressOrder", NQDescription.of("Configures the predefined progress order for this category."))
                 .literal("show", NQDescription.of("Shows the current predefined order in which the quests inside this category need to be progressed for your quest."))
                 .handler((context) -> {
                     final Category category = context.get("category");
@@ -53,8 +53,8 @@ public class CategoryEditCommand extends BaseCommand {
                     ));
                 }));
 
-        commandManager.command(builder.literal("predefinedProgressOrder")
-                .literal("set")
+        commandManager.command(builder.literal("predefinedProgressOrder", NQDescription.of("Configures the predefined progress order for this category."))
+                .literal("set", NQDescription.of("Changes the quest progress order for the selected category."))
                 .literal("none", NQDescription.of("Removes predefined order in which the quests inside this category need to be progressed for your quest."))
                 .handler((context) -> {
                     final Category category = context.get("category");
@@ -66,8 +66,8 @@ public class CategoryEditCommand extends BaseCommand {
                     ));
                 }));
 
-        commandManager.command(builder.literal("predefinedProgressOrder")
-                .literal("set")
+        commandManager.command(builder.literal("predefinedProgressOrder", NQDescription.of("Configures the predefined progress order for this category."))
+                .literal("set", NQDescription.of("Changes the quest progress order for the selected category."))
                 .literal("firstToLast", NQDescription.of("Sets a predefined order in which the quests inside this category need to be progressed for your quest."))
                 .handler((context) -> {
                     final Category category = context.get("category");
@@ -79,8 +79,8 @@ public class CategoryEditCommand extends BaseCommand {
                     ));
                 }));
 
-        commandManager.command(builder.literal("predefinedProgressOrder")
-                .literal("set")
+        commandManager.command(builder.literal("predefinedProgressOrder", NQDescription.of("Configures the predefined progress order for this category."))
+                .literal("set", NQDescription.of("Changes the quest progress order for the selected category."))
                 .literal("lastToFirst", NQDescription.of("Sets a predefined order in which the quests inside this category need to be progressed for your quest."))
                 .handler((context) -> {
                     final Category category = context.get("category");
@@ -92,8 +92,8 @@ public class CategoryEditCommand extends BaseCommand {
                     ));
                 }));
 
-        commandManager.command(builder.literal("predefinedProgressOrder")
-                .literal("set")
+        commandManager.command(builder.literal("predefinedProgressOrder", NQDescription.of("Configures the predefined progress order for this category."))
+                .literal("set", NQDescription.of("Changes the quest progress order for the selected category."))
                 .literal("custom", NQDescription.of("Sets a predefined order in which the quests need to be progressed in this category."))
                 .required("order", NQArguments.greedyStringArgument(), NQDescription.of("Custom order (numbers of objective IDs separated by space)"),
                         (context, input) -> {
@@ -122,7 +122,7 @@ public class CategoryEditCommand extends BaseCommand {
                 }));
 
 
-        commandManager.command(builder.literal("displayName")
+        commandManager.command(builder.literal("displayName", NQDescription.of("Category display name shown in category GUIs and category lists. Supports MiniMessage formatting."))
                 .literal("show", NQDescription.of("Shows current Category display name."))
                 .handler((context) -> {
                     final Category category = context.get("category");
@@ -132,7 +132,7 @@ public class CategoryEditCommand extends BaseCommand {
                                     + category.getDisplayName()
                     ));
                 }));
-        commandManager.command(builder.literal("displayName")
+        commandManager.command(builder.literal("displayName", NQDescription.of("Category display name shown in category GUIs and category lists. Supports MiniMessage formatting."))
                 .literal("remove", NQDescription.of("Removes current Category display name."))
                 .handler((context) -> {
                     final Category category = context.get("category");
@@ -144,9 +144,9 @@ public class CategoryEditCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Sets the new display name of the Category."))
-                .literal("displayName")
-                .literal("set")
-                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New Category display name"),
+                .literal("displayName", NQDescription.of("Category display name shown in category GUIs and category lists. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected category's display name."))
+                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New category display name. Supports spaces and MiniMessage formatting."),
                         (context, input) -> {
                             final List<String> completions = new ArrayList<>();
 
@@ -186,7 +186,7 @@ public class CategoryEditCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Sets the item displayed in the category GUI (default: book)."))
-                .literal("guiItem")
+                .literal("guiItem", NQDescription.of("Shows or changes the item displayed in GUIs."))
                 .required("material", itemStackSelectionArgument(notQuests), NQDescription.of("Material of item displayed in the category GUI."))
                 .flag(NQFlag.presence("glow", NQDescription.of("Makes the item have the enchanted glow.")))
                 .handler((context) -> {

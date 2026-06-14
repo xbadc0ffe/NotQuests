@@ -27,7 +27,7 @@ public class ObjectiveTriggerCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("This triggers the Trigger Command which is needed to complete a TriggerObjective (don't mistake it with Triggers & actions)."))
-                .literal("triggerObjective")
+                .literal("triggerObjective", NQDescription.of("Triggers objective progress manually."))
                 .required("trigger-name", NQArguments.stringArgument(), NQDescription.of("Name of the trigger which should be triggered."), (context, input) -> {
                             final List<String> completions = new ArrayList<>();
                             for (final Quest quest : notQuests.getQuestManager().getAllQuests()) {

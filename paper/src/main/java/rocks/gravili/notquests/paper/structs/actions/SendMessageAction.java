@@ -43,7 +43,7 @@ public class SendMessageAction extends Action {
       NQCommandBuilder builder,
       ActionFor actionFor) {
     manager.command(
-        builder.required("Sending Message", NQArguments.greedyStringArgument(), NQDescription.of("Message to broadcast"))
+        builder.required("Sending Message", NQArguments.greedyStringArgument(), NQDescription.of("Message that should be sent to the target player."))
             .handler((context) -> {
                   final String messageToSend = (String) context.get("Sending Message");
                   SendMessageAction sendMessageAction = new SendMessageAction(main);

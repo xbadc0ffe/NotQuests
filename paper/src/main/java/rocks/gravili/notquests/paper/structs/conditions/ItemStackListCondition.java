@@ -79,14 +79,18 @@ public class ItemStackListCondition extends Condition {
             }
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("List operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to compare the " + variableString + " item-list variable with the supplied item expression."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("equals");
                         completions.add("contains");
                         return completions;
                     })
-                    .required("expression", itemStackListVariableArgument("expression", variable), NQDescription.of("Expression"))
-                    .required("amount", NQArguments.integerArgument(), NQDescription.of("Amount of items"))
+                    .required("expression", itemStackListVariableArgument("expression", variable),
+                            NQDescription.of("Item or item-list expression to compare with the current " + variableString + " value."))
+                    .required("amount", NQArguments.integerArgument(),
+                            NQDescription.of("Required stack amount for each item in this item-list condition."))
                     .handler((context) -> {
 
                         final String expression = context.get("expression");

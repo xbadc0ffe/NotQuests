@@ -45,6 +45,11 @@ public final class MultiActionsArgument extends NQArgumentType<ActionList> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "comma-separated saved action names";
+    }
+
+    @Override
     public ArgumentType<String> getNativeType() {
         return StringArgumentType.greedyString();
     }

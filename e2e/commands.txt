@@ -121,6 +121,7 @@ qa variables check RandomNumberBetweenRange 1 10
 qa variables check Block world 100 64 100
 qa conditions check WorldTime 0 12000
 qa edit TestQuest objectives list
+qa debug exportCommandSchema
 qa list
 qa actions
 qa conditions

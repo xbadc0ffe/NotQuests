@@ -48,6 +48,11 @@ public final class EntityTypeArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return mythicMobsFactions ? "entity type, any, or MythicMobs faction" : "entity type or any";
+    }
+
+    @Override
     public String convert(final String input) throws CommandSyntaxException {
         if (mythicMobsFactions
                 && main.getIntegrationsManager().isMythicMobsEnabled()

@@ -50,6 +50,11 @@ public final class QuestArgument extends NQArgumentType<Quest> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "quest name";
+    }
+
+    @Override
     public Quest convert(final String input) throws CommandSyntaxException {
         final Quest foundQuest = main.getQuestManager().getQuest(input);
         if (foundQuest == null) {

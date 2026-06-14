@@ -16,7 +16,7 @@ public class ReloadCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Loads from the NotQuests configuration file."))
-                .literal("reload", "load")
+                .literal("reload", NQDescription.of("Reloads NotQuests data or configuration."), "load")
                 .handler((context) -> {
 
                     notQuests.getDataManager().loadGeneralConfig();
@@ -31,8 +31,8 @@ public class ReloadCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Reload the general.yml."))
-                .literal("reload", "load")
-                .literal("general.yml")
+                .literal("reload", NQDescription.of("Reloads NotQuests data or configuration."), "load")
+                .literal("general.yml", NQDescription.of("Reloads the main general.yml configuration file."))
                 .handler((context) -> {
                     notQuests.getDataManager().loadGeneralConfig();
                     context.sender().sendMessage(Component.empty());
@@ -40,8 +40,8 @@ public class ReloadCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Reload the languages from conversations files."))
-                .literal("reload", "load")
-                .literal("languages")
+                .literal("reload", NQDescription.of("Reloads NotQuests data or configuration."), "load")
+                .literal("languages", NQDescription.of("Reloads translation and language files."))
                 .handler((context) -> {
                     notQuests.getLanguageManager().loadLanguageConfig(false);
                     context.sender().sendMessage(Component.empty());
@@ -49,8 +49,8 @@ public class ReloadCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Reload the conversations from conversations files."))
-                .literal("reload", "load")
-                .literal("conversations")
+                .literal("reload", NQDescription.of("Reloads NotQuests data or configuration."), "load")
+                .literal("conversations", NQDescription.of("Manages conversations and their NPC attachments."))
                 .handler((context) -> {
                     if (notQuests.getConversationManager() != null) {
                         notQuests.getConversationManager().loadConversationsFromConfig();

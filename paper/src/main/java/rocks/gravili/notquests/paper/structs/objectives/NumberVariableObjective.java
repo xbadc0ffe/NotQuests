@@ -61,7 +61,9 @@ public class NumberVariableObjective extends Objective { // TODO: Not done yet
             }
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, addObjectiveBuilder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("Math operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to compare the " + variableString + " number variable against the target expression."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("equals");
                         completions.add("lessThan");
@@ -71,9 +73,10 @@ public class NumberVariableObjective extends Objective { // TODO: Not done yet
 
                         return completions;
                     })
-                    .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount"))
+                    .required("amount", numberVariableArgument("amount", null),
+                            NQDescription.of("Target number expression this " + variableString + " objective must reach."))
 
-                    .flag(NQFlag.builder("checkOnlyWhenCorrespondingVariableValueChanged").withDescription(NQDescription.of("This checks this objective only, when the corresponding variable value is changed via an action, instead of checking every x seconds.")).build())
+                    .flag(NQFlag.builder("checkOnlyWhenCorrespondingVariableValueChanged", NQDescription.of("This checks this objective only, when the corresponding variable value is changed via an action, instead of checking every x seconds.")).build())
                     .handler((context) -> {
                         String amountExpression = context.get("amount");
 

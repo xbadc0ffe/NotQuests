@@ -173,12 +173,17 @@ public class VariablesManager {
             }
 
 
-            final rocks.gravili.notquests.paper.commands.framework.NQFlag playerSelectorCommandFlag = rocks.gravili.notquests.paper.commands.framework.NQFlag.builder("player").withArgument(rocks.gravili.notquests.paper.commands.framework.NQArguments.playerArgument()).withDescription(NQDescription.of("Target player")).build();
+            final rocks.gravili.notquests.paper.commands.framework.NQFlag playerSelectorCommandFlag =
+                    rocks.gravili.notquests.paper.commands.framework.NQFlag.builder(
+                                    "player",
+                                    NQDescription.of("Player whose current variable value should be checked; defaults to the command sender when possible."))
+                            .withArgument(rocks.gravili.notquests.paper.commands.framework.NQArguments.playerArgument())
+                            .build();
 
 
             final NQCommandBuilder variableCheckCommandBuilder = main.getCommandManager().getAdminCommandBuilder()
-                    .literal("variables", "variable")
-                    .literal("check");
+                    .literal("variables", NQDescription.of("Evaluates NotQuests variables for a player or the command sender."), "variable")
+                    .literal("check", NQDescription.of("Displays a NotQuests variable's value for a player or the command sender."));
 
 
             main.getCommandManager().getNQCommandManager().command(registerVariableCommands(variableString, variableCheckCommandBuilder)
@@ -253,37 +258,72 @@ public class VariablesManager {
     public NQCommandBuilder registerVariableCommands(
             String variableString, NQCommandBuilder builder) {
         NQCommandBuilder newBuilder =
-                builder.literal(variableString, NQDescription.of("Variable Name"));
+                builder.literal(variableString, NQDescription.of("Selects the " + variableString + " variable for this action, condition, objective, or variable check."));
 
         Variable<?> variable = getVariableFromString(variableString);
         if (variable != null) {
-            // Descriptions left empty so the fancy completion bar falls back to each argument's own
-            // identifier (e.g. "TagName", "Block", "Field") — far more useful than the old generic,
-            // and incorrect ("Optional"), labels. These are all required() arguments.
             if (variable.getRequiredStrings() != null) {
                 for (StringVariableValueParser<CommandSender> stringParser : variable.getRequiredStrings()) {
-                    newBuilder = newBuilder.required(stringParser.getIdentifier(), stringVariableArgument(stringParser.getIdentifier(), variable), NQDescription.EMPTY);
+                    newBuilder = newBuilder.required(
+                            stringParser.getIdentifier(),
+                            stringVariableArgument(stringParser.getIdentifier(), variable),
+                            variableArgumentDescription(variableString, stringParser.getIdentifier(), "text"));
                 }
             }
             if (variable.getRequiredNumbers() != null) {
                 for (NumberVariableValueParser<CommandSender> numberParser : variable.getRequiredNumbers()) {
                     // Positional (non-greedy): these required numbers (e.g. a Block variable's x/y/z)
                     // are followed by further arguments, so they must not greedily swallow the rest.
-                    newBuilder = newBuilder.required(numberParser.getIdentifier(), numberVariableArgument(numberParser.getIdentifier(), variable, false), NQDescription.EMPTY);
+                    newBuilder = newBuilder.required(
+                            numberParser.getIdentifier(),
+                            numberVariableArgument(numberParser.getIdentifier(), variable, false),
+                            variableArgumentDescription(variableString, numberParser.getIdentifier(), "number"));
                 }
             }
             if (variable.getRequiredBooleans() != null) {
                 for (BooleanVariableValueParser<CommandSender> booleanParser : variable.getRequiredBooleans()) {
-                    newBuilder = newBuilder.required(booleanParser.getIdentifier(), booleanVariableArgument(booleanParser.getIdentifier(), variable, false), NQDescription.EMPTY);
+                    newBuilder = newBuilder.required(
+                            booleanParser.getIdentifier(),
+                            booleanVariableArgument(booleanParser.getIdentifier(), variable, false),
+                            variableArgumentDescription(variableString, booleanParser.getIdentifier(), "boolean expression"));
                 }
             }
             if (variable.getRequiredBooleanFlags() != null) {
                 for (rocks.gravili.notquests.paper.commands.framework.NQFlag commandFlag : variable.getRequiredBooleanFlags()) {
-                    newBuilder = newBuilder.flag(rocks.gravili.notquests.paper.commands.framework.NQFlag.presence(commandFlag.name(), NQDescription.EMPTY));
+                    final NQDescription description = commandFlag.description().isEmpty()
+                            ? NQDescription.of("Optional toggle for the " + variableString + " variable: " + commandFlag.name() + ".")
+                            : commandFlag.description();
+                    newBuilder = newBuilder.flag(rocks.gravili.notquests.paper.commands.framework.NQFlag.presence(commandFlag.name(), description));
                 }
             }
         }
         return newBuilder;
+    }
+
+    private NQDescription variableArgumentDescription(
+            final String variableString, final String identifier, final String valueKind) {
+        final String normalized = identifier.toLowerCase(java.util.Locale.ROOT);
+        final String description = switch (normalized) {
+            case "tagname" -> "Name of the NotQuests tag used by " + variableString + ". Tab-completion only shows tags with the matching value type.";
+            case "class path" -> "Fully qualified Java class name that contains the static field read by " + variableString + ".";
+            case "field" -> "Name of the static field read from the configured class.";
+            case "quest to check", "questname" -> "Quest identifier whose state should be checked by the " + variableString + " variable.";
+            case "world" -> "World name used for the location lookup.";
+            case "x" -> "X coordinate used for the location lookup.";
+            case "y" -> "Y coordinate used for the location lookup.";
+            case "z" -> "Z coordinate used for the location lookup.";
+            case "statistic" -> "Minecraft statistic key to read for this player, such as MOB_KILLS or JUMP.";
+            case "advancement" -> "Minecraft advancement key to check, for example minecraft:story/mine_stone.";
+            case "conditions" -> "Name of the condition list to evaluate for this variable.";
+            case "itemslot" -> "Inventory slot to inspect. Use the slot names suggested by tab-completion.";
+            case "permission" -> "Permission node to check on the target player.";
+            case "placeholder" -> "PlaceholderAPI placeholder to resolve for the target player.";
+            case "chance" -> "Chance percentage to evaluate, from 0 to 100.";
+            case "min" -> "Minimum number in the accepted range.";
+            case "max" -> "Maximum number in the accepted range.";
+            default -> "Required " + valueKind + " parameter for the " + variableString + " variable.";
+        };
+        return NQDescription.of(description);
     }
 
     public void registerVariable(

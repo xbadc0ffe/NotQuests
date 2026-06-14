@@ -14,6 +14,8 @@ import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.commands.framework.NQFlag;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static rocks.gravili.notquests.paper.commands.arguments.LocationArgument.locationArgument;
@@ -40,16 +42,16 @@ public class DebugCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Clears your own chat"))
-                .literal("debug")
-                .literal("clearOwnChat")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("clearOwnChat", NQDescription.of("Clears the command sender's chat for debugging."))
                 .handler((context) -> {
                     final Component componentToSend = Component.text("").append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline()).append(Component.newline());
                     context.sender().sendMessage(componentToSend);
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you information about the current world"))
-                .literal("debug")
-                .literal("worldInfo")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("worldInfo", NQDescription.of("Shows debug information about the current world."))
                 .senderType(Player.class)
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
@@ -63,8 +65,8 @@ public class DebugCommand extends BaseCommand {
 
 
         commandManager.command(builder.commandDescription(NQDescription.of("Calls the dataManager.reloadData() method. This starts loading all Config-, Quest-, and Player Data. Reload = Load"))
-                .literal("debug")
-                .literal("loadDataManagerUnsafe")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("loadDataManagerUnsafe", NQDescription.of("Debug command that reloads the data manager unsafely."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(notQuests.parse(
@@ -78,8 +80,8 @@ public class DebugCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Disables NotQuests, saving & loading"))
-                .literal("debug")
-                .literal("disablePluginAndSaving")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("disablePluginAndSaving", NQDescription.of("Debug command that disables plugin saving."))
                 .required("reason", NQArguments.stringArgument(), NQDescription.of("Reason for disabling the plugin"))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
@@ -100,8 +102,8 @@ public class DebugCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows the current errors and warnings NotQuests collected"))
-                .literal("debug")
-                .literal("showErrorsAndWarnings")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("showErrorsAndWarnings", NQDescription.of("Shows collected NotQuests errors and warnings."))
                 .flag(NQFlag.presence("printToConsole", NQDescription.of("Prints the output to the console")))
                 .handler((context) -> {
                     final boolean printToConsole = context.flags().contains("printToConsole");
@@ -121,9 +123,25 @@ public class DebugCommand extends BaseCommand {
                     }
                 }));
 
+        commandManager.command(builder.commandDescription(NQDescription.of("Exports the generated command schema as JSON."))
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("exportCommandSchema", NQDescription.of("Exports the native command schema used by docs and E2E tests."))
+                .handler((context) -> {
+                    try {
+                        final Path output = commandManager.exportCommandSchema();
+                        notQuests.sendMessage(
+                                context.sender(),
+                                "<success>Command schema exported to <highlight>" + output + "</highlight>");
+                    } catch (final IOException e) {
+                        notQuests.sendMessage(
+                                context.sender(),
+                                "<error>Could not export command schema: " + e.getMessage());
+                    }
+                }));
+
         commandManager.command(builder.commandDescription(NQDescription.of("Enables NotQuests, saving & loading"))
-                .literal("debug")
-                .literal("enablePluginAndSaving")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("enablePluginAndSaving", NQDescription.of("Debug command that re-enables plugin saving."))
                 .required("reason", NQArguments.stringArgument(), NQDescription.of("Reason for enabling the plugin"))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
@@ -144,8 +162,8 @@ public class DebugCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("You can probably ignore this."))
-                .literal("debug")
-                .literal("testcommand")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("testcommand", NQDescription.of("Runs a NotQuests debug test command."))
                 .senderType(Player.class)
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
@@ -170,8 +188,8 @@ public class DebugCommand extends BaseCommand {
 
 
         commandManager.command(builder.commandDescription(NQDescription.of("You can probably ignore this."))
-                .literal("debug")
-                .literal("testcommand2")
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("testcommand2", NQDescription.of("Runs a secondary NotQuests debug test command."))
                 .senderType(Player.class)
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
@@ -196,11 +214,11 @@ public class DebugCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Spawns a beacon beam"))
-                .literal("debug")
-                .literal("beaconBeam")
-                .required("player", NQArguments.playerArgument(), NQDescription.of("Player name"))
-                .required("location-name", NQArguments.stringArgument(), NQDescription.of("Location name"))
-                .required("location", locationArgument())
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("beaconBeam", NQDescription.of("Debugs or previews a beacon beam."))
+                .required("player", NQArguments.playerArgument(), NQDescription.of("Player who should see the debug beacon beam."))
+                .required("location-name", NQArguments.stringArgument(), NQDescription.of("Temporary debug name used to identify this beacon beam location."))
+                .required("location", locationArgument(), NQDescription.of("World and coordinates where the debug beacon beam should appear."))
                 .handler((context) -> {
                     final Player player = context.get("player");
                     final String locationName = context.get("location-name");

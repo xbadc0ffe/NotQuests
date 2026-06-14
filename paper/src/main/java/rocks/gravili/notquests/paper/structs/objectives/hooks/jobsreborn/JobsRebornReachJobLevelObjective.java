@@ -68,7 +68,7 @@ public class JobsRebornReachJobLevelObjective extends Objective {
                     return completions;
                 })
                 .required("level", numberVariableArgument("level", null), NQDescription.of("Job level which needs to be reached"))
-                .flag(NQFlag.builder("doNotCountPreviousLevels").withDescription(NQDescription.of("Makes it so only additional levels gained from the time of unlocking this Objective will count (and previous/existing counts will not count, so it starts from zero)")).build())
+                .flag(NQFlag.builder("doNotCountPreviousLevels", NQDescription.of("Only count job levels gained after this objective unlocks; existing levels do not count.")).build())
                 .handler((context) -> {
                     final String amountExpression = context.get("level");
                     final boolean countPreviousLevels = !context.flags().isPresent("doNotCountPreviousLevels");

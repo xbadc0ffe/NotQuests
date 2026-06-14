@@ -75,7 +75,9 @@ public class ListCondition extends Condition {
             }
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("List operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to compare the " + variableString + " list variable with the supplied expression."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("equals");
                         completions.add("equalsIgnoreCase");
@@ -83,7 +85,8 @@ public class ListCondition extends Condition {
                         completions.add("containsIgnoreCase");
                         return completions;
                     })
-                    .required("expression", listVariableArgument("expression", variable), NQDescription.of("Expression"))
+                    .required("expression", listVariableArgument("expression", variable),
+                            NQDescription.of("List value or expression to compare with the current " + variableString + " value."))
                     .handler((context) -> {
 
                         final String expression = context.get("expression");

@@ -41,6 +41,11 @@ public final class LocationArgument extends NQArgumentType<Location> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "location as x,y,z or world,x,y,z";
+    }
+
+    @Override
     public Location convert(final String input) throws CommandSyntaxException {
         final String[] parts = input.trim().split(",");
         try {

@@ -53,6 +53,11 @@ public final class ItemStackSelectionArgument extends NQArgumentType<ItemStackSe
         return new ItemStackSelectionArgument(main);
     }
 
+    @Override
+    public String valueTypeName() {
+        return "material, custom item, hand, any, or comma-separated materials";
+    }
+
     // An item selection is a comma-separated run of materials/NotQuests-items (e.g.
     // "grass_block,acacia_boat", plus the "hand"/"any" keywords). A comma is NOT a legal character
     // in Brigadier's vanilla single-token string parser, so the client can mark comma selections red

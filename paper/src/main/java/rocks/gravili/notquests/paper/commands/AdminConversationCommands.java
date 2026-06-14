@@ -72,8 +72,8 @@ public class AdminConversationCommands {
         this.conversationManager = conversationManager;
 
         manager.command(conversationBuilder
-                .literal("create")
-                .required("conversation-name", NQArguments.stringArgument(), NQDescription.of("conversation-name"), (context, input) -> {
+                .literal("create", NQDescription.of("Creates a new conversation file."))
+                .required("conversation-name", NQArguments.stringArgument(), NQDescription.of("Unique file/name for the new conversation."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<Enter new conversation-name>");
                     return completions;
@@ -154,7 +154,7 @@ public class AdminConversationCommands {
 
         if (main.getConfiguration().debug) {
             manager.command(conversationBuilder
-                    .literal("test")
+                    .literal("test", NQDescription.of("Runs a conversation test."))
                     .senderType(Player.class).commandDescription(NQDescription.of("Starts a test conversation."))
                     .handler((context) -> {
                         final Player player = (Player) context.sender();
@@ -164,7 +164,7 @@ public class AdminConversationCommands {
         }
 
         manager.command(conversationBuilder
-                .literal("list").commandDescription(NQDescription.of("Lists all conversations."))
+                .literal("list", NQDescription.of("Lists every saved conversation.")).commandDescription(NQDescription.of("Lists all conversations."))
                 .handler((context) -> {
                     context.sender().sendMessage(main.parse("<highlight>All conversations:"));
                     int counter = 1;
@@ -176,7 +176,7 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationBuilder
-                .literal("analyze")
+                .literal("analyze", NQDescription.of("Runs conversation analysis checks."))
                 .required("conversation", conversationArgument(main), NQDescription.of("Name of the Conversation."))
                 .flag(NQFlag.presence("printToConsole", NQDescription.of("Prints the output to the console"))).commandDescription(NQDescription.of("Analyze specific conversations."))
                 .handler((context) -> {
@@ -195,7 +195,7 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationBuilder
-                .literal("start")
+                .literal("start", NQDescription.of("Starts the selected conversation."))
                 .required("conversation", conversationArgument(main), NQDescription.of("Name of the Conversation."))
                 .senderType(Player.class).commandDescription(NQDescription.of("Starts a conversation."))
                 .handler((context) -> {
@@ -209,12 +209,12 @@ public class AdminConversationCommands {
                             foundConversation, null);
                 }));
 
-        final NQCommandBuilder conversationEditBuilder = conversationBuilder.literal("edit")
+        final NQCommandBuilder conversationEditBuilder = conversationBuilder.literal("edit", NQDescription.of("Opens subcommands for editing a saved conversation."))
                 .required("conversation", conversationArgument(main), NQDescription.of("Name of the Conversation."));
 
         manager.command(conversationEditBuilder
-                .literal("npcs")
-                .literal("add")
+                .literal("npcs", NQDescription.of("Manages NPCs attached to this quest or conversation."))
+                .literal("add", NQDescription.of("Attaches the selected conversation to an NPC or armor stand."))
                 .required("NPC", nqNPCArgument(main, false, true), NQDescription.of("ID of the NPC which should start the conversation")).commandDescription(NQDescription.of("Add conversation to NPC"))
                 .handler((context) -> {
                     final Conversation foundConversation = context.get("conversation");
@@ -260,8 +260,8 @@ public class AdminConversationCommands {
 
         //TODO: Generalize with an npc remove command
         manager.command(conversationEditBuilder
-                .literal("armorstand")
-                .literal("remove", "delete")
+                .literal("armorstand", NQDescription.of("Uses an armor stand selector/removal tool."))
+                .literal("remove", NQDescription.of("Gives a player the tool used to remove conversations from an armor stand."), "delete")
                 .senderType(Player.class).commandDescription(NQDescription.of("Gives you an item to remove all conversations from an armorstand"))
                 .handler((context) -> {
                     final Player player = (Player) context.sender();
@@ -296,9 +296,9 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationEditBuilder
-                .literal("speakers")
-                .literal("add", "create")
-                .required("speaker-name", NQArguments.stringArgument(), NQDescription.of("Speaker Name"), (context, input) -> {
+                .literal("speakers", NQDescription.of("Manages speakers used by conversation lines."))
+                .literal("add", NQDescription.of("Creates a new speaker for the selected conversation."), "create")
+                .required("speaker-name", NQArguments.stringArgument(), NQDescription.of("Unique speaker identifier used by conversation lines and speaker options."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<Enter new Speaker Name>");
                     return completions;
@@ -333,8 +333,8 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationEditBuilder
-                .literal("speakers")
-                .literal("list", "show").commandDescription(NQDescription.of("Adds / creates a new speaker for the conversation."))
+                .literal("speakers", NQDescription.of("Manages speakers used by conversation lines."))
+                .literal("list", NQDescription.of("Lists every speaker in the selected conversation."), "show").commandDescription(NQDescription.of("Lists every speaker in the conversation."))
                 .handler((context) -> {
                     final Conversation foundConversation = context.get("conversation");
 
@@ -363,9 +363,11 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationEditBuilder
-                .literal("speakers")
-                .literal("remove", "delete")
-                .required("speaker", speakerArgument(main, "conversation")).commandDescription(NQDescription.of("Adds / creates a new speaker for the conversation."))
+                .literal("speakers", NQDescription.of("Manages speakers used by conversation lines."))
+                .literal("remove", NQDescription.of("Removes a speaker from the selected conversation."), "delete")
+                .required("speaker", speakerArgument(main, "conversation"),
+                        NQDescription.of("Speaker identifier to remove from this conversation."))
+                .commandDescription(NQDescription.of("Removes a speaker from the conversation."))
                 .handler((context) -> {
                     final Conversation foundConversation = context.get("conversation");
 
@@ -390,8 +392,8 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationEditBuilder
-                .literal("category")
-                .literal("show").commandDescription(NQDescription.of("Shows the current category of this Conversation.."))
+                .literal("category", NQDescription.of("Shows or changes the category assigned to the selected conversation."))
+                .literal("show", NQDescription.of("Shows the category currently assigned to the selected conversation.")).commandDescription(NQDescription.of("Shows the current category of this Conversation.."))
                 .handler((context) -> {
                     final Conversation conversation = context.get("conversation");
                     context.sender().sendMessage(main.parse(
@@ -404,8 +406,8 @@ public class AdminConversationCommands {
                 }));
 
         manager.command(conversationEditBuilder
-                .literal("category")
-                .literal("set")
+                .literal("category", NQDescription.of("Shows or changes the category assigned to the selected conversation."))
+                .literal("set", NQDescription.of("Moves the selected conversation into another category."))
                 .required("category", categoryArgument(main), NQDescription.of("New category for this Conversation.")).commandDescription(NQDescription.of("Changes the current category of this Conversation."))
                 .handler((context) -> {
                     final Conversation conversation = context.get("conversation");
@@ -450,10 +452,10 @@ public class AdminConversationCommands {
     }
 
     public void handleLinesCommands() {
-        /*manager.command(conversationBuilder.literal("edit")
+        /*manager.command(conversationBuilder.literal("edit", NQDescription.of("Opens subcommands for editing a saved conversation."))
         .argument(ConversationSelector.of("conversation", main), Description.of("Name of the Conversation."))
-        .literal("lines")
-        .literal("add", "create")
+        .literal("lines", NQDescription.of("Manages conversation lines."))
+        .literal("add", NQDescription.of("Adds a new line to the selected conversation."), "create")
         .meta(CommandMeta.DESCRIPTION, "Creates a line for a conversation.")
         .handler((context) -> {
             final Audience audience = main.adventure().sender(context.sender());

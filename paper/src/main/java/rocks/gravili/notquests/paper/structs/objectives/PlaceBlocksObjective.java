@@ -53,7 +53,7 @@ public class PlaceBlocksObjective extends Objective {
         manager.command(addObjectiveBuilder
                 .required("materials", itemStackSelectionArgument(main), NQDescription.of("Material of the block which needs to be placed"))
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of blocks which need to be placed"))
-                .flag(NQFlag.builder("doNotDeductIfBlockIsBroken").withDescription(NQDescription.of("Makes it so Quest progress is not removed if the block is broken")).build())
+                .flag(NQFlag.builder("doNotDeductIfBlockIsBroken", NQDescription.of("Makes it so Quest progress is not removed if the block is broken")).build())
                 .handler((context) -> {
                     final String amountExpression = context.get("amount");
                     final boolean deductIfBlockIsBroken =

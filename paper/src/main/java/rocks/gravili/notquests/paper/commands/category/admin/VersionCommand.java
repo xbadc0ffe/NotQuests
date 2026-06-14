@@ -18,7 +18,7 @@ public class VersionCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Displays the version of the NotQuests plugin you're using."))
-                .literal("version", "ver", "v", "info")
+                .literal("version", NQDescription.of("Shows the installed NotQuests version."), "ver", "v", "info")
                 .handler((context) -> context.sender().sendMessage(notQuests.parse("<main>NotQuests version: <highlight>" + notQuests.getMain().getDescription().getVersion() +
                                         "\n<main>NotQuests module: <highlight>Paper" +
                                         "\n<main>Server version: <highlight>" + Bukkit.getVersion() +

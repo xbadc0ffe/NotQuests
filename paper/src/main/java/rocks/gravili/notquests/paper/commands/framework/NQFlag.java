@@ -18,6 +18,8 @@
 
 package rocks.gravili.notquests.paper.commands.framework;
 
+import java.util.Objects;
+
 /**
  * A command flag — our replacement for Cloud's {@code CommandFlag}. Brigadier has no native flag
  * concept, so {@link NQCommandManager} models a command's flags as a single optional trailing greedy
@@ -48,8 +50,8 @@ public final class NQFlag {
         return new NQFlag(name, null, description, null);
     }
 
-    public static Builder builder(final String name) {
-        return new Builder(name);
+    public static Builder builder(final String name, final NQDescription description) {
+        return new Builder(name, description);
     }
 
     public String name() {
@@ -75,21 +77,17 @@ public final class NQFlag {
     public static final class Builder {
         private final String name;
         private NQArgumentType<?> valueArgument;
-        private NQDescription description = NQDescription.EMPTY;
+        private final NQDescription description;
         private NQSuggestionProvider valueSuggestions;
 
-        private Builder(final String name) {
+        private Builder(final String name, final NQDescription description) {
             this.name = name;
+            this.description = Objects.requireNonNull(description, "description");
         }
 
         /** Make this a value flag backed by the given argument type. */
         public Builder withArgument(final NQArgumentType<?> valueArgument) {
             this.valueArgument = valueArgument;
-            return this;
-        }
-
-        public Builder withDescription(final NQDescription description) {
-            this.description = description;
             return this;
         }
 

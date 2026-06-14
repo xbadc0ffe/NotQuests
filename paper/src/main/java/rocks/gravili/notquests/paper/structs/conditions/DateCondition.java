@@ -55,41 +55,38 @@ public class DateCondition extends Condition {
             NQCommandManager manager,
             NQCommandBuilder builder,
             ConditionFor conditionFor) {
-        final NQFlag year = NQFlag.builder("year")
+        final NQFlag year = NQFlag.builder("year", NQDescription.of("Year that must match for this date condition."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter year."))
                 .build();
-        final NQFlag month = NQFlag.builder("month")
+        final NQFlag month = NQFlag.builder("month", NQDescription.of("Month that must match for this date condition."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter month."))
                 .build();
-        final NQFlag day = NQFlag.builder("day")
+        final NQFlag day = NQFlag.builder("day", NQDescription.of("Day of month that must match for this date condition."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter day."))
                 .build();
-        final NQFlag hours = NQFlag.builder("hours")
+        final NQFlag hours = NQFlag.builder("hours", NQDescription.of("Hour that must match for this date condition."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter hours."))
                 .build();
 
-        final NQFlag minutes = NQFlag.builder("minutes")
+        final NQFlag minutes = NQFlag.builder("minutes", NQDescription.of("Minute that must match for this date condition."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter minutes."))
                 .build();
 
-        final NQFlag seconds = NQFlag.builder("seconds")
+        final NQFlag seconds = NQFlag.builder("seconds", NQDescription.of("Second that must match for this date condition."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter seconds."))
                 .build();
 
-        final NQFlag timeZone = NQFlag.builder("timeZone")
+        final NQFlag timeZone = NQFlag.builder("timeZone", NQDescription.of("Time zone used when evaluating the date condition."))
                 .withArgument(NQArguments.stringArgument())
-                .withDescription(NQDescription.of("Enter timezone."))
                 .withSuggestions((context, input) ->
                         Arrays.stream(TimeZone.getAvailableIDs()).toList())
                 .build();
 
-        manager.command(builder.required("Date operation", NQArguments.stringArgument(), NQDescription.of("Date operation"), (context, input) -> {
+        manager.command(builder.required(
+                        "Date operation",
+                        NQArguments.stringArgument(),
+                        NQDescription.of("Whether the current date/time must be before or after the configured values."),
+                        (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("after");
                     completions.add("before");

@@ -16,8 +16,8 @@ public class CategoryListCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Lists all categories."))
-                .literal("categories")
-                .literal("list")
+                .literal("categories", NQDescription.of("Manages quest categories."))
+                .literal("list", NQDescription.of("Lists every quest category."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(notQuests.parse("<highlight>All categories:"));

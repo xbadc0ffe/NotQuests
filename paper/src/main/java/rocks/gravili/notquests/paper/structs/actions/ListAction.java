@@ -78,7 +78,9 @@ public class ListAction extends Action {
 
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("Operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to change the " + variableString + " list variable: set, add, remove, or clear."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("set");
                         completions.add("add");
@@ -86,7 +88,8 @@ public class ListAction extends Action {
                         completions.add("clear");
                         return completions;
                     })
-                    .required("expression", listVariableArgument("expression", variable), NQDescription.of("Expression"))
+                    .required("expression", listVariableArgument("expression", variable),
+                            NQDescription.of("List value or expression used by this " + variableString + " action."))
                     .handler((context) -> {
                         final String expression = context.get("expression");
                         final String operator = context.get("operator");

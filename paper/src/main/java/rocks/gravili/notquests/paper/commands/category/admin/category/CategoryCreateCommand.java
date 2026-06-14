@@ -18,7 +18,7 @@ public class CategoryCreateCommand extends BaseCommand {
 
     @Override
     public void apply(NQCommandManager commandManager) {
-        builder = builder.literal("categories").literal("create");
+        builder = builder.literal("categories", NQDescription.of("Manages quest categories.")).literal("create", NQDescription.of("Creates a new quest category."));
 
         commandManager.command(builder.required("categoryName", NQArguments.stringArgument(), NQDescription.of("Name of your new category"), (context, input) -> {
                             final List<String> suggestions = new ArrayList<>();

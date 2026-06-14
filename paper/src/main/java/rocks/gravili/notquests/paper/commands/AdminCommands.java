@@ -103,8 +103,8 @@ public class AdminCommands {
     public void handleDebugCommands() {
 
 
-       /* manager.command(builder.literal("debug")
-                .literal("beaconBeamAdvanced")
+       /* manager.command(builder.literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("beaconBeamAdvanced", NQDescription.of("Runs advanced beacon beam debugging."))
                 .argument(WorldArgument.of("world"), Description.of("World name"))
                 .argument(IntegerArgument.newBuilder("x"), Description.of("X coordinate"))
                 .argument(IntegerArgument.newBuilder("y"), Description.of("Y coordinate"))
@@ -265,9 +265,9 @@ public class AdminCommands {
     }
 
     public void handleQuestPoints() {
-        manager.command(builder.literal("questpoints")
+        manager.command(builder.literal("questpoints", NQDescription.of("Shows or changes a player's quest points."))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player whose questpoints you want to see."))
-                .literal("show", "view")
+                .literal("show", NQDescription.of("Shows the selected player's current quest points."), "view")
                 .commandDescription(NQDescription.of("Shows questpoints of a player"))
                 .handler((context) -> {
                     final Player playerSelector = context.get("player");
@@ -295,9 +295,9 @@ public class AdminCommands {
                 }));
 
 
-        manager.command(builder.literal("questpoints")
+        manager.command(builder.literal("questpoints", NQDescription.of("Shows or changes a player's quest points."))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player to whom you want to add questpoints to."))
-                .literal("add")
+                .literal("add", NQDescription.of("Adds quest points to the selected player."))
                 .required("amount", NQArguments.integerArgument(), NQDescription.of("Amount of questpoints to add"))
                 .commandDescription(NQDescription.of("Add questpoints to a player"))
                 .handler((context) -> {
@@ -321,9 +321,9 @@ public class AdminCommands {
                     }
                 }));
 
-        manager.command(builder.literal("questpoints")
+        manager.command(builder.literal("questpoints", NQDescription.of("Shows or changes a player's quest points."))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player of whom you want to remove questpoints from."))
-                .literal("remove", "deduct")
+                .literal("remove", NQDescription.of("Removes quest points from the selected player."), "deduct")
                 .required("amount", NQArguments.integerArgument(), NQDescription.of("Amount of questpoints to remove"))
                 .commandDescription(NQDescription.of("Remove questpoints from a player"))
                 .handler((context) -> {
@@ -349,9 +349,9 @@ public class AdminCommands {
                 }));
 
 
-        manager.command(builder.literal("questpoints")
+        manager.command(builder.literal("questpoints", NQDescription.of("Shows or changes a player's quest points."))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player whose questpoints amount you want to change."))
-                .literal("set")
+                .literal("set", NQDescription.of("Sets the selected player's quest points to an exact amount."))
                 .required("amount", NQArguments.integerArgument(), NQDescription.of("New questpoints amount"))
                 .commandDescription(NQDescription.of("Set questpoints for a player"))
                 .handler((context) -> {
@@ -381,15 +381,15 @@ public class AdminCommands {
 
     public void handleConditions() {
 
-        final NQCommandBuilder conditionsBuilder = builder.literal("conditions");
+        final NQCommandBuilder conditionsBuilder = builder.literal("conditions", NQDescription.of("Manages saved conditions that can be reused by quests, objectives, and actions."));
 
         final NQCommandBuilder conditionsEditBuilder = conditionsBuilder
-                .literal("edit")
-                .required("condition", conditionArgument(notQuests), NQDescription.of("Condition Name"));
+                .literal("edit", NQDescription.of("Opens subcommands for editing a saved condition."))
+                .required("condition", conditionArgument(notQuests), NQDescription.of("Identifier of the saved condition to edit."));
 
 
         manager.command(conditionsEditBuilder.commandDescription(NQDescription.of("Removes a condition"))
-                .literal("delete", "remove")
+                .literal("delete", NQDescription.of("Deletes the selected saved condition."), "remove")
                 .handler((context) -> {
 
                     final Condition condition = context.get("condition");
@@ -399,7 +399,7 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsEditBuilder.commandDescription(NQDescription.of("Checks a condition"))
-                .literal("check")
+                .literal("check", NQDescription.of("Checks the selected saved condition for a player."))
                 .optional("player", NQArguments.playerArgument(), NQDescription.of("Player for which the condition will be checked"))
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
@@ -423,7 +423,7 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsBuilder.commandDescription(NQDescription.of("Shows all existing conditions."))
-                .literal("list")
+                .literal("list", NQDescription.of("Lists every saved condition."))
                 .handler((context) -> {
                     int counter = 1;
                     context.sender().sendMessage(notQuests.parse("<highlight>All Conditions:"));
@@ -436,8 +436,8 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsEditBuilder.commandDescription(NQDescription.of("Shows the current category of this Condition."))
-                .literal("category")
-                .literal("show")
+                .literal("category", NQDescription.of("Shows or changes the category assigned to the selected condition."))
+                .literal("show", NQDescription.of("Shows the category currently assigned to the selected condition."))
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
 
@@ -448,8 +448,8 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsEditBuilder.commandDescription(NQDescription.of("Changes the current category of this Condition."))
-                .literal("category")
-                .literal("set")
+                .literal("category", NQDescription.of("Shows or changes the category assigned to the selected condition."))
+                .literal("set", NQDescription.of("Moves the selected condition into another category."))
                 .required("category", categoryArgument(notQuests), NQDescription.of("New category for this Condition."))
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
@@ -474,7 +474,7 @@ public class AdminCommands {
 
 
         manager.command(conditionsEditBuilder.literal("description", NQDescription.of("Sets the new description of the condition."))
-                .literal("set")
+                .literal("set", NQDescription.of("Sets the selected condition's description text."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Condition description"))
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
@@ -493,8 +493,9 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsEditBuilder.literal("hidden", NQDescription.of("Sets the new hidden status of the condition."))
-                .literal("set")
-                .required("hiddenStatusExpression", NQArguments.stringArgument(), NQDescription.of("Expression"))
+                .literal("set", NQDescription.of("Changes whether the selected condition is hidden from players."))
+                .required("hiddenStatusExpression", NQArguments.stringArgument(),
+                        NQDescription.of("Boolean expression that decides whether this saved condition is hidden from players."))
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
 
@@ -514,7 +515,7 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsEditBuilder.literal("description", NQDescription.of("Removes the description of the condition."))
-                .literal("remove", "delete")
+                .literal("remove", NQDescription.of("Removes the selected condition's custom description text."), "delete")
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
 
@@ -529,7 +530,7 @@ public class AdminCommands {
                 }));
 
         manager.command(conditionsEditBuilder.literal("description", NQDescription.of("Shows the description of the condition."))
-                .literal("show", "check")
+                .literal("show", NQDescription.of("Shows the selected condition's description text."), "check")
                 .handler((context) -> {
                     final Condition condition = context.get("condition");
 
@@ -547,7 +548,7 @@ public class AdminCommands {
 
 
         manager.command(actionsEditBuilder.commandDescription(NQDescription.of("Removes an action"))
-                .literal("delete", "remove")
+                .literal("delete", NQDescription.of("Deletes the selected saved action."), "remove")
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -556,7 +557,7 @@ public class AdminCommands {
                 }));
 
         manager.command(actionsEditBuilder.commandDescription(NQDescription.of("Executes an action"))
-                .literal("execute", "run")
+                .literal("execute", NQDescription.of("Executes the selected action or command."), "run")
                 .optional("player", NQArguments.playerArgument(), NQDescription.of("Player for which the action will be executed"))
                 .flag(NQFlag.presence("ignoreConditions", NQDescription.of("Ignores action conditions")))
                 .flag(NQFlag.presence("silent", NQDescription.of("Doesn't show the action executed message")))
@@ -584,7 +585,7 @@ public class AdminCommands {
                 }));
 
         manager.command(actionsBuilder.commandDescription(NQDescription.of("Shows all existing actions."))
-                .literal("list")
+                .literal("list", NQDescription.of("Lists every saved action."))
                 .handler((context) -> {
                     int counter = 1;
                     context.sender().sendMessage(notQuests.parse("<highlight>All Actions:"));
@@ -597,8 +598,8 @@ public class AdminCommands {
                 }));
 
         manager.command(actionsEditBuilder.commandDescription(NQDescription.of("Removes all conditions from this objective."))
-                .literal("conditions")
-                .literal("clear")
+                .literal("conditions", NQDescription.of("Manages conditions required before the selected action can run."))
+                .literal("clear", NQDescription.of("Removes every condition from the selected saved action."))
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -610,8 +611,8 @@ public class AdminCommands {
                 }));
 
         manager.command(actionsEditBuilder.commandDescription(NQDescription.of("Lists all conditions of this objective."))
-                .literal("conditions")
-                .literal("list", "show")
+                .literal("conditions", NQDescription.of("Manages conditions required before the selected action can run."))
+                .literal("list", NQDescription.of("Lists every condition on the selected saved action."), "show")
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -639,9 +640,11 @@ public class AdminCommands {
 
 
         final NQCommandBuilder editActionConditionsBuilder = actionsEditBuilder
-                .literal("conditions")
-                .literal("edit")
-                .required("condition-id", NQArguments.integerArgument(), NQDescription.of("Condition ID"), (context, input) -> {
+                .literal("conditions", NQDescription.of("Manages conditions required before the selected action can run."))
+                .literal("edit", NQDescription.of("Opens subcommands for editing a specific action condition."))
+                .required("condition-id", NQArguments.integerArgument(),
+                        NQDescription.of("Condition ID shown by this saved action's condition list."),
+                        (context, input) -> {
                             final ArrayList<String> completions = new ArrayList<>();
                             final Action action = context.get("action");
 
@@ -654,7 +657,7 @@ public class AdminCommands {
                 );
 
         manager.command(editActionConditionsBuilder.commandDescription(NQDescription.of("Removes a condition from this Action."))
-                .literal("delete", "remove")
+                .literal("delete", NQDescription.of("Removes the selected condition from the saved action."), "remove")
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -675,8 +678,8 @@ public class AdminCommands {
 
 
         manager.command(editActionConditionsBuilder.commandDescription(NQDescription.of("Sets the new description of the Action condition."))
-                .literal("description")
-                .literal("set")
+                .literal("description", NQDescription.of("Saved action condition description shown when listing this action's conditions. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected action condition's description text."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Action condition description"))
                 .handler((context) -> {
                     final Action action = context.get("action");
@@ -705,8 +708,8 @@ public class AdminCommands {
                 }));
 
         manager.command(editActionConditionsBuilder.commandDescription(NQDescription.of("Removes the description of the Action condition."))
-                .literal("description")
-                .literal("remove", "delete")
+                .literal("description", NQDescription.of("Saved action condition description shown when listing this action's conditions. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected action condition's custom description text."), "delete")
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -734,8 +737,8 @@ public class AdminCommands {
                 }));
 
         manager.command(editActionConditionsBuilder.commandDescription(NQDescription.of("Shows the description of the Action condition."))
-                .literal("description")
-                .literal("show", "check")
+                .literal("description", NQDescription.of("Saved action condition description shown when listing this action's conditions. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected action condition's description text."), "check")
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -758,8 +761,9 @@ public class AdminCommands {
 
 
         manager.command(editActionConditionsBuilder.literal("hidden", NQDescription.of("Sets the new hidden status of the Action condition."))
-                .literal("set")
-                .required("hiddenStatusExpression", NQArguments.stringArgument(), NQDescription.of("Expression"))
+                .literal("set", NQDescription.of("Changes whether the selected action condition is hidden from players."))
+                .required("hiddenStatusExpression", NQArguments.stringArgument(),
+                        NQDescription.of("Boolean expression that decides whether this action condition is hidden from players."))
                 .handler((context) -> {
                     final Action action = context.get("action");
 
@@ -789,8 +793,8 @@ public class AdminCommands {
 
 
         manager.command(actionsEditBuilder
-                .literal("category")
-                .literal("show")
+                .literal("category", NQDescription.of("Shows or changes the category assigned to the selected action."))
+                .literal("show", NQDescription.of("Shows the category currently assigned to the selected action."))
                 .commandDescription(NQDescription.of("Shows the current category of this Action."))
                 .handler((context) -> {
                     final Action action = context.get("action");
@@ -802,8 +806,8 @@ public class AdminCommands {
                 }));
 
         manager.command(actionsEditBuilder
-                .literal("category", NQDescription.of("Changes the current category of this Action."))
-                .literal("set")
+                .literal("category", NQDescription.of("Changes the category assigned to the selected action."))
+                .literal("set", NQDescription.of("Moves the selected action into another category."))
                 .required("category", categoryArgument(notQuests), NQDescription.of("New category for this Action."))
                 .handler((context) -> {
                     final Action action = context.get("action");

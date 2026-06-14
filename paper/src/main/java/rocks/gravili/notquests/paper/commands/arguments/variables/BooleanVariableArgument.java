@@ -67,6 +67,11 @@ public final class BooleanVariableArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "true/false value or boolean expression";
+    }
+
+    @Override
     public ArgumentType<String> getNativeType() {
         // Greedy only for a trailing boolean expression (it may contain commas, which a non-greedy
         // string would split on). Positional boolean args are non-greedy so they don't swallow the

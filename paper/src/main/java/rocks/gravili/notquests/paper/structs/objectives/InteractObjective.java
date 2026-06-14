@@ -56,7 +56,7 @@ public class InteractObjective extends Objective {
             final int level) {
         manager.command(addObjectiveBuilder
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of interactions needed"))
-                .required("world", NQArguments.worldArgument(), NQDescription.of("World name"))
+                .required("world", NQArguments.worldArgument(), NQDescription.of("World containing the block or location the player must interact with."))
                 /* .argumentTriplet(
                         "coords",
                         TypeToken.get(Vector.class),
@@ -68,12 +68,12 @@ public class InteractObjective extends Objective {
                         ArgumentDescription.of("Coordinates")
                 )*/
                 // Commented out, because this somehow breaks flags
-                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate"))
-                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate"))
-                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate"))
-                .flag(NQFlag.builder("leftClick").withDescription(NQDescription.of("Count left-clicks of the location.")).build())
-                .flag(NQFlag.builder("rightClick").withDescription(NQDescription.of("Count right-clicks of the location.")).build())
-                .flag(NQFlag.builder("cancelInteraction").withDescription(NQDescription.of("Makes it so the interaction will be cancelled while this objective is active")).build())
+                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate of the block or location the player must interact with."))
+                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate of the block or location the player must interact with."))
+                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate of the block or location the player must interact with."))
+                .flag(NQFlag.builder("leftClick", NQDescription.of("Count left-clicks of the location.")).build())
+                .flag(NQFlag.builder("rightClick", NQDescription.of("Count right-clicks of the location.")).build())
+                .flag(NQFlag.builder("cancelInteraction", NQDescription.of("Makes it so the interaction will be cancelled while this objective is active")).build())
                 .flag(main.getCommandManager().maxDistance)
                 .handler(
                         (context) -> {

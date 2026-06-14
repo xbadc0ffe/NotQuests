@@ -40,6 +40,11 @@ public final class ActionArgument extends NQArgumentType<Action> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "saved action name";
+    }
+
+    @Override
     public Action convert(final String input) throws CommandSyntaxException {
         final Action foundAction = main.getActionsYMLManager().getAction(input);
         if (foundAction == null) {

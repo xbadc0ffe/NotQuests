@@ -50,6 +50,11 @@ public final class SpeakerArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "conversation speaker";
+    }
+
+    @Override
     public String convert(final String input) {
         return input; // raw speaker name; resolved by the handler via resolveSpeaker(conversation, name)
     }

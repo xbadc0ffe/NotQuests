@@ -58,8 +58,8 @@ public class RunCommandObjective extends Objective {
                         completions.add("<Enter command (put between \" \" if you want to use spaces)>");
                         return completions;
                     })
-            .flag(NQFlag.builder("ignoreCase").withDescription(NQDescription.of("Makes it so it doesn't matter whether the player uses uppercase or lowercase characters")).build())
-            .flag(NQFlag.builder("cancelCommand").withDescription(NQDescription.of("Makes it so the command will be cancelled (not actually run) when entered while this objective is active")).build())
+            .flag(NQFlag.builder("ignoreCase", NQDescription.of("Makes it so it doesn't matter whether the player uses uppercase or lowercase characters")).build())
+            .flag(NQFlag.builder("cancelCommand", NQDescription.of("Cancel the matching command instead of letting it run while this objective is active.")).build())
             .handler(
                 (context) -> {
                   String command = context.get("Command");

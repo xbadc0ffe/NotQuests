@@ -80,7 +80,9 @@ public class BooleanCondition extends Condition {
 
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("Comparison operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to compare the " + variableString + " boolean variable: and, equals, or."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("and");
                         completions.add("equals");
@@ -88,7 +90,8 @@ public class BooleanCondition extends Condition {
 
                         return completions;
                     })
-                    .required("expression", booleanVariableArgument("expression", variable), NQDescription.of("Expression"))
+                    .required("expression", booleanVariableArgument("expression", variable),
+                            NQDescription.of("Boolean expression to compare with the current " + variableString + " value."))
                     .handler((context) -> {
 
                         final String expression = context.get("expression");

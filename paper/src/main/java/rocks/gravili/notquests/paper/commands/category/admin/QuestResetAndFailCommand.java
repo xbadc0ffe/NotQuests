@@ -25,7 +25,7 @@ public class QuestResetAndFailCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Fails the quest from all players, removes it from completed quests, resets the accept cooldown and basically everything else."))
-                .literal("resetAndFailQuestForAllPlayers")
+                .literal("resetAndFailQuestForAllPlayers", NQDescription.of("Resets and fails this quest for every player."))
                 .required("quest", questArgument(notQuests), NQDescription.of("Name of the Quest which should be reset and failed."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());

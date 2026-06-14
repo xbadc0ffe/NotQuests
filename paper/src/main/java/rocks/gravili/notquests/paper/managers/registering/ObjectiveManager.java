@@ -121,9 +121,9 @@ public class ObjectiveManager {
             Method commandHandler = objective.getMethod("handleCommands", main.getClass(), NQCommandManager.class, NQCommandBuilder.class, int.class);
 
             //Level 0
-            final NQCommandBuilder objectivesBuilder = main.getCommandManager().getAdminEditCommandBuilder().literal("objectives", "o");
+            final NQCommandBuilder objectivesBuilder = main.getCommandManager().getAdminEditCommandBuilder().literal("objectives", NQDescription.of("Manages objectives on the selected quest."), "o");
             final NQCommandBuilder adminEditAddObjectiveCommandBuilder =
-                    objectivesBuilder.literal("add");
+                    objectivesBuilder.literal("add", NQDescription.of("Adds a new objective to the selected quest."));
 
             commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilder
                     .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
@@ -131,11 +131,14 @@ public class ObjectiveManager {
 
             //Level 1
             final String objectiveIDIdentifier = "objectiveId";
-            final NQCommandBuilder objectivesBuilderLevel1 = objectivesBuilder.literal("edit").required(objectiveIDIdentifier, objectiveArgument(main, 0), NQDescription.of(objectiveIDIdentifier));
+            final NQCommandBuilder objectivesBuilderLevel1 = objectivesBuilder.literal("edit", NQDescription.of("Opens subcommands for editing a specific objective on the selected quest.")).required(
+                    objectiveIDIdentifier,
+                    objectiveArgument(main, 0),
+                    NQDescription.of("Objective ID shown by this quest's objectives list."));
 
 
             final NQCommandBuilder adminEditAddObjectiveCommandBuilderLevel1 =
-                    objectivesBuilderLevel1.literal("objectives", "o").literal("add");
+                    objectivesBuilderLevel1.literal("objectives", NQDescription.of("Manages child objectives inside the selected objective."), "o").literal("add", NQDescription.of("Adds a child objective to the selected objective."));
 
             //Level 1
             commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilderLevel1
@@ -143,16 +146,17 @@ public class ObjectiveManager {
                     .flag(main.getCommandManager().taskDescription), 1);
 
 
-            final NQCommandBuilder objectivesBuilder2 = objectivesBuilderLevel1.literal("objectives", "");
+            final NQCommandBuilder objectivesBuilder2 = objectivesBuilderLevel1.literal("objectives", NQDescription.of("Manages child objectives inside the selected objective."), "");
             final String objectiveIDIdentifier2 = "objectiveId2";
             final int level2 = 2;
             final NQCommandBuilder objectivesBuilderLevel2 = objectivesBuilder2
-                    .literal("edit")
-                    .required(objectiveIDIdentifier2, objectiveArgument(main, 1), NQDescription.of(objectiveIDIdentifier2));
+                    .literal("edit", NQDescription.of("Opens subcommands for editing a specific child objective."))
+                    .required(objectiveIDIdentifier2, objectiveArgument(main, 1),
+                            NQDescription.of("Child objective ID shown inside the selected parent objective."));
 
 
             final NQCommandBuilder adminEditAddObjectiveCommandBuilderLevel2 =
-                    objectivesBuilderLevel2.literal("objectives", "o").literal("add");
+                    objectivesBuilderLevel2.literal("objectives", NQDescription.of("Manages child objectives inside the selected nested objective."), "o").literal("add", NQDescription.of("Adds a child objective to the selected nested objective."));
 
             //Level 2
             commandHandler.invoke(

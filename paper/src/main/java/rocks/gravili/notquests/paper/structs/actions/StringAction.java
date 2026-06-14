@@ -77,13 +77,16 @@ public class StringAction extends Action {
             }
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("String operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to change the " + variableString + " string variable: set or append."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("set");
                         completions.add("append");
                         return completions;
                     })
-                    .required("string", stringVariableArgument("string", variable), NQDescription.of("String"))
+                    .required("string", stringVariableArgument("string", variable),
+                            NQDescription.of("String value or expression used by this " + variableString + " action."))
                     .handler((context) -> {
                         final String string = context.get("string");
                         final String stringOperator = context.get("operator");

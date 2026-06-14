@@ -77,7 +77,9 @@ public class NumberCondition extends Condition {
 
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("List operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to compare the " + variableString + " number variable against the expression."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("equals");
                         completions.add("lessThan");
@@ -86,7 +88,8 @@ public class NumberCondition extends Condition {
                         completions.add("lessOrEqualThan");
                         return completions;
                     })
-                    .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount"))
+                    .required("amount", numberVariableArgument("amount", null),
+                            NQDescription.of("Number expression to compare with the current " + variableString + " value."))
                     .handler((context) -> {
 
                         final String amountExpression = context.get("amount");

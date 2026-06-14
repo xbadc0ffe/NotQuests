@@ -16,7 +16,7 @@ public class SaveCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Saves the NotQuests configuration file."))
-                .literal("save")
+                .literal("save", NQDescription.of("Saves NotQuests data to disk."))
                 .handler((context) -> {
                     notQuests.getDataManager().saveData();
                     context.sender().sendMessage(Component.empty());

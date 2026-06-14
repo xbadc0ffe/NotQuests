@@ -24,7 +24,7 @@ package rocks.gravili.notquests.paper.commands.framework;
  * command-hint to label arguments.
  */
 public final class NQDescription {
-    public static final NQDescription EMPTY = new NQDescription("");
+    static final NQDescription EMPTY = new NQDescription("");
 
     private final String text;
 

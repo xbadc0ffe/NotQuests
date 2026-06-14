@@ -40,6 +40,11 @@ public final class ConversationArgument extends NQArgumentType<Conversation> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "conversation name";
+    }
+
+    @Override
     public Conversation convert(final String input) throws CommandSyntaxException {
         for (final Conversation conversation : main.getConversationManager().getAllConversations()) {
             if (conversation.getIdentifier().equalsIgnoreCase(input)) {

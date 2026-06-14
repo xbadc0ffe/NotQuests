@@ -20,7 +20,7 @@ public class QuestFailCommand extends BaseCommand {
 
     @Override
     public void apply(NQCommandManager commandManager) {
-        commandManager.command(builder.literal("failQuest").commandDescription(NQDescription.of("Fails an active quest for a player"))
+        commandManager.command(builder.literal("failQuest", NQDescription.of("Fails an active quest for a player.")).commandDescription(NQDescription.of("Fails an active quest for a player"))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player name whose quest should be failed."))
                 .required("activeQuest", activeQuestArgument(notQuests), NQDescription.of("Active quest which should be failed."))
                 .handler((context) -> {

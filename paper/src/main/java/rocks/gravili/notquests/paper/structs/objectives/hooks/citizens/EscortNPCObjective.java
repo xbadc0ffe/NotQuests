@@ -60,9 +60,10 @@ public class EscortNPCObjective extends Objective { //TODO: Add support for othe
             return;
         }
 
-        NQFlag spawnLocationCommandFlag = NQFlag.builder("spawnLocation")
+        NQFlag spawnLocationCommandFlag = NQFlag.builder(
+                        "spawnLocation",
+                        NQDescription.of("Location where the escorted NPC should spawn before the objective starts."))
                 .withArgument(locationArgument())
-                .withDescription(NQDescription.of("Spawn Location"))
                 .build();
 
         manager.command(addObjectiveBuilder

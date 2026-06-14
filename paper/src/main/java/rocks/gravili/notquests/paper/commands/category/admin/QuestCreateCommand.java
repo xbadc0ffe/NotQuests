@@ -18,7 +18,7 @@ public class QuestCreateCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.literal("create", NQDescription.of("Create a new quest."))
-                .required("questName", NQArguments.stringArgument(), NQDescription.of("Quest Name"), (context, input) ->
+                .required("questName", NQArguments.stringArgument(), NQDescription.of("Unique identifier for the new quest."), (context, input) ->
                         List.of("<Enter new Quest Name>"))
                 .flag(notQuests.getCommandManager().categoryFlag)
                 .handler((context) -> {

@@ -57,6 +57,11 @@ public final class NQNPCArgument extends NQArgumentType<NQNPCResult> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "NPC selector such as citizens:1, fancynpcs:<id>, none, or rightClickSelect";
+    }
+
+    @Override
     public ArgumentType<String> getNativeType() {
         return StringArgumentType.greedyString();
     }

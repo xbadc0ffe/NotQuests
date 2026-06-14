@@ -17,10 +17,10 @@ public class ListCommand extends BaseCommand {
 
     @Override
     public void apply(NQCommandManager commandManager) {
-        builder = builder.literal("list");
+        builder = builder.literal("list", NQDescription.of("Lists available NotQuests data, types, and definitions."));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you a list of all available Objective Types."))
-                .literal("ObjectiveTypes")
+                .literal("ObjectiveTypes", NQDescription.of("Lists every available objective type."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(notQuests.parse("<highlight>All objective types:"));
@@ -30,7 +30,7 @@ public class ListCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you a list of all available Requirement Types."))
-                .literal("RequirementTypes")
+                .literal("RequirementTypes", NQDescription.of("Lists every available requirement/condition type."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(notQuests.parse("<highlight>All requirement types:"));
@@ -40,7 +40,7 @@ public class ListCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you a list of all available Action (Reward) Types."))
-                .literal("ActionTypes")
+                .literal("ActionTypes", NQDescription.of("Lists every available action type."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(notQuests.parse("<highlight>" + "All reward types:"));
@@ -50,7 +50,7 @@ public class ListCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you a list of all available Trigger Types."))
-                .literal("TriggerTypes")
+                .literal("TriggerTypes", NQDescription.of("Lists every available trigger type."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(notQuests.parse("<highlight>" + "All trigger types:"));
@@ -60,7 +60,7 @@ public class ListCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you a list of all created Quests."))
-                .literal("AllQuests")
+                .literal("AllQuests", NQDescription.of("Lists every loaded quest across all categories."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
                     int counter = 1;
@@ -73,7 +73,7 @@ public class ListCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder.commandDescription(NQDescription.of("Shows you a list of all available Placeholders which can be used in Trigger or Action commands."))
-                .literal("Placeholders")
+                .literal("Placeholders", NQDescription.of("Lists PlaceholderAPI placeholders provided by NotQuests."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
 

@@ -46,7 +46,7 @@ public class AdminItemsCommand {
         this.manager = manager;
         this.builder = builder;
 
-        var editBuilder = builder.literal("items");
+        var editBuilder = builder.literal("items", NQDescription.of("Manages custom NotQuests items."));
         manager.command(editBuilder
                 .literal("create", NQDescription.of("Creates a new Item."))
                 .required("name", NQArguments.stringArgument(), NQDescription.of("Item Name"))
@@ -100,7 +100,7 @@ public class AdminItemsCommand {
                 }));
 
         manager.command(editBuilder.commandDescription(NQDescription.of("Lists all items"))
-                .literal("list")
+                .literal("list", NQDescription.of("Lists every saved NotQuests item."))
                 .handler((context) -> {
                     context.sender().sendMessage(notQuests.parse("<highlight>All Items:"));
                     int counter = 1;
@@ -122,12 +122,12 @@ public class AdminItemsCommand {
                 }));
 
         NQCommandBuilder admitItemsEditBuilder = editBuilder
-                .literal("edit", "e")
+                .literal("edit", NQDescription.of("Opens subcommands for editing a saved NotQuests item."), "e")
                 .required("item", nqNPCArgument(notQuests), NQDescription.of("NotQuests Item which you want to edit."));
 
 
         manager.command(admitItemsEditBuilder.commandDescription(NQDescription.of("Gives the player the item."))
-                .literal("give")
+                .literal("give", NQDescription.of("Gives the selected NotQuests item to a player."))
                 .required("player", rocks.gravili.notquests.paper.commands.framework.NQArguments.playerArgument(), NQDescription.of("Player who should receive the item"))
                 .required("amount", NQArguments.integerArgument(), NQDescription.of("Amount of items the player should receive"))
                 .handler((context) -> {
@@ -149,7 +149,7 @@ public class AdminItemsCommand {
                 }));
 
         manager.command(admitItemsEditBuilder.commandDescription(NQDescription.of("Removes a NotQuests Item."))
-                .literal("remove", "delete")
+                .literal("remove", NQDescription.of("Deletes the selected saved NotQuests item."), "delete")
                 .handler((context) -> {
                     NQItem nqItem = context.get("item");
 
@@ -163,9 +163,9 @@ public class AdminItemsCommand {
                 }));
 
         manager.command(admitItemsEditBuilder.commandDescription(NQDescription.of("Sets an item's display name."))
-                .literal("displayName")
-                .literal("set")
-                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New display name"))
+                .literal("displayName", NQDescription.of("Custom item display name shown on the saved NotQuests item. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected item's display name."))
+                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New item display name. Supports spaces and MiniMessage formatting."))
                 .handler((context) -> {
                     NQItem nqItem = context.get("item");
                     final String displayName = (String) context.get("display-name");
@@ -181,8 +181,8 @@ public class AdminItemsCommand {
                 }));
 
         manager.command(admitItemsEditBuilder.commandDescription(NQDescription.of("Removes an item's display name."))
-                .literal("displayName")
-                .literal("remove")
+                .literal("displayName", NQDescription.of("Custom item display name shown on the saved NotQuests item. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected item's custom display name."))
                 .handler((context) -> {
                     NQItem nqItem = context.get("item");
 
@@ -196,8 +196,8 @@ public class AdminItemsCommand {
                 }));
 
         manager.command(admitItemsEditBuilder.commandDescription(NQDescription.of("Shows an item's current display name."))
-                .literal("displayName")
-                .literal("show")
+                .literal("displayName", NQDescription.of("Custom item display name shown on the saved NotQuests item. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected item's current display name."))
                 .handler((context) -> {
                     NQItem nqItem = context.get("item");
                     context.sender().sendMessage(notQuests.parse(

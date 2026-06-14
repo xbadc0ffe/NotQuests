@@ -22,10 +22,12 @@ Usage: analyze.py <server.log>
 import re
 import sys
 import pathlib
+import json
 
 E2E = pathlib.Path(__file__).resolve().parent
 SRC = E2E.parent / "paper" / "src" / "main" / "java"
 CMDS_FILE = E2E / "commands.txt"
+COMMAND_SCHEMA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated" / "commands.json"
 
 EXCLUDE_INTEGRATION = {
     "EscortNPC", "JobsRebornReachJobLevel", "SlimefunResearch", "ReachLocation",
@@ -139,9 +141,74 @@ def main():
             print(f"   {cmd}")
         print()
 
-    ok = ready and not missing and not real_fails
+    schema_errors = []
+    try:
+        schema = json.loads(COMMAND_SCHEMA.read_text())
+        exported = schema.get("commands", [])
+        syntaxes = {entry.get("syntax") for entry in exported}
+        if not exported:
+            schema_errors.append("schema contains no commands")
+        if "/nqa debug exportCommandSchema" not in syntaxes:
+            schema_errors.append("schema is missing /nqa debug exportCommandSchema")
+        for entry in exported:
+            for segment in entry.get("segments", []):
+                if weak_description(segment.get("description"), segment.get("name"), segment.get("token")):
+                    schema_errors.append(
+                        "weak command-segment description in "
+                        + str(entry.get("syntax"))
+                        + ": "
+                        + str(segment.get("token"))
+                        + " -> "
+                        + repr(segment.get("description")))
+            for flag in entry.get("flags", []):
+                if weak_description(flag.get("description"), flag.get("name"), flag.get("token")):
+                    schema_errors.append(
+                        "weak flag description in "
+                        + str(entry.get("syntax"))
+                        + ": --"
+                        + str(flag.get("name"))
+                        + " -> "
+                        + repr(flag.get("description")))
+    except FileNotFoundError:
+        schema_errors.append(f"schema file was not written: {COMMAND_SCHEMA}")
+    except json.JSONDecodeError as exc:
+        schema_errors.append(f"schema JSON is invalid: {exc}")
+    if schema_errors:
+        print("COMMAND SCHEMA ERROR:")
+        for error in schema_errors:
+            print(f"   - {error}")
+        print()
+
+    ok = ready and not missing and not real_fails and not schema_errors
     print("RESULT:", "PASS" if ok else "FAIL")
     sys.exit(0 if ok else 1)
+
+
+def weak_description(description, name, token):
+    text = str(description or "").strip()
+    if not text or text == "Variable Name":
+        return True
+    weak_phrases = {
+        "adds a new entry in this command branch.",
+        "checks the selected value or condition.",
+        "creates a new entry.",
+        "deletes the selected entry.",
+        "lists matching entries.",
+        "opens edit commands for the selected entry.",
+        "optional command flags for this command.",
+        "removes all entries in this command branch.",
+        "removes the selected entry or value.",
+        "sets a new value.",
+        "shows detailed information about the selected entry.",
+        "shows or changes the category assigned to this entry.",
+        "shows the current value.",
+        "shows, sets, or removes user-facing description text.",
+    }
+    if text.lower() in weak_phrases:
+        return True
+    token_text = str(token or "").strip().replace("[", "").replace("]", "").replace("<", "").replace(">", "")
+    candidates = {str(name or "").strip(), token_text}
+    return text.lower() in {candidate.lower() for candidate in candidates if candidate}
 
 
 if __name__ == "__main__":

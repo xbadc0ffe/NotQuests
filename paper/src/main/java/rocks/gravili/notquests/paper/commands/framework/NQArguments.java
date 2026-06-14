@@ -57,6 +57,11 @@ public final class NQArguments {
             protected List<String> suggest(final CommandContext<?> context, final String remaining) {
                 return List.of("1", "2", "3", "4", "5", "10", "16", "32", "64");
             }
+
+            @Override
+            public String valueTypeName() {
+                return "whole number";
+            }
         };
     }
 
@@ -70,6 +75,11 @@ public final class NQArguments {
                     throw fail("'" + input + "' is not a number");
                 }
             }
+
+            @Override
+            public String valueTypeName() {
+                return "number";
+            }
         };
     }
 
@@ -82,6 +92,11 @@ public final class NQArguments {
                 } catch (final NumberFormatException e) {
                     throw fail("'" + input + "' is not a whole number");
                 }
+            }
+
+            @Override
+            public String valueTypeName() {
+                return "whole number";
             }
         };
     }
@@ -102,6 +117,11 @@ public final class NQArguments {
             protected List<String> suggest(final CommandContext<?> context, final String remaining) {
                 return List.of("true", "false");
             }
+
+            @Override
+            public String valueTypeName() {
+                return "true or false";
+            }
         };
     }
 
@@ -110,6 +130,11 @@ public final class NQArguments {
             @Override
             public String convert(final String input) {
                 return input;
+            }
+
+            @Override
+            public String valueTypeName() {
+                return "text";
             }
         };
     }
@@ -126,6 +151,11 @@ public final class NQArguments {
             public com.mojang.brigadier.arguments.ArgumentType<String> getNativeType() {
                 return com.mojang.brigadier.arguments.StringArgumentType.greedyString();
             }
+
+            @Override
+            public String valueTypeName() {
+                return "text";
+            }
         };
     }
 
@@ -139,6 +169,11 @@ public final class NQArguments {
             @Override
             public com.mojang.brigadier.arguments.ArgumentType<String> getNativeType() {
                 return com.mojang.brigadier.arguments.StringArgumentType.greedyString();
+            }
+
+            @Override
+            public String valueTypeName() {
+                return "text";
             }
         };
     }
@@ -167,6 +202,11 @@ public final class NQArguments {
             protected List<String> suggest(final CommandContext<?> context, final String remaining) {
                 return List.of("1s", "5s", "10s", "30s", "1m", "5m", "1h");
             }
+
+            @Override
+            public String valueTypeName() {
+                return "duration such as 1s, 5m, or 2h";
+            }
         };
     }
 
@@ -189,6 +229,11 @@ public final class NQArguments {
                 }
                 return names;
             }
+
+            @Override
+            public String valueTypeName() {
+                return "world name";
+            }
         };
     }
 
@@ -210,6 +255,11 @@ public final class NQArguments {
                     names.add(online.getName());
                 }
                 return names;
+            }
+
+            @Override
+            public String valueTypeName() {
+                return "online player name";
             }
         };
     }
@@ -234,6 +284,11 @@ public final class NQArguments {
                 }
                 return names;
             }
+
+            @Override
+            public String valueTypeName() {
+                return type.getSimpleName() + " value";
+            }
         };
     }
 
@@ -248,6 +303,11 @@ public final class NQArguments {
             @Override
             public com.mojang.brigadier.arguments.ArgumentType<String> getNativeType() {
                 return com.mojang.brigadier.arguments.StringArgumentType.greedyString();
+            }
+
+            @Override
+            public String valueTypeName() {
+                return "MiniMessage text";
             }
         };
     }

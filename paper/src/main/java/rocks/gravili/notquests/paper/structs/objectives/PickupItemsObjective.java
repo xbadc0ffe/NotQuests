@@ -55,9 +55,9 @@ public class PickupItemsObjective extends Objective {
         manager.command(addObjectiveBuilder
                 .required("materials", itemStackSelectionArgument(main), NQDescription.of("Material of the item which needs to be collected"))
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of items which need to be collected"))
-                .flag(NQFlag.builder("doNotDeductIfItemIsDropped").withDescription(NQDescription.of("Makes it so Quest progress is NOT removed if the item is dropped.")).build())
-                .flag(NQFlag.builder("doNotDeductIfItemIsPlaced").withDescription(NQDescription.of("Makes it so Quest progress is NOT removed if the item is placed.")).build())
-                .flag(NQFlag.builder("doNotDeductIfItemIsRemovedFromInventory").withDescription(NQDescription.of("Makes it so Quest progress is NOT removed if the item is removed from inventory.")).build())
+                .flag(NQFlag.builder("doNotDeductIfItemIsDropped", NQDescription.of("Makes it so Quest progress is NOT removed if the item is dropped.")).build())
+                .flag(NQFlag.builder("doNotDeductIfItemIsPlaced", NQDescription.of("Makes it so Quest progress is NOT removed if the item is placed.")).build())
+                .flag(NQFlag.builder("doNotDeductIfItemIsRemovedFromInventory", NQDescription.of("Makes it so Quest progress is NOT removed if the item is removed from inventory.")).build())
                 .handler((context) -> {
                     final String amountExpression = context.get("amount");
                     final boolean deductIfItemIsDropped =

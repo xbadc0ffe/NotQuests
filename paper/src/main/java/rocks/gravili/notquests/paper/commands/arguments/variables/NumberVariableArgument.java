@@ -68,6 +68,11 @@ public final class NumberVariableArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "number or numeric expression";
+    }
+
+    @Override
     public ArgumentType<String> getNativeType() {
         // Greedy ONLY for trailing number expressions: an expression may contain commas (variable
         // function-args like "Block(world:w,x:1,y:2,z:3)"), and every non-greedy Brigadier string

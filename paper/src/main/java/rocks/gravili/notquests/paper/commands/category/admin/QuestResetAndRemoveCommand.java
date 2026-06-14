@@ -28,9 +28,9 @@ public class QuestResetAndRemoveCommand extends BaseCommand {
     public void apply(NQCommandManager commandManager) {
 
         builder = builder.commandDescription(NQDescription.of("Removes the quest from a specific player players, removes it from completed quests, resets the accept cooldown and basically everything else."))
-                .literal("resetAndRemoveQuest");
+                .literal("resetAndRemoveQuest", NQDescription.of("Removes a quest from player progress data."));
         commandManager.command(builder
-                .required("player", NQArguments.playerArgument(), NQDescription.of("Player name"))
+                .required("player", NQArguments.playerArgument(), NQDescription.of("Player whose quest data should be reset and removed."))
                 .required("quest", questArgument(notQuests), NQDescription.of("Name of the Quest which should be reset and removed."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
@@ -41,7 +41,7 @@ public class QuestResetAndRemoveCommand extends BaseCommand {
                 }));
 
         commandManager.command(builder
-                .literal("all")
+                .literal("all", NQDescription.of("Applies this operation to all matching players or entries."))
                 .required("quest", questArgument(notQuests), NQDescription.of("Name of the Quest which should be reset and removed."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());

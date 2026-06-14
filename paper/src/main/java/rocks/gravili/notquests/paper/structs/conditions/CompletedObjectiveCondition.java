@@ -48,7 +48,7 @@ public class CompletedObjectiveCondition extends Condition {
             NQCommandBuilder builder,
             ConditionFor conditionFor) {
         if (conditionFor == ConditionFor.OBJECTIVEUNLOCK || conditionFor == ConditionFor.OBJECTIVEPROGRESS || conditionFor == ConditionFor.OBJECTIVECOMPLETE) {
-            manager.command(builder.required("dependingObjectiveId", objectiveArgument(main, 0), NQDescription.of("Depending Objective ID"), (context, input) -> {
+            manager.command(builder.required("dependingObjectiveId", objectiveArgument(main, 0), NQDescription.of("Objective ID that must be completed before this condition is fulfilled."), (context, input) -> {
                         List<String> completions = new ArrayList<>();
 
                         final Quest quest = context.get("quest");

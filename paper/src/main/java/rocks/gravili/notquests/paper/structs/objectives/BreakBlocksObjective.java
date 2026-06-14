@@ -51,7 +51,7 @@ public class BreakBlocksObjective extends Objective {
         manager.command(addObjectiveBuilder
                 .required("materials", itemStackSelectionArgument(main), NQDescription.of("Material of the block which needs to be broken"))
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of blocks which need to be broken"))
-                .flag(NQFlag.builder("doNotDeductIfBlockIsPlaced").withDescription(NQDescription.of("Makes it so Quest progress is not removed if the block is placed")).build())
+                .flag(NQFlag.builder("doNotDeductIfBlockIsPlaced", NQDescription.of("Makes it so Quest progress is not removed if the block is placed")).build())
                 .handler(
                         (context) -> {
                             final String amountExpression = context.get("amount");

@@ -57,19 +57,22 @@ public class ActionAction extends Action {
             NQCommandBuilder builder,
             ActionFor actionFor) {
 
-        NQFlag minRandomFlag = NQFlag.builder("minRandom")
+        NQFlag minRandomFlag = NQFlag.builder(
+                        "minRandom",
+                        NQDescription.of("Minimum number of referenced actions to choose when executing a random subset."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("If this is set, it will only execute a random amount of quests with this minimum"))
                 .build();
 
-        NQFlag maxRandomFlag = NQFlag.builder("maxRandom")
+        NQFlag maxRandomFlag = NQFlag.builder(
+                        "maxRandom",
+                        NQDescription.of("Maximum number of referenced actions to choose when executing a random subset."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("If this is set, it will only execute a random amount of quests with this maximum"))
                 .build();
 
-        NQFlag executedActionDelay = NQFlag.builder("executedActionDelay")
+        NQFlag executedActionDelay = NQFlag.builder(
+                        "executedActionDelay",
+                        NQDescription.of("Delay applied to each executed sub-action; overrides the sub-action's own delay."))
                 .withArgument(NQArguments.durationArgument())
-                .withDescription(NQDescription.of("Delay its actions will be executed in milliseconds. This overrides the existing delay of sub-actions."))
                 .build();
 
         manager.command(builder

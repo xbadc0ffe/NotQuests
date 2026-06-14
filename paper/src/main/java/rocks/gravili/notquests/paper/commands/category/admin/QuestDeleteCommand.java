@@ -20,7 +20,7 @@ public class QuestDeleteCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.literal("delete", NQDescription.of("Delete an existing Quest."))
-                .required("questName", questArgument(notQuests), NQDescription.of("Quest Name"), (context, input) -> {
+                .required("questName", questArgument(notQuests), NQDescription.of("Identifier of the quest to delete."), (context, input) -> {
                     final List<String> completions = new ArrayList<>();
                     for (final Quest quest : notQuests.getQuestManager().getAllQuests()) {
                         completions.add(quest.getIdentifier());

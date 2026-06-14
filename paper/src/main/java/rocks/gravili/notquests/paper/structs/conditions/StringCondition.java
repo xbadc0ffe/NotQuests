@@ -76,7 +76,9 @@ public class StringCondition extends Condition {
 
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("String operator."),(context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to compare the " + variableString + " string variable with the supplied value."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("equals");
                         completions.add("equalsIgnoreCase");
@@ -87,7 +89,8 @@ public class StringCondition extends Condition {
 
                         return completions;
                     })
-                    .required("string", stringVariableArgument("string", variable), NQDescription.of("String"))
+                    .required("string", stringVariableArgument("string", variable),
+                            NQDescription.of("String value or expression to compare with the current " + variableString + " value."))
                     .handler((context) -> {
                         String string = context.get("string");
                         string = string.replace("__", " ");

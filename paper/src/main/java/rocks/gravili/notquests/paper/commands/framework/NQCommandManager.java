@@ -31,12 +31,26 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder.Kind;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder.Step;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.CommandInfo;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.CommandIndex;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.FlagInfo;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.SegmentInfo;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -57,9 +71,14 @@ import java.util.function.Consumer;
  */
 public final class NQCommandManager {
     private static final String FLAG_ARG = "nqFlags";
+    private static final TextColor LITERAL_COLOR = TextColor.color(0xE8F1FF);
+    private static final TextColor ARGUMENT_COLOR = TextColor.color(0x00FFFB);
+    private static final TextColor FLAG_COLOR = TextColor.color(0xF9D66B);
+    private static final TextColor DESCRIPTION_COLOR = TextColor.color(0xB7C2D5);
 
     private final NotQuests main;
     private final Map<String, Node> roots = new LinkedHashMap<>();
+    private List<CommandInfo> cachedCommandSchema;
 
     public NQCommandManager(final NotQuests main, final NQCommands registrar) {
         this.main = main;
@@ -106,9 +125,10 @@ public final class NQCommandManager {
         current.permission = builder.permission();
         current.senderType = builder.senderType();
         current.flags = builder.flags();
-        if (current.description.isEmpty() && builder.commandDescription() != null) {
-            current.description = builder.commandDescription();
+        if (builder.commandDescription() != null && !builder.commandDescription().isEmpty()) {
+            current.commandDescription = builder.commandDescription();
         }
+        cachedCommandSchema = null;
     }
 
     /**
@@ -124,6 +144,36 @@ public final class NQCommandManager {
             return List.of();
         }
         return usageLines(root, rootName);
+    }
+
+    /** Send hoverable/clickable one-level help for a root command. */
+    public void sendRootHelp(final CommandSender sender, final String rootName, final String title) {
+        main.sendMessage(sender, title);
+        final Node root = roots.get(rootName);
+        if (root == null) {
+            return;
+        }
+        sendUsageLines(sender, root, List.of(root));
+    }
+
+    /** Full executable-command schema, generated from the merged command tree and cached. */
+    public List<CommandInfo> commandSchema() {
+        if (cachedCommandSchema == null) {
+            cachedCommandSchema = List.copyOf(buildCommandSchema());
+        }
+        return cachedCommandSchema;
+    }
+
+    public CommandIndex commandIndex() {
+        return new CommandIndex(main.getMain().getDescription().getVersion(), commandSchema());
+    }
+
+    /** Write the current command schema to {@code plugins/NotQuests/generated/commands.json}. */
+    public Path exportCommandSchema() throws IOException {
+        final Path output = main.getMain().getDataFolder().toPath().resolve("generated").resolve("commands.json");
+        Files.createDirectories(output.getParent());
+        Files.writeString(output, commandIndex().toJson(), StandardCharsets.UTF_8);
+        return output;
     }
 
     /**
@@ -145,15 +195,21 @@ public final class NQCommandManager {
     private void registerAll(final Commands commands) {
         for (final Node root : roots.values()) {
             try {
-                final LiteralCommandNode<CommandSourceStack> node = (LiteralCommandNode<CommandSourceStack>) compile(root, root.name);
+                final LiteralCommandNode<CommandSourceStack> node =
+                        (LiteralCommandNode<CommandSourceStack>) compile(root, List.of(root));
                 commands.register(node, root.description.textDescription(), new ArrayList<>(root.aliases));
             } catch (final Throwable t) {
                 main.getLogManager().warn("Failed to register native command /" + root.name + ": " + t.getMessage());
             }
         }
+        try {
+            exportCommandSchema();
+        } catch (final IOException e) {
+            main.getLogManager().warn("Failed to export command schema: " + e.getMessage());
+        }
     }
 
-    private CommandNode<CommandSourceStack> compile(final Node node, final String path) {
+    private CommandNode<CommandSourceStack> compile(final Node node, final List<Node> path) {
         if (node.kind == Kind.LITERAL) {
             final LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(node.name);
             populate(builder, node, path);
@@ -168,14 +224,14 @@ public final class NQCommandManager {
         return builder.build();
     }
 
-    private void populate(final ArgumentBuilder<CommandSourceStack, ?> builder, final Node node, final String path) {
+    private void populate(final ArgumentBuilder<CommandSourceStack, ?> builder, final Node node, final List<Node> path) {
         if (node.permission != null) {
             final String permission = node.permission;
             builder.requires(source -> source.getSender().hasPermission(permission));
         }
         for (final Node child : node.children.values()) {
-            final String childLabel = child.kind == Kind.LITERAL ? child.name : "<" + child.name + ">";
-            final CommandNode<CommandSourceStack> built = compile(child, path + " " + childLabel);
+            final List<Node> childPath = appendPath(path, child);
+            final CommandNode<CommandSourceStack> built = compile(child, childPath);
             builder.then(built);
             // NOTE: short sub-command aliases (e.g. "o" for "objectives") are intentionally NOT
             // registered as tree nodes. In Brigadier the client builds literal suggestions locally
@@ -205,13 +261,203 @@ public final class NQCommandManager {
     }
 
     /** Default executor for handler-less branch nodes: lists the node's valid continuations. */
-    private int printBranchHelp(final Node node, final String path, final CommandContext<CommandSourceStack> ctx) {
+    private int printBranchHelp(
+            final Node node, final List<Node> path, final CommandContext<CommandSourceStack> ctx) {
         final CommandSender sender = ctx.getSource().getSender();
-        main.sendMessage(sender, "<main>/" + path + " <unimportant>— available subcommands:");
-        for (final String usageLine : usageLines(node, path)) {
-            main.sendMessage(sender, "<unimportant>" + usageLine);
-        }
+        main.sendMessage(sender, "<main>/" + pathSyntax(path) + " <unimportant>— available subcommands:");
+        sendUsageLines(sender, node, path);
         return Command.SINGLE_SUCCESS;
+    }
+
+    private void sendUsageLines(final CommandSender sender, final Node node, final List<Node> path) {
+        final List<Node> children = new ArrayList<>(node.children.values());
+        children.sort(Comparator.comparing(NQCommandManager::displayToken));
+        for (final Node child : children) {
+            final List<Node> childPath = appendPath(path, child);
+            main.sendMessage(sender, usageLineComponent(childPath, !child.children.isEmpty()));
+        }
+    }
+
+    private Component usageLineComponent(final List<Node> path, final boolean hasMore) {
+        final String displaySyntax = "/" + pathSyntax(path) + (hasMore ? " ..." : flagsSyntax(path.get(path.size() - 1)));
+        final String clickSyntax = "/" + pathSyntax(path) + (hasMore ? " " : flagsSyntax(path.get(path.size() - 1)));
+        Component line = Component.text("/", NamedTextColor.DARK_GRAY)
+                .clickEvent(ClickEvent.suggestCommand(clickSyntax))
+                .hoverEvent(HoverEvent.showText(Component.text("Click to insert this command shape", DESCRIPTION_COLOR)));
+
+        for (int i = 0; i < path.size(); i++) {
+            if (i > 0) {
+                line = line.append(Component.space());
+            }
+            line = line.append(segmentComponent(path.get(i), path.subList(0, i + 1)));
+        }
+        if (hasMore) {
+            line = line.append(Component.text(" ...", NamedTextColor.DARK_GRAY)
+                    .hoverEvent(HoverEvent.showText(Component.text("More arguments or subcommands follow", DESCRIPTION_COLOR))));
+        } else {
+            for (final NQFlag flag : path.get(path.size() - 1).flags) {
+                line = line.append(Component.space()).append(flagComponent(flag, displaySyntax));
+            }
+        }
+        return line;
+    }
+
+    private Component segmentComponent(final Node node, final List<Node> pathPrefix) {
+        final boolean argument = node.kind != Kind.LITERAL;
+        final String token = displayToken(node);
+        final TextColor color = argument ? ARGUMENT_COLOR : LITERAL_COLOR;
+        final String suggestedPrefix = "/" + pathSyntax(pathPrefix) + (node.children.isEmpty() ? "" : " ");
+        return Component.text(token, color)
+                .clickEvent(ClickEvent.suggestCommand(suggestedPrefix))
+                .hoverEvent(HoverEvent.showText(segmentHover(node, pathPrefix)));
+    }
+
+    private Component flagComponent(final NQFlag flag, final String syntax) {
+        final String token = flag.isPresence() ? "[--" + flag.name() + "]" : "[--" + flag.name() + " <value>]";
+        return Component.text(token, FLAG_COLOR)
+                .clickEvent(ClickEvent.suggestCommand(syntax))
+                .hoverEvent(HoverEvent.showText(flagHover(flag)));
+    }
+
+    private Component segmentHover(final Node node, final List<Node> pathPrefix) {
+        final boolean argument = node.kind != Kind.LITERAL;
+        Component hover = Component.text(argument ? "Argument " + displayToken(node) : "Command " + node.name,
+                argument ? ARGUMENT_COLOR : LITERAL_COLOR);
+        final String description = descriptionText(node.description);
+        if (!description.isBlank()) {
+            hover = hover.append(Component.newline()).append(Component.text(description, DESCRIPTION_COLOR));
+        }
+        if (argument && node.argument != null) {
+            hover = hover.append(Component.newline())
+                    .append(Component.text("Accepts: " + node.argument.valueTypeName(), NamedTextColor.GRAY));
+        }
+        hover = hover.append(Component.newline())
+                .append(Component.text("Syntax: /" + pathSyntax(pathPrefix), NamedTextColor.GRAY));
+        return hover;
+    }
+
+    private Component flagHover(final NQFlag flag) {
+        Component hover = Component.text("Flag --" + flag.name(), FLAG_COLOR);
+        final String description = descriptionText(flag.description());
+        if (!description.isBlank()) {
+            hover = hover.append(Component.newline()).append(Component.text(description, DESCRIPTION_COLOR));
+        }
+        if (!flag.isPresence()) {
+            hover = hover.append(Component.newline())
+                    .append(Component.text("Accepts: " + flag.valueArgument().valueTypeName(), NamedTextColor.GRAY));
+        }
+        return hover;
+    }
+
+    private List<CommandInfo> buildCommandSchema() {
+        final List<CommandInfo> commands = new ArrayList<>();
+        for (final Node root : roots.values()) {
+            collectCommandSchema(root, List.of(root), commands);
+        }
+        commands.sort(Comparator.comparing(CommandInfo::syntax));
+        return commands;
+    }
+
+    private void collectCommandSchema(final Node node, final List<Node> path, final List<CommandInfo> commands) {
+        if (node.handler != null) {
+            commands.add(commandInfo(path, node));
+        }
+        for (final Node child : node.children.values()) {
+            collectCommandSchema(child, appendPath(path, child), commands);
+        }
+    }
+
+    private CommandInfo commandInfo(final List<Node> path, final Node executable) {
+        final List<SegmentInfo> segments = new ArrayList<>();
+        for (final Node node : path) {
+            segments.add(new SegmentInfo(
+                    node.kind.name().toLowerCase(java.util.Locale.ROOT),
+                    node.name,
+                    displayToken(node),
+                    descriptionText(node.description),
+                    node.argument == null ? null : argumentTypeName(node.argument),
+                    node.argument == null ? null : node.argument.valueTypeName(),
+                    node.kind != Kind.OPTIONAL));
+        }
+
+        final List<FlagInfo> flags = new ArrayList<>();
+        for (final NQFlag flag : executable.flags) {
+            flags.add(new FlagInfo(
+                    flag.name(),
+                    flag.isPresence() ? "--" + flag.name() : "--" + flag.name() + " <value>",
+                    descriptionText(flag.description()),
+                    flag.isPresence() ? null : argumentTypeName(flag.valueArgument()),
+                    flag.isPresence() ? null : flag.valueArgument().valueTypeName(),
+                    flag.isPresence()));
+        }
+
+        final Node root = path.get(0);
+        return new CommandInfo(
+                root.name,
+                List.copyOf(root.aliases),
+                "/" + pathSyntax(path) + flagsSyntax(executable),
+                descriptionText(executable.commandDescription.isEmpty() ? executable.description : executable.commandDescription),
+                executable.permission,
+                executable.senderType == null ? "any" : executable.senderType.getSimpleName(),
+                List.copyOf(segments),
+                List.copyOf(flags));
+    }
+
+    private static List<Node> appendPath(final List<Node> path, final Node child) {
+        final List<Node> childPath = new ArrayList<>(path.size() + 1);
+        childPath.addAll(path);
+        childPath.add(child);
+        return List.copyOf(childPath);
+    }
+
+    private static String pathSyntax(final List<Node> path) {
+        final StringBuilder syntax = new StringBuilder();
+        for (int i = 0; i < path.size(); i++) {
+            if (i > 0) {
+                syntax.append(' ');
+            }
+            syntax.append(displayToken(path.get(i)));
+        }
+        return syntax.toString();
+    }
+
+    private static String flagsSyntax(final Node node) {
+        if (node.flags.isEmpty()) {
+            return "";
+        }
+        final StringBuilder syntax = new StringBuilder();
+        for (final NQFlag flag : node.flags) {
+            syntax.append('[').append("--").append(flag.name());
+            if (!flag.isPresence()) {
+                syntax.append(" <value>");
+            }
+            syntax.append("] ");
+        }
+        return " " + syntax.toString().trim();
+    }
+
+    private static String displayToken(final Node node) {
+        return switch (node.kind) {
+            case LITERAL -> node.name;
+            case REQUIRED -> "<" + node.name + ">";
+            case OPTIONAL -> "[<" + node.name + ">]";
+        };
+    }
+
+    private static String descriptionText(final NQDescription description) {
+        return description == null ? "" : description.textDescription();
+    }
+
+    private static String argumentTypeName(final NQArgumentType<?> argument) {
+        if (argument == null) {
+            return "";
+        }
+        final String simpleName = argument.getClass().getSimpleName();
+        if (!simpleName.isBlank()) {
+            return simpleName;
+        }
+        final String nativeName = argument.getNativeType().getClass().getSimpleName();
+        return nativeName.isBlank() ? argument.getClass().getName() : nativeName;
     }
 
     private int execute(final Node node, final CommandContext<CommandSourceStack> ctx, final String flagString) {
@@ -383,6 +629,7 @@ public final class NQCommandManager {
         private NQArgumentType<?> argument;
         private NQDescription description = NQDescription.EMPTY;
         private NQSuggestionProvider suggestionOverride;
+        private NQDescription commandDescription = NQDescription.EMPTY;
         private Consumer<NQCommandContext> handler;
         private String permission;
         private Class<?> senderType;

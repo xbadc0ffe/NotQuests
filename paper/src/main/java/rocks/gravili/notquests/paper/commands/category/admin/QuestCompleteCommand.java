@@ -21,7 +21,7 @@ public class QuestCompleteCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Completes an active quest for a player"))
-                .literal("completeQuest")
+                .literal("completeQuest", NQDescription.of("Completes an active quest for a player."))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player name whose quest should be completed."))
                 .required("activeQuest", activeQuestArgument(notQuests), NQDescription.of("Active quest which should be completed."))
                 .handler((context) -> {

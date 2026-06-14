@@ -58,7 +58,7 @@ public class TownyNationReachTownCountObjective extends Objective {
 
     manager.command(addObjectiveBuilder
             .required("amount", numberVariableArgument("amount", null), NQDescription.of("Minimum amount of towns"))
-            .flag(NQFlag.builder("doNotCountPreviousTowns").withDescription(NQDescription.of("Makes it so only additional towns from the time of unlocking this Objective will count (and previous/existing counts will not count, so it starts from zero)")).build())
+            .flag(NQFlag.builder("doNotCountPreviousTowns", NQDescription.of("Only count towns added after this objective unlocks; existing towns do not count.")).build())
             .handler(
                 (context) -> {
                   final String amountExpression = context.get("amount");

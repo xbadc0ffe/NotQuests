@@ -60,7 +60,7 @@ public class KillEliteMobsObjective extends Objective {
             return;
         }
 
-        NQFlag mobname = NQFlag.builder("mobname")
+        NQFlag mobname = NQFlag.builder("mobname", NQDescription.of("EliteMobs mob name that counts for this objective, or any."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> {
                             List<String> completions = new ArrayList<>();
@@ -70,22 +70,19 @@ public class KillEliteMobsObjective extends Objective {
                             }
                             return completions;
                         })
-                .withDescription(NQDescription.of("Name of the Elite Mob"))
                 .build();
 
-        NQFlag minimumLevel = NQFlag.builder("minimumLevel")
+        NQFlag minimumLevel = NQFlag.builder("minimumLevel", NQDescription.of("Minimum EliteMobs level that counts for this objective."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> main.getDataManager().numberPositiveCompletions)
-                .withDescription(NQDescription.of("Minimum level"))
                 .build();
 
-        NQFlag maximumLevel = NQFlag.builder("maximumLevel")
+        NQFlag maximumLevel = NQFlag.builder("maximumLevel", NQDescription.of("Maximum EliteMobs level that counts for this objective."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> main.getDataManager().numberPositiveCompletions)
-                .withDescription(NQDescription.of("Maximum level"))
                 .build();
 
-        NQFlag spawnReason = NQFlag.builder("spawnReason")
+        NQFlag spawnReason = NQFlag.builder("spawnReason", NQDescription.of("Bukkit spawn reason that counts for this EliteMobs kill objective, or any."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> {
                             List<String> completions = new ArrayList<>();
@@ -95,10 +92,11 @@ public class KillEliteMobsObjective extends Objective {
                             }
                             return completions;
                         })
-                .withDescription(NQDescription.of("Spawn Reason"))
                 .build();
 
-        NQFlag minimumDamagePercentage = NQFlag.builder("minimumDamagePercentage")
+        NQFlag minimumDamagePercentage = NQFlag.builder(
+                        "minimumDamagePercentage",
+                        NQDescription.of("Minimum percent of total damage the player must deal for the kill to count."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> {
                             List<String> completions = new ArrayList<>();
@@ -108,11 +106,10 @@ public class KillEliteMobsObjective extends Objective {
 
                             return completions;
                         })
-                .withDescription(NQDescription.of("Minimum Damage Percentage"))
                 .build();
 
         manager.command(addObjectiveBuilder
-                .literal("KillEliteMobs")
+                .literal("KillEliteMobs", NQDescription.of("Adds an EliteMobs kill objective."))
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of kills needed"))
                 .flag(mobname)
                 .flag(minimumLevel)

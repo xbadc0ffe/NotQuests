@@ -45,7 +45,7 @@ public class BroadcastMessageAction extends Action {
             ActionFor actionFor) {
         manager.command(
                 builder
-                        .required("Broadcast Message", NQArguments.greedyStringArgument(), NQDescription.of("Message to broadcast"))
+                        .required("Broadcast Message", NQArguments.greedyStringArgument(), NQDescription.of("Message that should be broadcast to the server."))
                         .handler((context) -> {
                             final String messageToBroadcast = (String) context.get("Broadcast Message");
                             BroadcastMessageAction broadcastMessageAction = new BroadcastMessageAction(main);

@@ -58,6 +58,11 @@ public final class ItemStackListVariableArgument extends NQArgumentType<String> 
     }
 
     @Override
+    public String valueTypeName() {
+        return "material, custom item, hand, or any";
+    }
+
+    @Override
     public String convert(final String input) throws CommandSyntaxException {
         return input;
     }

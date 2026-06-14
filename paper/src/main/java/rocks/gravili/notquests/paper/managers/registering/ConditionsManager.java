@@ -50,7 +50,11 @@ public class ConditionsManager {
     public ConditionsManager(final NotQuests main) {
         this.main = main;
         conditions = new HashMap<>();
-        playerSelectorCommandFlag = NQFlag.builder("player").withArgument(NQArguments.playerArgument()).withDescription(NQDescription.of("Player selector")).build();
+        playerSelectorCommandFlag = NQFlag.builder(
+                        "player",
+                        NQDescription.of("Player whose quest, tag, inventory, permission, or variable data should be checked."))
+                .withArgument(NQArguments.playerArgument())
+                .build();
         registerDefaultConditions();
 
     }
@@ -96,8 +100,9 @@ public class ConditionsManager {
 
             commandHandler.setAccessible(true);
 
-            final NQFlag negateFlag = NQFlag.builder("negate").withDescription(NQDescription.of("Negates this condition")).build();
-            final NQFlag allowProgressDecreaseIfNotFulfilledFlag = NQFlag.builder("allowProgressDecreaseIfNotFulfilled").withDescription(NQDescription.of("By default, if this condition is not fulfilled, the objective progress also wont be allowed to decrease. Setting this flag would allow it to decrease in any case, while only not allowing progress to be increased if the condition is not fulfilled")).build();
+            final NQFlag negateFlag = NQFlag.builder("negate", NQDescription.of("Invert the result so this condition passes when it would normally fail."))
+                    .build();
+            final NQFlag allowProgressDecreaseIfNotFulfilledFlag = NQFlag.builder("allowProgressDecreaseIfNotFulfilled", NQDescription.of("By default, if this condition is not fulfilled, the objective progress also wont be allowed to decrease. Setting this flag would allow it to decrease in any case, while only not allowing progress to be increased if the condition is not fulfilled")).build();
 
             if (condition == NumberCondition.class || condition == StringCondition.class || condition == BooleanCondition.class || condition == ListCondition.class || condition == ItemStackListCondition.class) {
                 commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditAddRequirementCommandBuilder().flag(negateFlag)
@@ -127,28 +132,28 @@ public class ConditionsManager {
                         .commandDescription(NQDescription.of("Checks a " + identifier + " condition inline"))
                         .flag(playerSelectorCommandFlag), ConditionFor.INLINE); //For inline /qa conditions check
             } else {
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditAddRequirementCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditAddRequirementCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .commandDescription(NQDescription.of("Creates a new " + identifier + " condition")), ConditionFor.QUEST);
 
 
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddUnlockConditionCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddUnlockConditionCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .commandDescription(NQDescription.of("Creates a new " + identifier + " unlock condition")), ConditionFor.OBJECTIVEUNLOCK);
 
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddProgressConditionCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddProgressConditionCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .flag(allowProgressDecreaseIfNotFulfilledFlag)
                         .commandDescription(NQDescription.of("Creates a new " + identifier + " progress condition")),  ConditionFor.OBJECTIVEPROGRESS);
 
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddCompleteConditionCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditObjectiveAddCompleteConditionCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .commandDescription(NQDescription.of("Creates a new " + identifier + " complete condition")), ConditionFor.OBJECTIVECOMPLETE);
 
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminAddConditionCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminAddConditionCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .commandDescription(NQDescription.of("Creates a new " + identifier + " condition"))
                         .flag(main.getCommandManager().categoryFlag), ConditionFor.ConditionsYML); //For conditions.yml
 
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminActionsAddConditionCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminActionsAddConditionCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .commandDescription(NQDescription.of("Creates a new " + identifier + " condition: " + ConditionFor.Action)), ConditionFor.Action); //For conditions.yml
 
-                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminConditionCheckCommandBuilder().literal(identifier).flag(negateFlag)
+                commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminConditionCheckCommandBuilder().literal(identifier, NQDescription.of(identifier + " condition type.")).flag(negateFlag)
                         .commandDescription(NQDescription.of("Checks a " + identifier + " condition inline"))
                         .flag(playerSelectorCommandFlag), ConditionFor.INLINE); //For inline /qa conditions check
 
@@ -317,8 +322,9 @@ public class ConditionsManager {
 
                     main.getLogManager().info("Re-registering condition " + identifier + " due to variable changes...");
 
-                    final NQFlag negateFlag = NQFlag.builder("negate").withDescription(NQDescription.of("Negates this condition")).build();
-                    final NQFlag allowProgressDecreaseIfNotFulfilledFlag = NQFlag.builder("allowProgressDecreaseIfNotFulfilled").withDescription(NQDescription.of("By default, if this condition is not fulfilled, the objective progress also wont be allowed to decrease. Setting this flag would allow it to decrease in any case, while only not allowing progress to be increased if the condition is not fulfilled")).build();
+                    final NQFlag negateFlag = NQFlag.builder("negate", NQDescription.of("Invert the result so this condition passes when it would normally fail."))
+                            .build();
+                    final NQFlag allowProgressDecreaseIfNotFulfilledFlag = NQFlag.builder("allowProgressDecreaseIfNotFulfilled", NQDescription.of("By default, if this condition is not fulfilled, the objective progress also wont be allowed to decrease. Setting this flag would allow it to decrease in any case, while only not allowing progress to be increased if the condition is not fulfilled")).build();
 
                     commandHandler.invoke(condition, main, main.getCommandManager().getNQCommandManager(), main.getCommandManager().getAdminEditAddRequirementCommandBuilder().flag(negateFlag)
                             .commandDescription(NQDescription.of("Creates a new " + identifier + " condition")), ConditionFor.QUEST);

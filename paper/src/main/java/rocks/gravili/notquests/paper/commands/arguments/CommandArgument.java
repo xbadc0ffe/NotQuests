@@ -45,6 +45,11 @@ public final class CommandArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "command text";
+    }
+
+    @Override
     public ArgumentType<String> getNativeType() {
         // The Cloud parser consumed the rest of the input; greedyString mirrors that.
         return StringArgumentType.greedyString();

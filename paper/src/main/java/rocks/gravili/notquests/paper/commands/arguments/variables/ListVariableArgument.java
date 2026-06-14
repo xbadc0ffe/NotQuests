@@ -56,6 +56,11 @@ public final class ListVariableArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "comma-separated list";
+    }
+
+    @Override
     public String convert(final String input) throws CommandSyntaxException {
         return input;
     }

@@ -53,8 +53,8 @@ public class ReachLocationObjective extends Objective {
         }
 
         manager.command(addObjectiveBuilder
-                .literal("worldeditselection")
-                .required("Location Name", NQArguments.greedyStringArgument(), NQDescription.of("Location name"), (context, input) -> {
+                .literal("worldeditselection", NQDescription.of("Use the player's current WorldEdit selection as the target region."))
+                .required("Location Name", NQArguments.greedyStringArgument(), NQDescription.of("Name shown to players for this location in objective task text."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<Enter new Location name>");
                     return completions;

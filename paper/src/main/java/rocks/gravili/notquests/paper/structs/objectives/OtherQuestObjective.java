@@ -51,7 +51,7 @@ public class OtherQuestObjective extends Objective {
         manager.command(addObjectiveBuilder
                 .required("other quest name", questArgument(main), NQDescription.of("Name of the other Quest the player has to complete"))
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of times the Quest needs to be completed"))
-                .flag(NQFlag.builder("countPreviouslyCompletedQuests").withDescription(NQDescription.of("Makes it so quests completed before this OtherQuest objective becomes active will be counted towards the progress too.")).build())
+                .flag(NQFlag.builder("countPreviouslyCompletedQuests", NQDescription.of("Makes it so quests completed before this OtherQuest objective becomes active will be counted towards the progress too.")).build())
                 .handler((context) -> {
                     final Quest otherQuest = context.get("other quest name");
                     final String amountExpression = context.get("amount");

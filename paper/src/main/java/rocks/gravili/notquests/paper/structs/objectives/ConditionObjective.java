@@ -46,8 +46,8 @@ public class ConditionObjective extends Objective {
             NQCommandBuilder addObjectiveBuilder,
             final int level) {
         manager.command(addObjectiveBuilder
-                .required("condition", conditionArgument(main), NQDescription.of("Condition Name"))
-                .flag(NQFlag.builder("checkOnlyWhenCorrespondingVariableValueChanged").withDescription(NQDescription.of("This checks this condition only, when the corresponding variable value is changed via an action, instead of checking every x seconds.")).build())
+                .required("condition", conditionArgument(main), NQDescription.of("Identifier of the saved condition this objective should watch."))
+                .flag(NQFlag.builder("checkOnlyWhenCorrespondingVariableValueChanged", NQDescription.of("This checks this condition only, when the corresponding variable value is changed via an action, instead of checking every x seconds.")).build())
                 .handler(
                         (context) -> {
                             final Condition condition = context.get("condition");

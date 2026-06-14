@@ -43,8 +43,10 @@ public class EnchantObjective extends Objective {
                 .required("enchantment", enchantmentArgument(), NQDescription.of("Enchantment which needs to be applied to the item"))
                 .required("materials", itemStackSelectionArgument(main), NQDescription.of("Material of the item which needs to be enchanted"))
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of times the item needs to be enchanted"))
-                .flag(NQFlag.builder("min").withArgument(numberVariableArgument("min", null)).build())
-                .flag(NQFlag.builder("max").withArgument(numberVariableArgument("max", null)).build())
+                .flag(NQFlag.builder("min", NQDescription.of("Minimum enchantment level that counts for this objective."))
+                        .withArgument(numberVariableArgument("min", null)).build())
+                .flag(NQFlag.builder("max", NQDescription.of("Maximum enchantment level that counts for this objective."))
+                        .withArgument(numberVariableArgument("max", null)).build())
                 .handler(
                         (context) -> {
                             final Enchantment enchantment1 = context.get("enchantment");

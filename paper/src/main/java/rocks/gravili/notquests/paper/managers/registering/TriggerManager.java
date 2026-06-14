@@ -76,7 +76,7 @@ public class TriggerManager {
                     main.getCommandManager().getNQCommandManager(),
                     main.getCommandManager()
                             .getAdminEditAddTriggerCommandBuilder()
-                            .literal(identifier)
+                            .literal(identifier, NQDescription.of(identifier + " trigger type."))
                             .commandDescription(NQDescription.of("Creates a new " + identifier + " trigger")));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();

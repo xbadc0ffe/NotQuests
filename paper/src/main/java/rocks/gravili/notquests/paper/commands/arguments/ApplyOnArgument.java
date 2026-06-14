@@ -52,6 +52,11 @@ public final class ApplyOnArgument extends NQArgumentType<Integer> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "Quest, O1, O2, or another objective target";
+    }
+
+    @Override
     public Integer convert(final String input) throws CommandSyntaxException {
         // applyOn is a small integer: 0 = Quest, 1 = Objective 1, ... Accept "Quest", "O1"/"O2"
         // (objective shorthand) or a bare number. No prior-argument context is needed.

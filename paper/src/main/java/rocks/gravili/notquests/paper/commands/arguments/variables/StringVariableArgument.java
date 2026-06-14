@@ -61,6 +61,11 @@ public final class StringVariableArgument extends NQArgumentType<String> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "text value";
+    }
+
+    @Override
     public String convert(final String input) throws CommandSyntaxException {
         return input;
     }

@@ -66,8 +66,8 @@ public class AdminEditCommands {
         this.manager = manager;
 
 
-        manager.command(editBuilder.literal("acceptCooldown").literal("complete")
-                .literal("set")
+        manager.command(editBuilder.literal("acceptCooldown", NQDescription.of("Configures the cooldown before this quest can be accepted again.")).literal("complete", NQDescription.of("Applies this setting to quest completion cooldowns."))
+                .literal("set", NQDescription.of("Sets the cooldown players must wait after completing this quest before accepting it again."))
                 .required("duration", NQArguments.durationArgument(), NQDescription.of("New accept cooldown measured by quest completion time.")).commandDescription(NQDescription.of("Sets the time players have to wait between accepting quests."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
@@ -81,8 +81,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editBuilder.literal("acceptCooldown").literal("complete")
-                .literal("disable").commandDescription(NQDescription.of("Disables the wait time for players between accepting quests."))
+        manager.command(editBuilder.literal("acceptCooldown", NQDescription.of("Configures the cooldown before this quest can be accepted again.")).literal("complete", NQDescription.of("Applies this setting to quest completion cooldowns."))
+                .literal("disable", NQDescription.of("Turns this setting off.")).commandDescription(NQDescription.of("Disables the wait time for players between accepting quests."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     quest.setAcceptCooldownComplete(-1, true);
@@ -92,12 +92,12 @@ public class AdminEditCommands {
                 }));
 
 
-        final NQCommandBuilder armorstandBuilder = editBuilder.literal("armorstands");
+        final NQCommandBuilder armorstandBuilder = editBuilder.literal("armorstands", NQDescription.of("Manages armor stands attached as quest givers."));
         handleArmorStands(armorstandBuilder);
 
 
-        manager.command(editBuilder.literal("description")
-                .literal("show").commandDescription(NQDescription.of("Shows current Quest description."))
+        manager.command(editBuilder.literal("description", NQDescription.of("Quest description shown in quest previews, GUIs, and chat. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected quest's current description text.")).commandDescription(NQDescription.of("Shows current Quest description."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -106,8 +106,8 @@ public class AdminEditCommands {
                                     + quest.getObjectiveHolderDescription()
                     ));
                 }));
-        manager.command(editBuilder.literal("description")
-                .literal("remove").commandDescription(NQDescription.of("Removes current Quest description."))
+        manager.command(editBuilder.literal("description", NQDescription.of("Quest description shown in quest previews, GUIs, and chat. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected quest's custom description text.")).commandDescription(NQDescription.of("Removes current Quest description."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -118,8 +118,8 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editBuilder.literal("description")
-                .literal("set")
+        manager.command(editBuilder.literal("description", NQDescription.of("Quest description shown in quest previews, GUIs, and chat. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected quest's description text shown to players."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Sets the new description of the Quest."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
@@ -133,8 +133,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editBuilder.literal("displayName")
-                .literal("show").commandDescription(NQDescription.of("Shows current Quest display name."))
+        manager.command(editBuilder.literal("displayName", NQDescription.of("Quest display name shown in quest lists, quest previews, GUIs, and chat messages. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected quest's current display name.")).commandDescription(NQDescription.of("Shows current Quest display name."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -143,8 +143,8 @@ public class AdminEditCommands {
                                     + quest.getQuestDisplayName()
                     ));
                 }));
-        manager.command(editBuilder.literal("displayName")
-                .literal("remove").commandDescription(NQDescription.of("Removes current Quest display name."))
+        manager.command(editBuilder.literal("displayName", NQDescription.of("Quest display name shown in quest lists, quest previews, GUIs, and chat messages. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected quest's custom display name.")).commandDescription(NQDescription.of("Removes current Quest display name."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -155,9 +155,9 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editBuilder.literal("displayName")
-                .literal("set")
-                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("Quest display name"))
+        manager.command(editBuilder.literal("displayName", NQDescription.of("Quest display name shown in quest lists, quest previews, GUIs, and chat messages. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected quest's display name shown in GUIs, previews, and chat."))
+                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New quest display name. Supports spaces and MiniMessage formatting."))
                 .commandDescription(NQDescription.of("Sets the new display name of the Quest."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
@@ -172,7 +172,7 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editBuilder.literal("limits").literal("completions")
+        manager.command(editBuilder.literal("limits", NQDescription.of("Configures quest accept, completion, and fail limits.")).literal("completions", NQDescription.of("Configures how many times players may complete this quest."))
                 .required("max-completions", NQArguments.integerArgument(), NQDescription.of("Maximum amount of completions. Set to -1 for unlimited (default)."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<amount of maximum completions>");
@@ -197,7 +197,7 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(editBuilder.literal("limits").literal("accepts")
+        manager.command(editBuilder.literal("limits", NQDescription.of("Configures quest accept, completion, and fail limits.")).literal("accepts", NQDescription.of("Configures how many times players may accept this quest."))
                 .required("max-accepts", NQArguments.integerArgument(), NQDescription.of("Maximum amount of accepts. Set to -1 for unlimited (default)."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<amount of maximum accepts>");
@@ -222,7 +222,7 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(editBuilder.literal("limits").literal("fails")
+        manager.command(editBuilder.literal("limits", NQDescription.of("Configures quest accept, completion, and fail limits.")).literal("fails", NQDescription.of("Configures how many times players may fail this quest."))
                 .required("max-fails", NQArguments.integerArgument(), NQDescription.of("Maximum amount of fails. Set to -1 for unlimited (default)."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<amount of maximum fails>");
@@ -248,7 +248,7 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editBuilder.literal("takeEnabled")
+        manager.command(editBuilder.literal("takeEnabled", NQDescription.of("Controls whether players may take this quest."))
                 .required("take-enabled", NQArguments.booleanArgument(), NQDescription.of("Enabled by default. Yes / no"))
                 .commandDescription(NQDescription.of("Sets if players can accept the Quest using /notquests take."))
                 .handler((context) -> {
@@ -268,7 +268,7 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(editBuilder.literal("abortEnabled")
+        manager.command(editBuilder.literal("abortEnabled", NQDescription.of("Controls whether players may abort this quest."))
                 .required("abort-enabled", NQArguments.booleanArgument(), NQDescription.of("Enabled by default. Yes / no")).commandDescription(NQDescription.of("Sets if players can abort the Quest using /notquests abort."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
@@ -287,7 +287,7 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(editBuilder.literal("guiItem")
+        manager.command(editBuilder.literal("guiItem", NQDescription.of("Shows or changes the item displayed in GUIs."))
                 .required("material", itemStackSelectionArgument(main), NQDescription.of("Material of item displayed in the Quest take GUI."))
                 .flag(
                         NQFlag.presence("glow", NQDescription.of("Makes the item have the enchanted glow."))
@@ -325,45 +325,45 @@ public class AdminEditCommands {
 
                 }));
 
-        final NQCommandBuilder objectivesBuilder = editBuilder.literal("objectives", "o");
+        final NQCommandBuilder objectivesBuilder = editBuilder.literal("objectives", NQDescription.of("Manages objectives on this quest or parent objective."), "o");
         //qa edit questname objectives
 
         final String objectiveIDIdentifier = "objectiveId";
         //qa edit questname objectives edit <objectiveID> objectives
         final NQCommandBuilder objectivesBuilderLevel1 =
                 objectivesBuilder
-                        .literal("edit")
+                        .literal("edit", NQDescription.of("Opens subcommands for editing a specific objective on the selected quest."))
                         .required(objectiveIDIdentifier,
                                 objectiveArgument(main, 0),
-                                NQDescription.of(objectiveIDIdentifier))
-                        .literal("objectives", "o");
+                                NQDescription.of("Objective ID shown by this quest's objectives list."))
+                        .literal("objectives", NQDescription.of("Manages objectives on this quest or parent objective."), "o");
 
 
         final String objectiveIDIdentifier2 = "objectiveId2";
         final NQCommandBuilder objectivesBuilderLevel2 =
                 objectivesBuilderLevel1
-                        .literal("edit")
+                        .literal("edit", NQDescription.of("Opens subcommands for editing a child objective inside the selected objective."))
                         .required(objectiveIDIdentifier2,
                                 objectiveArgument(main, 1),
-                                NQDescription.of(objectiveIDIdentifier2))
-                        .literal("objectives", "o");
+                                NQDescription.of("Child objective ID shown inside the selected parent objective."))
+                        .literal("objectives", NQDescription.of("Manages objectives on this quest or parent objective."), "o");
 
         handleObjectives(objectivesBuilder, 0);
         handleObjectives(objectivesBuilderLevel1, 1);
         handleObjectives(objectivesBuilderLevel2, 2);
 
-        final NQCommandBuilder requirementsBuilder = editBuilder.literal("requirements");
+        final NQCommandBuilder requirementsBuilder = editBuilder.literal("requirements", NQDescription.of("Manages requirements that must pass before a quest can be taken."));
         handleRequirements(requirementsBuilder);
-        final NQCommandBuilder rewardsBuilder = editBuilder.literal("rewards");
+        final NQCommandBuilder rewardsBuilder = editBuilder.literal("rewards", NQDescription.of("Manages rewards granted by this quest or objective."));
         handleRewards(rewardsBuilder);
-        final NQCommandBuilder triggersBuilder = editBuilder.literal("triggers");
+        final NQCommandBuilder triggersBuilder = editBuilder.literal("triggers", NQDescription.of("Manages triggers attached to this quest."));
         handleTriggers(triggersBuilder);
 
-        final NQCommandBuilder categoryBuilder = editBuilder.literal("category");
+        final NQCommandBuilder categoryBuilder = editBuilder.literal("category", NQDescription.of("Shows or changes the category assigned to the selected quest."));
         handleCategories(categoryBuilder);
 
 
-        final NQCommandBuilder npcsBuilder = editBuilder.literal("npcs");
+        final NQCommandBuilder npcsBuilder = editBuilder.literal("npcs", NQDescription.of("Manages NPCs attached to this quest or conversation."));
         handleNPCs(npcsBuilder);
 
     }
@@ -371,7 +371,7 @@ public class AdminEditCommands {
     public void handleNPCs(final NQCommandBuilder builder) {
         manager.command(
                 builder
-                        .literal("add")
+                        .literal("add", NQDescription.of("Attaches the selected quest to an NPC or armor stand quest giver."))
                         .required("npc", nqNPCArgument(main, false, true), NQDescription.of("ID of the Citizens NPC to whom the Quest should be attached."))
                         .flag(
                                 NQFlag.presence("hideInNPC", NQDescription.of("Makes the Quest hidden from in the NPC."))).commandDescription(NQDescription.of("Attaches the Quest to a Citizens NPC."))
@@ -459,7 +459,7 @@ public class AdminEditCommands {
 
                                 }));
 
-        manager.command(builder.literal("clear").commandDescription(NQDescription.of("De-attaches this Quest from all NPCs."))
+        manager.command(builder.literal("clear", NQDescription.of("Detaches the selected quest from every NPC and armor stand quest giver.")).commandDescription(NQDescription.of("De-attaches this Quest from all NPCs."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     quest.clearNPCs();
@@ -470,7 +470,7 @@ public class AdminEditCommands {
                     );
                 }));
 
-        manager.command(builder.literal("list")
+        manager.command(builder.literal("list", NQDescription.of("Lists every NPC and armor stand currently attached to the selected quest."))
                 .commandDescription(NQDescription.of("Lists all NPCs which have this Quest attached."))
                 .handler(
                         (context) -> {
@@ -510,7 +510,7 @@ public class AdminEditCommands {
 
 
     public void handleCategories(final NQCommandBuilder builder) {
-        manager.command(builder.literal("show").commandDescription(NQDescription.of("Shows the current category of this Quest."))
+        manager.command(builder.literal("show", NQDescription.of("Shows the category currently assigned to the selected quest.")).commandDescription(NQDescription.of("Shows the current category of this Quest."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -520,7 +520,7 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("set")
+        manager.command(builder.literal("set", NQDescription.of("Moves the selected quest into another category."))
                 .required("category", categoryArgument(main), NQDescription.of("New category for this Quest."))
                 .commandDescription(NQDescription.of("Changes the current category of this Quest."))
                 .handler((context) -> {
@@ -547,7 +547,7 @@ public class AdminEditCommands {
 
     public void handleArmorStands(final NQCommandBuilder builder) {
 
-        manager.command(builder.literal("check")
+        manager.command(builder.literal("check", NQDescription.of("Gives a player the armor-stand inspection tool for quest attachments."))
                 .senderType(Player.class).commandDescription(NQDescription.of("Gives you an item with which you check what Quests are attached to an armor stand."))
                 .handler((context) -> {
                     final Player player = (Player) context.sender();
@@ -585,7 +585,7 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(builder.literal("add")
+        manager.command(builder.literal("add", NQDescription.of("Gives a player the tool used to attach this quest to an armor stand."))
                 .senderType(Player.class)
                 .flag(NQFlag.presence("hideInArmorStand", NQDescription.of("Makes the Quest hidden from armor stands")))
                 .commandDescription(NQDescription.of("Gives you an item with which you can add the quest to an armor stand."))
@@ -636,16 +636,16 @@ public class AdminEditCommands {
                     context.sender().sendMessage(main.parse("<success>You have been given an item with which you can add this quest to armor stands!"));
                 }));
 
-        manager.command(builder.literal("clear")
+        manager.command(builder.literal("clear", NQDescription.of("Clears all armor-stand quest-giver attachments for this quest."))
                 .senderType(Player.class).commandDescription(NQDescription.of("This command is not done yet."))
                 .handler((context) -> context.sender().sendMessage(main.parse("<error>Sorry, this command is not done yet! I'll add it in future versions."))));
 
-        manager.command(builder.literal("list")
+        manager.command(builder.literal("list", NQDescription.of("Lists armor stands attached to the selected quest."))
                 .senderType(Player.class).commandDescription(NQDescription.of("This command is not done yet."))
                 .handler((context) -> context.sender().sendMessage(main.parse("<error>Sorry, this command is not done yet! I'll add it in future versions."))));
 
 
-        manager.command(builder.literal("remove")
+        manager.command(builder.literal("remove", NQDescription.of("Gives a player the tool used to remove this quest from an armor stand."))
                 .senderType(Player.class)
                 .flag(NQFlag.presence("hideInArmorStand", NQDescription.of("Sets if you want to remove the Quest which is hidden in an armor stand.")))
                 .commandDescription(NQDescription.of("Gives you an item with which you can remove the quest from an armor stand."))
@@ -712,9 +712,9 @@ public class AdminEditCommands {
 
         main.getLogManager().debug("Handling objectives for level <highlight>" + level + "</highlight>...");
 
-        final NQCommandBuilder predefinedProgressOrderBuilder = builder.literal("predefinedProgressOrder");
+        final NQCommandBuilder predefinedProgressOrderBuilder = builder.literal("predefinedProgressOrder", NQDescription.of("Configures the predefined progress order for this category."));
 
-        manager.command(predefinedProgressOrderBuilder.literal("show").commandDescription(NQDescription.of("Shows the current predefined order in which the objectives need to be progressed for your quest."))
+        manager.command(predefinedProgressOrderBuilder.literal("show", NQDescription.of("Shows the objective progress order currently configured here.")).commandDescription(NQDescription.of("Shows the current predefined order in which the objectives need to be progressed for your quest."))
                 .handler((context) -> {
                     final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
                     context.sender().sendMessage(Component.empty());
@@ -723,8 +723,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(predefinedProgressOrderBuilder.literal("set")
-                .literal("none").commandDescription(NQDescription.of("Sets a predefined order in which the objectives need to be progressed for your quest."))
+        manager.command(predefinedProgressOrderBuilder.literal("set", NQDescription.of("Changes the required progress order for objectives in this branch."))
+                .literal("none", NQDescription.of("Clears this optional mode or selection.")).commandDescription(NQDescription.of("Sets a predefined order in which the objectives need to be progressed for your quest."))
                 .handler((context) -> {
                     final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
                     objectiveHolder.setPredefinedProgressOrder(null, true);
@@ -733,8 +733,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(predefinedProgressOrderBuilder.literal("set")
-                .literal("firstToLast").commandDescription(NQDescription.of("Sets a predefined order in which the objectives need to be progressed for your quest."))
+        manager.command(predefinedProgressOrderBuilder.literal("set", NQDescription.of("Changes the required progress order for objectives in this branch."))
+                .literal("firstToLast", NQDescription.of("Orders category progress from the first quest to the last.")).commandDescription(NQDescription.of("Sets a predefined order in which the objectives need to be progressed for your quest."))
                 .handler((context) -> {
                     final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
                     objectiveHolder.setPredefinedProgressOrder(PredefinedProgressOrder.firstToLast(), true);
@@ -743,8 +743,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(predefinedProgressOrderBuilder.literal("set")
-                .literal("lastToFirst").commandDescription(NQDescription.of("Sets a predefined order in which the objectives need to be progressed for your quest."))
+        manager.command(predefinedProgressOrderBuilder.literal("set", NQDescription.of("Changes the required progress order for objectives in this branch."))
+                .literal("lastToFirst", NQDescription.of("Orders category progress from the last quest to the first.")).commandDescription(NQDescription.of("Sets a predefined order in which the objectives need to be progressed for your quest."))
                 .handler((context) -> {
                     final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
                     objectiveHolder.setPredefinedProgressOrder(PredefinedProgressOrder.lastToFirst(), true);
@@ -753,8 +753,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(predefinedProgressOrderBuilder.literal("set")
-                .literal("custom")
+        manager.command(predefinedProgressOrderBuilder.literal("set", NQDescription.of("Changes the required progress order for objectives in this branch."))
+                .literal("custom", NQDescription.of("Uses a custom value or custom order."))
                 .required("order", NQArguments.greedyStringArgument(), NQDescription.of("Custom order. Example: 2 1 3 4 5 6 7 9 8"), (context, input) -> {
                             List<String> completions = new ArrayList<>();
                             final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
@@ -783,7 +783,7 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("clear").commandDescription(NQDescription.of("Removes all objectives from a Quest."))
+        manager.command(builder.literal("clear", NQDescription.of(level == 0 ? "Removes every objective from the selected quest." : "Removes every child objective from the selected objective.")).commandDescription(NQDescription.of("Removes all objectives from a Quest."))
                 .handler((context) -> {
                     final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
 
@@ -794,7 +794,7 @@ public class AdminEditCommands {
                                     + "</highlight> have been removed!"
                     ));
                 }));
-        manager.command(builder.literal("list").commandDescription(NQDescription.of("Lists all objectives of a Quest."))
+        manager.command(builder.literal("list", NQDescription.of(level == 0 ? "Lists every objective on the selected quest." : "Lists every child objective inside the selected objective.")).commandDescription(NQDescription.of("Lists all objectives of a Quest."))
                 .handler((context) -> {
                     final ObjectiveHolder objectiveHolder = main.getCommandManager().getObjectiveHolderFromContextAndLevel(context, level);
 
@@ -809,7 +809,12 @@ public class AdminEditCommands {
         //Builder: qa edit questname objectives edit <Objective ID> objectives
         //adminEditObjectivesBuilderWithLevels: qa edit questname objectives edit <Objective ID> objectives edit <Objective ID 2>
 
-        final NQCommandBuilder adminEditObjectivesBuilderWithLevels = builder.literal("edit").required(objectiveIDIdentifier, objectiveArgument(main, level), NQDescription.of(objectiveIDIdentifier));
+        final NQCommandBuilder adminEditObjectivesBuilderWithLevels = builder.literal("edit", NQDescription.of(level == 0 ? "Opens subcommands for editing a specific objective on the selected quest." : "Opens subcommands for editing a child objective inside the selected objective.")).required(
+                objectiveIDIdentifier,
+                objectiveArgument(main, level),
+                NQDescription.of(level == 0
+                        ? "Objective ID shown by this quest's objectives list."
+                        : "Child objective ID shown inside the selected parent objective."));
         handleEditObjectives(adminEditObjectivesBuilderWithLevels, level);
     }
 
@@ -825,16 +830,16 @@ public class AdminEditCommands {
         main.getLogManager().debug("Handling EDIT objectives for level <highlight>" + level + "</highlight>... objectiveIDIdentifier: " + objectiveIDIdentifier);
 
 
-        manager.command(builder.literal("location")
-                .literal("enable").commandDescription(NQDescription.of("Shows the location to the player."))
+        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
+                .literal("enable", NQDescription.of("Turns this setting on.")).commandDescription(NQDescription.of("Shows the location to the player."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     objective.setShowLocation(true, true);
                     context.sender().sendMessage(main.parse("<main>The objective with ID <highlight>" + objective.getObjectiveID() + "</highlight> is now showing the location to the player!"));
                 }));
 
-        manager.command(builder.literal("location")
-                .literal("disables").commandDescription(NQDescription.of("Disables showing the location to the player."))
+        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
+                .literal("disables", NQDescription.of("Stops showing the selected objective's location to players.")).commandDescription(NQDescription.of("Disables showing the location to the player."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -845,9 +850,9 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("location")
-                .literal("set")
-                .required("world", NQArguments.worldArgument(), NQDescription.of("World name"))
+        manager.command(builder.literal("location", NQDescription.of("Shows or changes a saved location."))
+                .literal("set", NQDescription.of("Sets the location shown to players for the selected objective."))
+                .required("world", NQArguments.worldArgument(), NQDescription.of("World where this quest respawn location should be placed."))
                 /* .argumentTriplet(
                          "coords",
                          TypeToken.get(Vector.class),
@@ -858,9 +863,9 @@ public class AdminEditCommands {
                          ),
                          Description.of("Coordinates")
                  )*/ //Commented out, because this somehow breaks flags
-                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate"))
-                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate"))
-                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate"))
+                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate for the quest respawn location."))
+                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate for the quest respawn location."))
+                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate for the quest respawn location."))
                 .commandDescription(NQDescription.of("Disables showing the location to the player."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -873,8 +878,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("completionNPC")
-                .literal("show", "view").commandDescription(NQDescription.of("Shows the completionNPC of an objective."))
+        manager.command(builder.literal("completionNPC", NQDescription.of("Manages the NPC used to complete this quest."))
+                .literal("show", NQDescription.of("Shows the NPC players must click to complete the selected objective."), "view").commandDescription(NQDescription.of("Shows the completionNPC of an objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -883,9 +888,9 @@ public class AdminEditCommands {
                                     + (objective.getCompletionNPC() != null ? objective.getCompletionNPC().getID() : "null") + "</highlight2>!"
                     ));
                 }));
-        manager.command(builder.literal("completionNPC")
-                .literal("set")
-                .required("Completion NPC", nqNPCArgument(main, true, true), NQDescription.of("Completion NPC")).commandDescription(NQDescription.of("Sets the completionNPC of an objective."))
+        manager.command(builder.literal("completionNPC", NQDescription.of("Manages the NPC used to complete this quest."))
+                .literal("set", NQDescription.of("Sets the NPC players must click to complete the selected objective."))
+                .required("Completion NPC", nqNPCArgument(main, true, true), NQDescription.of("NPC that must be clicked to complete this objective; supports Citizens, FancyNPCs, armor stands, rightClickSelect, or none.")).commandDescription(NQDescription.of("Sets the completionNPC of an objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     final NQNPCResult completionNPCResult = context.get("Completion NPC");
@@ -922,18 +927,18 @@ public class AdminEditCommands {
                 }));
 
 
-        final NQCommandBuilder editObjectiveConditionsUnlockBuilder = builder.literal("conditions").literal("unlock");
+        final NQCommandBuilder editObjectiveConditionsUnlockBuilder = builder.literal("conditions", NQDescription.of("Manages conditions attached to the selected objective.")).literal("unlock", NQDescription.of("Manages conditions required before the objective can unlock."));
         handleEditObjectivesUnlockConditions(editObjectiveConditionsUnlockBuilder, level);
 
-        final NQCommandBuilder editObjectiveConditionsProgressBuilder = builder.literal("conditions").literal("progress");
+        final NQCommandBuilder editObjectiveConditionsProgressBuilder = builder.literal("conditions", NQDescription.of("Manages conditions attached to the selected objective.")).literal("progress", NQDescription.of("Manages conditions required while the objective is progressing."));
         handleEditObjectivesProgressConditions(editObjectiveConditionsProgressBuilder, level);
 
-        final NQCommandBuilder editObjectiveConditionsCompleteBuilder = builder.literal("conditions").literal("complete");
+        final NQCommandBuilder editObjectiveConditionsCompleteBuilder = builder.literal("conditions", NQDescription.of("Manages conditions attached to the selected objective.")).literal("complete", NQDescription.of("Manages conditions required before the objective can complete."));
         handleEditObjectivesCompleteConditions(editObjectiveConditionsCompleteBuilder, level);
 
 
-        manager.command(builder.literal("description")
-                .literal("show").commandDescription(NQDescription.of("Shows current objective description."))
+        manager.command(builder.literal("description", NQDescription.of("Objective description shown in objective lists, progress output, and GUIs. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected objective's current description text.")).commandDescription(NQDescription.of("Shows current objective description."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     context.sender().sendMessage(main.parse(
@@ -941,8 +946,8 @@ public class AdminEditCommands {
                                     + objective.getObjectiveHolderDescription()
                     ));
                 }));
-        manager.command(builder.literal("description")
-                .literal("remove").commandDescription(NQDescription.of("Removes current objective description."))
+        manager.command(builder.literal("description", NQDescription.of("Objective description shown in objective lists, progress output, and GUIs. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected objective's custom description text.")).commandDescription(NQDescription.of("Removes current objective description."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     objective.removeDescription(true);
@@ -951,8 +956,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("taskDescription")
-                .literal("show").commandDescription(NQDescription.of("Shows current objective task description."))
+        manager.command(builder.literal("taskDescription", NQDescription.of("Shows or changes the task text shown for an objective."))
+                .literal("show", NQDescription.of("Shows the selected objective's task text shown to players.")).commandDescription(NQDescription.of("Shows current objective task description."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     context.sender().sendMessage(main.parse(
@@ -960,8 +965,8 @@ public class AdminEditCommands {
                                     + objective.getTaskDescriptionProvided()
                     ));
                 }));
-        manager.command(builder.literal("taskDescription")
-                .literal("remove").commandDescription(NQDescription.of("Removes current objective task description."))
+        manager.command(builder.literal("taskDescription", NQDescription.of("Shows or changes the task text shown for an objective."))
+                .literal("remove", NQDescription.of("Removes the selected objective's custom task text.")).commandDescription(NQDescription.of("Removes current objective task description."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -972,9 +977,9 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("description")
-                .literal("set")
-                .required("Objective Description", NQArguments.greedyStringArgument(), NQDescription.of("Objective description"))
+        manager.command(builder.literal("description", NQDescription.of("Objective description shown in objective lists, progress output, and GUIs. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected objective's description text."))
+                .required("Objective Description", NQArguments.greedyStringArgument(), NQDescription.of("Task text shown to players for this objective. Supports spaces and MiniMessage formatting."))
                 .commandDescription(NQDescription.of("Sets current objective description."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -987,8 +992,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("taskDescription")
-                .literal("set")
+        manager.command(builder.literal("taskDescription", NQDescription.of("Shows or changes the task text shown for an objective."))
+                .literal("set", NQDescription.of("Sets the task text shown to players for the selected objective."))
                 .required("Task Description", NQArguments.greedyStringArgument(), NQDescription.of("Objective task description"))
                 .commandDescription(NQDescription.of("Sets current objective task description."))
                 .handler((context) -> {
@@ -1002,14 +1007,14 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(builder.literal("displayName")
-                .literal("show").commandDescription(NQDescription.of("Shows current objective displayname."))
+        manager.command(builder.literal("displayName", NQDescription.of("Objective display name shown in quest progress, objective lists, GUIs, and task messages. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected objective's current display name.")).commandDescription(NQDescription.of("Shows current objective displayname."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     context.sender().sendMessage(main.parse("<main>Current displayname of objective with ID <highlight>" + objective.getObjectiveID() + "</highlight>: <highlight2>" + objective.getDisplayName()));
                 }));
-        manager.command(builder.literal("displayName")
-                .literal("remove").commandDescription(NQDescription.of("Removes current objective displayname."))
+        manager.command(builder.literal("displayName", NQDescription.of("Objective display name shown in quest progress, objective lists, GUIs, and task messages. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected objective's custom display name.")).commandDescription(NQDescription.of("Removes current objective displayname."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1020,9 +1025,9 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("set")
-                .required("DisplayName", NQArguments.greedyStringArgument(), NQDescription.of("Quest display name"))
+        manager.command(builder.literal("displayName", NQDescription.of("Objective display name shown in quest progress, objective lists, GUIs, and task messages. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected objective's display name shown in GUIs and progress output."))
+                .required("DisplayName", NQArguments.greedyStringArgument(), NQDescription.of("New objective display name. Supports spaces and MiniMessage formatting."))
                 .commandDescription(NQDescription.of("Sets current objective displayname."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1033,7 +1038,7 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(builder.literal("info").commandDescription(NQDescription.of("Shows everything there is to know about this objective."))
+        manager.command(builder.literal("info", NQDescription.of("Shows detailed information about the selected objective.")).commandDescription(NQDescription.of("Shows everything there is to know about this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1088,7 +1093,7 @@ public class AdminEditCommands {
 
                 }));
 
-        manager.command(builder.literal("remove", "delete").commandDescription(NQDescription.of("Removes the objective from the Quest."))
+        manager.command(builder.literal("remove", NQDescription.of("Removes the selected objective from its quest or parent objective."), "delete").commandDescription(NQDescription.of("Removes the objective from the Quest."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                     objective.getObjectiveHolder().removeObjective(objective);
@@ -1097,7 +1102,7 @@ public class AdminEditCommands {
                 }));
 
 
-        final NQCommandBuilder rewardsBuilder = builder.literal("rewards");
+        final NQCommandBuilder rewardsBuilder = builder.literal("rewards", NQDescription.of("Manages rewards granted by the selected objective."));
         handleObjectiveRewards(rewardsBuilder, level);
     }
 
@@ -1106,7 +1111,7 @@ public class AdminEditCommands {
         //Add is handled individually by each requirement
 
 
-        manager.command(builder.literal("list", "show").commandDescription(NQDescription.of("Lists all the requirements this Quest has."))
+        manager.command(builder.literal("list", NQDescription.of("Lists every requirement on the selected quest."), "show").commandDescription(NQDescription.of("Lists all the requirements this Quest has."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     context.sender().sendMessage(main.parse("<highlight>Requirements for Quest <highlight2>" + quest.getIdentifier() + "</highlight2>:"));
@@ -1120,15 +1125,17 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(builder.literal("clear").commandDescription(NQDescription.of("Clears all the requirements this Quest has."))
+        manager.command(builder.literal("clear", NQDescription.of("Removes every requirement from the selected quest.")).commandDescription(NQDescription.of("Clears all the requirements this Quest has."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     quest.clearRequirements();
                     context.sender().sendMessage(main.parse("<main>All requirements of Quest <highlight>" + quest.getIdentifier() + "</highlight> have been removed!"));
                 }));
 
-        final NQCommandBuilder editQuestRequirementsBuilder = builder.literal("edit")
-                .required("Requirement ID", NQArguments.integerArgument(), NQDescription.EMPTY, (context, input) -> {
+        final NQCommandBuilder editQuestRequirementsBuilder = builder.literal("edit", NQDescription.of("Opens subcommands for editing a specific quest requirement."))
+                .required("Requirement ID", NQArguments.integerArgument(),
+                        NQDescription.of("Numeric requirement ID shown by this quest's requirements list."),
+                        (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     final Quest quest = context.get("quest");
                     for (final Condition condition : quest.getRequirements()) {
@@ -1137,7 +1144,7 @@ public class AdminEditCommands {
                     return completions;
                 });
 
-        manager.command(editQuestRequirementsBuilder.literal("delete", "remove")
+        manager.command(editQuestRequirementsBuilder.literal("delete", NQDescription.of("Removes the selected requirement from the quest."), "remove")
                 .commandDescription(NQDescription.of("Removes a requirement from this Quest."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
@@ -1152,8 +1159,8 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editQuestRequirementsBuilder.literal("description")
-                .literal("set")
+        manager.command(editQuestRequirementsBuilder.literal("description", NQDescription.of("Requirement description shown when listing this quest's requirements. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected requirement's description text."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Quest requirementdescription")).commandDescription(NQDescription.of("Sets the new description of the Quest requirement."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
@@ -1175,9 +1182,10 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editQuestRequirementsBuilder.literal("hidden")
-                .literal("set")
-                .required("hiddenStatusExpression", NQArguments.stringArgument(), NQDescription.of("Expression"))
+        manager.command(editQuestRequirementsBuilder.literal("hidden", NQDescription.of("Controls whether the selected requirement is hidden from players."))
+                .literal("set", NQDescription.of("Changes whether the selected requirement is hidden from players."))
+                .required("hiddenStatusExpression", NQArguments.stringArgument(),
+                        NQDescription.of("Boolean expression that decides whether this requirement is hidden from players."))
                 .commandDescription(NQDescription.of("Sets the new hidden status of the Quest requirement."))
                 //.required("hiddenStatusExpression", booleanVariableValueParser("hiddenStatusExpression", null, ((context, input) -> CompletableFuture.completedFuture(new ArrayList<>()))), Description.of("Expression")).commandDescription(Description.of("Sets the new hidden status of the Quest requirement."))
                 .handler((context) -> {
@@ -1205,8 +1213,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editQuestRequirementsBuilder.literal("description")
-                .literal("remove", "delete").commandDescription(NQDescription.of("Removes the description of the Quest requirement."))
+        manager.command(editQuestRequirementsBuilder.literal("description", NQDescription.of("Requirement description shown when listing this quest's requirements. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected requirement's custom description text."), "delete").commandDescription(NQDescription.of("Removes the description of the Quest requirement."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     int conditionID = context.get("Requirement ID");
@@ -1230,8 +1238,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editQuestRequirementsBuilder.literal("description")
-                .literal("show", "check").commandDescription(NQDescription.of("Shows the description of the Quest requirement."))
+        manager.command(editQuestRequirementsBuilder.literal("description", NQDescription.of("Requirement description shown when listing this quest's requirements. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected requirement's description text."), "check").commandDescription(NQDescription.of("Shows the description of the Quest requirement."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     int conditionID = context.get("Requirement ID");
@@ -1254,7 +1262,7 @@ public class AdminEditCommands {
     public void handleEditObjectivesUnlockConditions(final NQCommandBuilder builder, final int level) {
 
         manager.command(builder
-                .literal("clear").commandDescription(NQDescription.of("Removes all unlock conditions from this objective."))
+                .literal("clear", NQDescription.of("Removes every unlock condition from the selected objective.")).commandDescription(NQDescription.of("Removes all unlock conditions from this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1267,7 +1275,7 @@ public class AdminEditCommands {
                 }));
 
         manager.command(builder
-                .literal("list", "show").commandDescription(NQDescription.of("Lists all unlock conditions of this objective."))
+                .literal("list", NQDescription.of("Lists every unlock condition on the selected objective."), "show").commandDescription(NQDescription.of("Lists all unlock conditions of this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1291,8 +1299,10 @@ public class AdminEditCommands {
 
 
         final NQCommandBuilder editObjectiveConditionsBuilder = builder
-                .literal("edit")
-                .required("Condition ID", NQArguments.integerArgument(), NQDescription.of("Condition ID"), (context, input) -> {
+                .literal("edit", NQDescription.of("Opens subcommands for editing a specific unlock condition."))
+                .required("Condition ID", NQArguments.integerArgument(),
+                        NQDescription.of("Unlock-condition ID shown by this objective's unlock-condition list."),
+                        (context, input) -> {
                             List<String> completions = new ArrayList<>();
                             final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                             for (final Condition condition : objective.getUnlockConditions()) {
@@ -1303,7 +1313,7 @@ public class AdminEditCommands {
                 );
 
         manager.command(editObjectiveConditionsBuilder
-                .literal("delete", "remove").commandDescription(NQDescription.of("Removes an unlock condition from this Objective."))
+                .literal("delete", NQDescription.of("Removes the selected unlock condition from the objective."), "remove").commandDescription(NQDescription.of("Removes an unlock condition from this Objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1322,8 +1332,8 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("set")
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Unlock-condition description shown when listing this objective's unlock conditions. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected unlock condition's description text."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Objective condition description")).commandDescription(NQDescription.of("Sets the new description of the Objective unlock condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1353,9 +1363,10 @@ public class AdminEditCommands {
                 }));
 
         manager.command(editObjectiveConditionsBuilder
-                .literal("hidden")
-                .literal("set")
-                .required("hiddenStatusExpression", NQArguments.stringArgument(), NQDescription.of("Expression"))
+                .literal("hidden", NQDescription.of("Controls whether the selected unlock condition is hidden from players."))
+                .literal("set", NQDescription.of("Changes whether the selected unlock condition is hidden from players."))
+                .required("hiddenStatusExpression", NQArguments.stringArgument(),
+                        NQDescription.of("Boolean expression that decides whether this unlock condition is hidden from players."))
                 .commandDescription(NQDescription.of("Sets the new hidden status of the Objective unlock condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1384,8 +1395,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("remove", "delete").commandDescription(NQDescription.of("Removes the description of the objective unlock condition."))
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Unlock-condition description shown when listing this objective's unlock conditions. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected unlock condition's custom description text."), "delete").commandDescription(NQDescription.of("Removes the description of the objective unlock condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1411,8 +1422,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("show", "check").commandDescription(NQDescription.of("Shows the description of the objective unlock condition."))
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Unlock-condition description shown when listing this objective's unlock conditions. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected unlock condition's description text."), "check").commandDescription(NQDescription.of("Shows the description of the objective unlock condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1436,7 +1447,7 @@ public class AdminEditCommands {
 
     public void handleEditObjectivesProgressConditions(final NQCommandBuilder builder, final int level) {
         manager.command(builder
-                .literal("clear").commandDescription(NQDescription.of("Removes all progress conditions from this objective."))
+                .literal("clear", NQDescription.of("Removes every progress condition from the selected objective.")).commandDescription(NQDescription.of("Removes all progress conditions from this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1449,7 +1460,7 @@ public class AdminEditCommands {
                 }));
 
         manager.command(builder
-                .literal("list", "show").commandDescription(NQDescription.of("Lists all progress conditions of this objective."))
+                .literal("list", NQDescription.of("Lists every progress condition on the selected objective."), "show").commandDescription(NQDescription.of("Lists all progress conditions of this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1473,8 +1484,10 @@ public class AdminEditCommands {
 
 
         final NQCommandBuilder editObjectiveConditionsBuilder = builder
-                .literal("edit")
-                .required("Condition ID", NQArguments.integerArgument(), NQDescription.of("Condition ID"), (context, input) -> {
+                .literal("edit", NQDescription.of("Opens subcommands for editing a specific progress condition."))
+                .required("Condition ID", NQArguments.integerArgument(),
+                        NQDescription.of("Progress-condition ID shown by this objective's progress-condition list."),
+                        (context, input) -> {
                             List<String> completions = new ArrayList<>();
                             final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
                             for (final Condition condition : objective.getProgressConditions()) {
@@ -1485,7 +1498,7 @@ public class AdminEditCommands {
                 );
 
         manager.command(editObjectiveConditionsBuilder
-                .literal("delete", "remove").commandDescription(NQDescription.of("Removes an progress condition from this Objective."))
+                .literal("delete", NQDescription.of("Removes the selected progress condition from the objective."), "remove").commandDescription(NQDescription.of("Removes an progress condition from this Objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1504,8 +1517,8 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("set")
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Progress-condition description shown when listing this objective's progress conditions. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected progress condition's description text."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Objective condition description")).commandDescription(NQDescription.of("Sets the new description of the Objective progress condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1533,9 +1546,10 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("hidden")
-                .literal("set")
-                .required("hiddenStatusExpression", NQArguments.stringArgument(), NQDescription.of("Expression"))
+        manager.command(editObjectiveConditionsBuilder.literal("hidden", NQDescription.of("Controls whether the selected progress condition is hidden from players."))
+                .literal("set", NQDescription.of("Changes whether the selected progress condition is hidden from players."))
+                .required("hiddenStatusExpression", NQArguments.stringArgument(),
+                        NQDescription.of("Boolean expression that decides whether this progress condition is hidden from players."))
                 .commandDescription(NQDescription.of("Sets the new hidden status of the Objective progress condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1564,8 +1578,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("remove", "delete").commandDescription(NQDescription.of("Removes the description of the objective progress condition."))
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Progress-condition description shown when listing this objective's progress conditions. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected progress condition's custom description text."), "delete").commandDescription(NQDescription.of("Removes the description of the objective progress condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1591,8 +1605,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("show", "check").commandDescription(NQDescription.of("Shows the description of the objective progress condition."))
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Progress-condition description shown when listing this objective's progress conditions. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected progress condition's description text."), "check").commandDescription(NQDescription.of("Shows the description of the objective progress condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1616,7 +1630,7 @@ public class AdminEditCommands {
 
     public void handleEditObjectivesCompleteConditions(final NQCommandBuilder builder, final int level) {
         manager.command(builder
-                .literal("clear").commandDescription(NQDescription.of("Removes all complete conditions from this objective."))
+                .literal("clear", NQDescription.of("Removes every completion condition from the selected objective.")).commandDescription(NQDescription.of("Removes all complete conditions from this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1629,7 +1643,7 @@ public class AdminEditCommands {
                 }));
 
         manager.command(builder
-                .literal("list", "show").commandDescription(NQDescription.of("Lists all complete conditions of this objective."))
+                .literal("list", NQDescription.of("Lists every completion condition on the selected objective."), "show").commandDescription(NQDescription.of("Lists all complete conditions of this objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1653,8 +1667,10 @@ public class AdminEditCommands {
 
 
         final NQCommandBuilder editObjectiveConditionsBuilder = builder
-                .literal("edit")
-                .required("Condition ID", NQArguments.integerArgument(), NQDescription.of("Condition ID"), (context, input) -> {
+                .literal("edit", NQDescription.of("Opens subcommands for editing a specific completion condition."))
+                .required("Condition ID", NQArguments.integerArgument(),
+                        NQDescription.of("Complete-condition ID shown by this objective's complete-condition list."),
+                        (context, input) -> {
                             List<String> completions = new ArrayList<>();
                             final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1667,7 +1683,7 @@ public class AdminEditCommands {
                 );
 
         manager.command(editObjectiveConditionsBuilder
-                .literal("delete", "remove").commandDescription(NQDescription.of("Removes an complete condition from this Objective."))
+                .literal("delete", NQDescription.of("Removes the selected completion condition from the objective."), "remove").commandDescription(NQDescription.of("Removes an complete condition from this Objective."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1686,8 +1702,8 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("set")
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Completion-condition description shown when listing this objective's completion conditions. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected completion condition's description text."))
                 .required("description", NQArguments.greedyStringArgument(), NQDescription.of("Objective condition description")).commandDescription(NQDescription.of("Sets the new description of the Objective complete condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1715,9 +1731,10 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("hidden")
-                .literal("set")
-                .required("hiddenStatusExpression", NQArguments.stringArgument(), NQDescription.of("Expression"))
+        manager.command(editObjectiveConditionsBuilder.literal("hidden", NQDescription.of("Controls whether the selected completion condition is hidden from players."))
+                .literal("set", NQDescription.of("Changes whether the selected completion condition is hidden from players."))
+                .required("hiddenStatusExpression", NQArguments.stringArgument(),
+                        NQDescription.of("Boolean expression that decides whether this complete condition is hidden from players."))
                 .commandDescription(NQDescription.of("Sets the new hidden status of the Objective complete condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1746,8 +1763,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("remove", "delete").commandDescription(NQDescription.of("Removes the description of the objective complete condition."))
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Completion-condition description shown when listing this objective's completion conditions. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected completion condition's custom description text."), "delete").commandDescription(NQDescription.of("Removes the description of the objective complete condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1773,8 +1790,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(editObjectiveConditionsBuilder.literal("description")
-                .literal("show", "check").commandDescription(NQDescription.of("Shows the description of the objective complete condition."))
+        manager.command(editObjectiveConditionsBuilder.literal("description", NQDescription.of("Completion-condition description shown when listing this objective's completion conditions. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected completion condition's description text."), "check").commandDescription(NQDescription.of("Shows the description of the objective complete condition."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1799,7 +1816,7 @@ public class AdminEditCommands {
     public void handleRewards(final NQCommandBuilder builder) {
         //Add is handled individually by each reward
 
-        manager.command(builder.literal("list", "show").commandDescription(NQDescription.of("Lists all the rewards this Quest has."))
+        manager.command(builder.literal("list", NQDescription.of("Lists every reward granted by the selected quest."), "show").commandDescription(NQDescription.of("Lists all the rewards this Quest has."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -1815,7 +1832,7 @@ public class AdminEditCommands {
 
                 }));
 
-        manager.command(builder.literal("clear").commandDescription(NQDescription.of("Clears all the rewards this Quest has."))
+        manager.command(builder.literal("clear", NQDescription.of("Removes every reward from the selected quest.")).commandDescription(NQDescription.of("Clears all the rewards this Quest has."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -1824,8 +1841,9 @@ public class AdminEditCommands {
                 }));
 
 
-        final NQCommandBuilder editRewardsBuilder = builder.literal("edit")
-                .required("reward-id", NQArguments.integerArgument(), NQDescription.EMPTY,
+        final NQCommandBuilder editRewardsBuilder = builder.literal("edit", NQDescription.of("Opens subcommands for editing a specific quest reward."))
+                .required("reward-id", NQArguments.integerArgument(),
+                        NQDescription.of("Numeric reward ID shown by this quest's rewards list."),
                         (context, input) -> {
                             List<String> completions = new ArrayList<>();
 
@@ -1853,7 +1871,7 @@ public class AdminEditCommands {
     public void handleObjectiveRewards(final NQCommandBuilder builder, final int level) {
         //Add is handled individually by each reward
 
-        manager.command(builder.literal("list", "show").commandDescription(NQDescription.of("Lists all the rewards this Objective has."))
+        manager.command(builder.literal("list", NQDescription.of("Lists every reward granted by the selected objective."), "show").commandDescription(NQDescription.of("Lists all the rewards this Objective has."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1868,7 +1886,7 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(builder.literal("clear").commandDescription(NQDescription.of("Clears all the rewards this Objective has."))
+        manager.command(builder.literal("clear", NQDescription.of("Removes every reward from the selected objective.")).commandDescription(NQDescription.of("Clears all the rewards this Objective has."))
                 .handler((context) -> {
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
 
@@ -1877,8 +1895,10 @@ public class AdminEditCommands {
                 }));
 
 
-        final NQCommandBuilder editRewardsBuilder = builder.literal("edit")
-                .required("reward-id", NQArguments.integerArgument(), NQDescription.of("reward-id"), (context, input) -> {
+        final NQCommandBuilder editRewardsBuilder = builder.literal("edit", NQDescription.of("Opens subcommands for editing a specific objective reward."))
+                .required("reward-id", NQArguments.integerArgument(),
+                        NQDescription.of("Numeric reward ID shown by this objective's rewards list."),
+                        (context, input) -> {
                             List<String> completions = new ArrayList<>();
 
                             final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1894,7 +1914,7 @@ public class AdminEditCommands {
     }
 
     public void handleObjectiveEditRewards(final NQCommandBuilder builder, final int level) {
-        manager.command(builder.literal("info").commandDescription(NQDescription.of("Shows everything there is to know about this reward."))
+        manager.command(builder.literal("info", NQDescription.of("Shows detailed information about the selected objective reward.")).commandDescription(NQDescription.of("Shows everything there is to know about this reward."))
                 .handler((context) -> {
                     final int ID = context.get("reward-id");
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1925,7 +1945,7 @@ public class AdminEditCommands {
 
                 }));
 
-        manager.command(builder.literal("remove").commandDescription(NQDescription.of("Removes the reward from the Quest."))
+        manager.command(builder.literal("remove", NQDescription.of("Removes the selected reward from the objective.")).commandDescription(NQDescription.of("Removes the reward from the Quest."))
                 .handler((context) -> {
                     final int ID = context.get("reward-id");
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1945,8 +1965,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("show").commandDescription(NQDescription.of("Shows current reward Display Name."))
+        manager.command(builder.literal("displayName", NQDescription.of("Reward display name shown in reward previews and reward lists. Only rewards with a display name are shown there. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected reward's display name.")).commandDescription(NQDescription.of("Shows current reward Display Name."))
                 .handler((context) -> {
                     final int ID = context.get("reward-id");
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1970,8 +1990,8 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("remove", "delete").commandDescription(NQDescription.of("Removes current reward Display Name."))
+        manager.command(builder.literal("displayName", NQDescription.of("Reward display name shown in reward previews and reward lists. Only rewards with a display name are shown there. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected reward's custom display name."), "delete").commandDescription(NQDescription.of("Removes current reward Display Name."))
                 .handler((context) -> {
                     final int ID = context.get("reward-id");
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -1992,9 +2012,9 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("set")
-                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("Reward display name")).commandDescription(NQDescription.of("Sets new reward Display Name. Only rewards with a Display Name will be displayed."))
+        manager.command(builder.literal("displayName", NQDescription.of("Reward display name shown in reward previews and reward lists. Only rewards with a display name are shown there. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected reward's display name shown in reward previews and lists."))
+                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New reward display name. Supports spaces and MiniMessage formatting.")).commandDescription(NQDescription.of("Sets new reward Display Name. Only rewards with a Display Name will be displayed."))
                 .handler((context) -> {
                     final int ID = context.get("reward-id");
                     final Objective objective = main.getCommandManager().getObjectiveFromContextAndLevel(context, level);
@@ -2022,7 +2042,7 @@ public class AdminEditCommands {
     }
 
     public void handleEditRewards(final NQCommandBuilder builder) {
-        manager.command(builder.literal("info").commandDescription(NQDescription.of("Shows everything there is to know about this reward."))
+        manager.command(builder.literal("info", NQDescription.of("Shows detailed information about the selected quest reward.")).commandDescription(NQDescription.of("Shows everything there is to know about this reward."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     final int ID = context.get("reward-id");
@@ -2052,7 +2072,7 @@ public class AdminEditCommands {
 
                 }));
 
-        manager.command(builder.literal("remove").commandDescription(NQDescription.of("Removes the reward from the Quest."))
+        manager.command(builder.literal("remove", NQDescription.of("Removes the selected reward from the quest.")).commandDescription(NQDescription.of("Removes the reward from the Quest."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     final int ID = context.get("reward-id");
@@ -2071,8 +2091,8 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("show").commandDescription(NQDescription.of("Shows current reward Display Name."))
+        manager.command(builder.literal("displayName", NQDescription.of("Reward display name shown in reward previews and reward lists. Only rewards with a display name are shown there. Supports MiniMessage formatting."))
+                .literal("show", NQDescription.of("Shows the selected reward's display name.")).commandDescription(NQDescription.of("Shows current reward Display Name."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     final int ID = context.get("reward-id");
@@ -2095,8 +2115,8 @@ public class AdminEditCommands {
                     }
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("remove", "delete").commandDescription(NQDescription.of("Removes current reward Display Name."))
+        manager.command(builder.literal("displayName", NQDescription.of("Reward display name shown in reward previews and reward lists. Only rewards with a display name are shown there. Supports MiniMessage formatting."))
+                .literal("remove", NQDescription.of("Removes the selected reward's custom display name."), "delete").commandDescription(NQDescription.of("Removes current reward Display Name."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     final int ID = context.get("reward-id");
@@ -2116,9 +2136,9 @@ public class AdminEditCommands {
                     ));
                 }));
 
-        manager.command(builder.literal("displayName")
-                .literal("set")
-                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("Reward display name")).commandDescription(NQDescription.of("Sets new reward Display Name. Only rewards with a Display Name will be displayed."))
+        manager.command(builder.literal("displayName", NQDescription.of("Reward display name shown in reward previews and reward lists. Only rewards with a display name are shown there. Supports MiniMessage formatting."))
+                .literal("set", NQDescription.of("Sets the selected reward's display name shown in reward previews and lists."))
+                .required("display-name", NQArguments.greedyStringArgument(), NQDescription.of("New reward display name. Supports spaces and MiniMessage formatting.")).commandDescription(NQDescription.of("Sets new reward Display Name. Only rewards with a Display Name will be displayed."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
                     final int ID = context.get("reward-id");
@@ -2146,7 +2166,7 @@ public class AdminEditCommands {
 
     public void handleTriggers(final NQCommandBuilder builder) {
         //Add is handled individually by each trigger
-        manager.command(builder.literal("clear").commandDescription(NQDescription.of("Removes all the triggers this Quest has."))
+        manager.command(builder.literal("clear", NQDescription.of("Removes every trigger from the selected quest.")).commandDescription(NQDescription.of("Removes all the triggers this Quest has."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -2157,7 +2177,7 @@ public class AdminEditCommands {
 
                 }));
 
-        manager.command(builder.literal("list", "show").commandDescription(NQDescription.of("Lists all the triggers this Quest has."))
+        manager.command(builder.literal("list", NQDescription.of("Lists every trigger attached to the selected quest."), "show").commandDescription(NQDescription.of("Lists all the triggers this Quest has."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
 
@@ -2201,8 +2221,8 @@ public class AdminEditCommands {
                 }));
 
 
-        manager.command(builder.literal("remove", "delete")
-                .required("trigger-id", NQArguments.integerArgument(), NQDescription.of("Trigger ID"), (context, input) -> {
+        manager.command(builder.literal("remove", NQDescription.of("Removes the selected trigger from the quest."), "delete")
+                .required("trigger-id", NQArguments.integerArgument(), NQDescription.of("Numeric ID of the trigger to remove from this quest."), (context, input) -> {
                             List<String> completions = new ArrayList<>();
 
                             final Quest quest = context.get("quest");

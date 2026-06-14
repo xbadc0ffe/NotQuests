@@ -30,7 +30,7 @@ public class MilkCowObjective extends Objective {
             final int level) {
         manager.command(addObjectiveBuilder
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of cows to milk"))
-                .flag(NQFlag.builder("cancelMilking").withDescription(NQDescription.of("Makes it so the milking will be cancelled while this objective is active")).build())
+                .flag(NQFlag.builder("cancelMilking", NQDescription.of("Makes it so the milking will be cancelled while this objective is active")).build())
                 .flag(main.getCommandManager().maxDistance)
                 .handler(
                         (context) -> {

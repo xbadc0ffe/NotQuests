@@ -53,6 +53,11 @@ public final class ActiveQuestArgument extends NQArgumentType<ActiveQuest> {
         return new ActiveQuestArgument(main);
     }
 
+    @Override
+    public String valueTypeName() {
+        return "active quest name";
+    }
+
     /**
      * Resolves the target player for this argument: an explicit "player" argument (admin commands) if
      * present, otherwise the command sender (user commands like /nq abort, where there is no "player"

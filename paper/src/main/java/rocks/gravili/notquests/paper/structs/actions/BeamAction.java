@@ -51,12 +51,12 @@ public class BeamAction extends Action {
             NQCommandManager manager,
             NQCommandBuilder builder,
             ActionFor actionFor) {
-        manager.command(builder.required("beamName", NQArguments.stringArgument(), NQDescription.of("Beam Name."), (context, input) -> {
+        manager.command(builder.required("beamName", NQArguments.stringArgument(), NQDescription.of("Identifier of the beam to remove."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<Enter beam name>");
                     return completions;
                 })
-                .literal("remove")
+                .literal("remove", NQDescription.of("Removes the named beam from the player's screen."))
                 .handler((context) -> {
                     String beamName = context.get("beamName");
                     BeamAction beamAction = new BeamAction(main);
@@ -65,16 +65,16 @@ public class BeamAction extends Action {
                     main.getActionManager().addAction(beamAction, context, actionFor);
                 }));
 
-        manager.command(builder.required("beamName", NQArguments.stringArgument(), NQDescription.of("Beam Name."), (context, input) -> {
+        manager.command(builder.required("beamName", NQArguments.stringArgument(), NQDescription.of("Identifier to assign to the spawned beam."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<Enter beam name>");
                     return completions;
                 })
-                .literal("spawn")
-                .required("world", NQArguments.worldArgument(), NQDescription.of("World name"))
-                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate"))
-                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate"))
-                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate"))
+                .literal("spawn", NQDescription.of("Spawns or displays the configured object or effect."))
+                .required("world", NQArguments.worldArgument(), NQDescription.of("World where the beam should be spawned."))
+                .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate where the beam should be spawned."))
+                .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate where the beam should be spawned."))
+                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate where the beam should be spawned."))
                 .handler(
                         (context) -> {
                             String beamName = context.get("beamName");

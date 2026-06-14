@@ -40,6 +40,11 @@ public final class EnchantmentArgument extends NQArgumentType<Enchantment> {
     }
 
     @Override
+    public String valueTypeName() {
+        return "Minecraft enchantment";
+    }
+
+    @Override
     public Enchantment convert(final String input) throws CommandSyntaxException {
         final Enchantment enchantment =
                 Registry.ENCHANTMENT.get(NamespacedKey.minecraft(input.toLowerCase(Locale.ROOT)));

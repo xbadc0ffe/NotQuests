@@ -78,7 +78,9 @@ public class NumberAction extends Action {
 
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of( "Math operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to change the " + variableString + " number variable: set, add, deduct, multiply, or divide."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("set");
                         completions.add("add");
@@ -87,7 +89,8 @@ public class NumberAction extends Action {
                         completions.add("divide");
                         return completions;
                     })
-                    .required("amount", numberVariableArgument("amount", variable), NQDescription.of("Amount"))
+                    .required("amount", numberVariableArgument("amount", variable),
+                            NQDescription.of("Number expression used as the value for this " + variableString + " action."))
                     .handler((context) -> {
                         final String amountExpression = context.get("amount");
                         final String mathOperator = context.get("operator");

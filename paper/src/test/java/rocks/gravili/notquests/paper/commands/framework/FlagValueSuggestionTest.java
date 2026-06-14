@@ -35,14 +35,12 @@ class FlagValueSuggestionTest {
         when(main.getUtilManager()).thenReturn(utilManager);
         manager = new NQCommandManager(main, new NQCommands(main));
         manager.command(manager.commandBuilder("root", NQDescription.of("root"))
-                .literal("action")
-                .flag(NQFlag.builder("delay")
+                .literal("action", NQDescription.of("action"))
+                .flag(NQFlag.builder("delay", NQDescription.of("Delay before running the action."))
                         .withArgument(NQArguments.durationArgument())
-                        .withDescription(NQDescription.of("Delay"))
                         .build())
-                .flag(NQFlag.builder("player")
+                .flag(NQFlag.builder("player", NQDescription.of("Player used as the action target."))
                         .withArgument(NQArguments.stringArgument())
-                        .withDescription(NQDescription.of("Player"))
                         .build())
                 .handler(context -> {}));
     }
@@ -54,9 +52,9 @@ class FlagValueSuggestionTest {
         final Map<String, Object> roots = (Map<String, Object>) rootsField.get(manager);
         final Object root = roots.get("root");
 
-        final Method compile = NQCommandManager.class.getDeclaredMethod("compile", root.getClass(), String.class);
+        final Method compile = NQCommandManager.class.getDeclaredMethod("compile", root.getClass(), List.class);
         compile.setAccessible(true);
-        return (LiteralCommandNode<CommandSourceStack>) compile.invoke(manager, root, "root");
+        return (LiteralCommandNode<CommandSourceStack>) compile.invoke(manager, root, List.of(root));
     }
 
     private List<String> completionsFor(final String input) throws Exception {

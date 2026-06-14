@@ -66,6 +66,14 @@ public abstract class NQArgumentType<T> implements CustomArgumentType.Converted<
     }
 
     /**
+     * User-facing value type shown in exported command docs and command hover text. This is distinct
+     * from {@link #getNativeType()}, which describes Brigadier's low-level tokenizer.
+     */
+    public String valueTypeName() {
+        return "text";
+    }
+
+    /**
      * Provide completions for the token currently being typed. Returned values are filtered by prefix
      * automatically. Defaults to no suggestions.
      *

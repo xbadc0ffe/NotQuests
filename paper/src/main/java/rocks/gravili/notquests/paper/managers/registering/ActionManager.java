@@ -51,7 +51,11 @@ public class ActionManager {
     public ActionManager(final NotQuests main) {
         this.main = main;
         actions = new HashMap<>();
-        playerSelectorCommandFlag = NQFlag.builder("player").withArgument(NQArguments.playerArgument()).withDescription(NQDescription.of("Player selector")).build();
+        playerSelectorCommandFlag = NQFlag.builder(
+                        "player",
+                        NQDescription.of("Player who should be used as the target when executing this action from a command."))
+                .withArgument(NQArguments.playerArgument())
+                .build();
         registerDefaultActions();
     }
 
@@ -156,7 +160,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminEditAddRewardCommandBuilder()
-                                .literal(identifier)
+                                .literal(identifier, NQDescription.of(identifier + " action type."))
                                 .commandDescription(NQDescription.of("Creates a new " + identifier + " action")),
                         ActionFor.QUEST);
                 commandHandler.invoke(
@@ -165,7 +169,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminEditObjectiveAddRewardCommandBuilder()
-                                .literal(identifier)
+                                .literal(identifier, NQDescription.of(identifier + " action type."))
                                 .commandDescription(NQDescription.of("Creates a new " + identifier + " action")),
                         ActionFor.OBJECTIVE);
                 commandHandler.invoke(
@@ -174,7 +178,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminAddActionCommandBuilder()
-                                .literal(identifier)
+                                .literal(identifier, NQDescription.of(identifier + " action type."))
                                 .commandDescription(NQDescription.of("Creates a new " + identifier + " action"))
                                 .flag(main.getCommandManager().categoryFlag)
                                 .flag(main.getCommandManager().delayFlag),
@@ -187,7 +191,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminExecuteActionCommandBuilder()
-                                .literal(identifier)
+                                .literal(identifier, NQDescription.of(identifier + " action type."))
                                 .commandDescription(NQDescription.of("Executes a new " + identifier + " action inline"))
                                 .flag(playerSelectorCommandFlag)
                                 .flag(main.getCommandManager().delayFlag),

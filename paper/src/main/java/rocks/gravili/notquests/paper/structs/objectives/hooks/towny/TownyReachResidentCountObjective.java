@@ -57,7 +57,7 @@ public class TownyReachResidentCountObjective extends Objective {
 
         manager.command(addObjectiveBuilder
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Minimum amount of residents"))
-                .flag(NQFlag.builder("doNotCountPreviousResidents").withDescription(NQDescription.of("Makes it so only additional residents from the time of unlocking this Objective will count (and previous/existing counts will not count, so it starts from zero)")).build())
+                .flag(NQFlag.builder("doNotCountPreviousResidents", NQDescription.of("Only count residents added after this objective unlocks; existing residents do not count.")).build())
                 .handler((context) -> {
                     final String amountExpression = context.get("amount");
                     final boolean countPreviousResidents = !context.flags().isPresent("doNotCountPreviousResidents");

@@ -83,13 +83,16 @@ public class BooleanAction extends Action {
             }
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("Operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to set the " + variableString + " boolean variable: set or setNot."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("set");
                         completions.add("setNot");
                         return completions;
                     })
-                    .required("expression", booleanVariableArgument("expression", variable), NQDescription.of("Expression"))
+                    .required("expression", booleanVariableArgument("expression", variable),
+                            NQDescription.of("Boolean expression used as the new value for " + variableString + "."))
                     .handler(
                             (context) -> {
                                 final String expression = context.get("expression");

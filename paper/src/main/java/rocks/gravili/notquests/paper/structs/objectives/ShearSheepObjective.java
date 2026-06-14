@@ -30,7 +30,7 @@ public class ShearSheepObjective extends Objective {
             final int level) {
         manager.command(addObjectiveBuilder
                 .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of shears needed"))
-                .flag(NQFlag.builder("cancelShearing").withDescription(NQDescription.of("Makes it so the shearing will be cancelled while this objective is active")).build())
+                .flag(NQFlag.builder("cancelShearing", NQDescription.of("Makes it so the shearing will be cancelled while this objective is active")).build())
                 .flag(main.getCommandManager().maxDistance)
                 .handler(
                         (context) -> {

@@ -126,22 +126,27 @@ public class CommandManager {
     }
 
     public void createCommandFlags() {
-        nametag_containsany = NQFlag.builder("nametag_containsany")
+        nametag_containsany = NQFlag.builder(
+                        "nametag_containsany",
+                        NQDescription.of("Only count entities whose nametag contains every provided word."))
                 .withArgument(NQArguments.stringArrayArgument())
-                .withDescription(NQDescription.of("This word or every word seperated by a space needs to be part of the nametag"))
                 .build();
 
-        nametag_equals = NQFlag.builder("nametag_equals")
+        nametag_equals = NQFlag.builder(
+                        "nametag_equals",
+                        NQDescription.of("Only count entities whose nametag exactly matches the provided text."))
                 .withArgument(NQArguments.stringArrayArgument())
-                .withDescription(NQDescription.of("What the nametag has to be equal"))
                 .build();
 
-        taskDescription = NQFlag.builder("taskDescription")
+        taskDescription = NQFlag.builder(
+                        "taskDescription",
+                        NQDescription.of("Custom task text shown to players for this objective instead of the default description."))
                 .withArgument(NQArguments.componentArgument(main))
-                .withDescription(NQDescription.of("Custom description of the task"))
                 .build();
 
-        speakerColor = NQFlag.builder("speakerColor")
+        speakerColor = NQFlag.builder(
+                        "speakerColor",
+                        NQDescription.of("MiniMessage color or tag used for conversation speaker names."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> {
                     final ArrayList<String> completions = new ArrayList<>();
@@ -150,26 +155,26 @@ public class CommandManager {
                     }
                     return completions;
                 })
-                .withDescription(NQDescription.of("Color of the speaker name"))
                 .build();
 
-        maxDistance = NQFlag.builder("maxDistance")
+        maxDistance = NQFlag.builder("maxDistance", NQDescription.of("Maximum distance allowed from the target location or NPC."))
                 .withArgument(NQArguments.integerArgument())
-                .withDescription(NQDescription.of("Enter maximum distance of two locations"))
                 .build();
 
-        world = NQFlag.builder("world")
+        world = NQFlag.builder("world", NQDescription.of("World where this sound or location-based effect should be played."))
                 .withArgument(NQArguments.worldArgument())
-                .withDescription(NQDescription.of("World Name"))
                 .build();
 
-        applyOn = NQFlag.builder("applyOn")
+        applyOn = NQFlag.builder(
+                        "applyOn",
+                        NQDescription.of("Quest or objective target this trigger, action, or condition should apply to, such as Quest, O1, or O2."))
                 .withArgument(NQArguments.integerArgument())
                 .withSuggestions((context, input) -> java.util.List.of("0", "1", "2"))
-                .withDescription(NQDescription.of("To which part of the Quest it should apply (Examples: 'Quest', 'O1', 'O2. (O1 = Objective 1)."))
                 .build();
 
-        triggerWorldString = NQFlag.builder("world_name")
+        triggerWorldString = NQFlag.builder(
+                        "world_name",
+                        NQDescription.of("World name filter for world enter/leave triggers, or ALL for every world."))
                 .withArgument(NQArguments.stringArgument())
                 .withSuggestions((context, input) -> {
                     final ArrayList<String> completions = new ArrayList<>();
@@ -179,37 +184,32 @@ public class CommandManager {
                     }
                     return completions;
                 })
-                .withDescription(NQDescription.of("World where the Trigger applies (Examples: 'world_the_end', 'farmworld', 'world', 'ALL')."))
                 .build();
 
-        minimumTimeAfterCompletion = NQFlag.builder("waitTimeAfterCompletion")
+        minimumTimeAfterCompletion = NQFlag.builder(
+                        "waitTimeAfterCompletion",
+                        NQDescription.of("Minimum time that must pass after completing the quest before this condition can pass."))
                 .withArgument(NQArguments.longArgument())
-                .withDescription(NQDescription.of("Enter minimum time you have to wait after completion."))
                 .build();
 
-        categoryFlag = NQFlag.builder("category")
+        categoryFlag = NQFlag.builder("category", NQDescription.of("Quest category used to store or look up the created NotQuests object."))
                 .withArgument(categoryArgument(main))
-                .withDescription(NQDescription.of("Category name"))
                 .build();
 
-        delayFlag = NQFlag.builder("delay")
+        delayFlag = NQFlag.builder("delay", NQDescription.of("How long to wait before running this action, such as 1s, 500ms, or 2m."))
                 .withArgument(NQArguments.durationArgument())
-                .withDescription(NQDescription.of("Delay in milliseconds"))
                 .build();
 
-        locationX = NQFlag.builder("locationX")
+        locationX = NQFlag.builder("locationX", NQDescription.of("X coordinate used by this command."))
                 .withArgument(NQArguments.doubleArgument())
-                .withDescription(NQDescription.of("Enter x coordinate location"))
                 .build();
 
-        locationY = NQFlag.builder("locationY")
+        locationY = NQFlag.builder("locationY", NQDescription.of("Y coordinate used by this command."))
                 .withArgument(NQArguments.doubleArgument())
-                .withDescription(NQDescription.of("Enter y coordinate location"))
                 .build();
 
-        locationZ = NQFlag.builder("locationZ")
+        locationZ = NQFlag.builder("locationZ", NQDescription.of("Z coordinate used by this command."))
                 .withArgument(NQArguments.doubleArgument())
-                .withDescription(NQDescription.of("Enter z coordinate location"))
                 .build();
     }
 
@@ -264,49 +264,54 @@ public class CommandManager {
                         "notquestsadmin")
                 .permission("notquests.admin");
 
-        adminEditCommandBuilder = adminCommandBuilder.literal("edit", "e").required("quest", questArgument(main), NQDescription.of("Quest Name"));
-        adminTagCommandBuilder = adminCommandBuilder.literal("tags", "t");
-        adminItemsCommandBuilder = adminCommandBuilder.literal("items", "item", "i");
-        adminConversationCommandBuilder = adminCommandBuilder.literal("conversations", "c");
-        adminEditAddObjectiveCommandBuilder = adminEditCommandBuilder.literal("objectives", "o").literal("add");
-        adminEditAddRequirementCommandBuilder = adminEditCommandBuilder.literal("requirements", "req").literal("add");
-        adminEditAddRewardCommandBuilder = adminEditCommandBuilder.literal("rewards", "rew").literal("add");
-        adminEditAddTriggerCommandBuilder = adminEditCommandBuilder.literal("triggers", "t")
-                .literal("add").required("action", actionArgument(main), NQDescription.of("Action which will be executed when the Trigger triggers."));
+        adminEditCommandBuilder = adminCommandBuilder.literal("edit", NQDescription.of("Opens subcommands for editing a specific quest."), "e").required("quest", questArgument(main),
+                NQDescription.of("Identifier of the quest to edit; use /qa list to see available quests."));
+        adminTagCommandBuilder = adminCommandBuilder.literal("tags", NQDescription.of("Manages player tags."), "t");
+        adminItemsCommandBuilder = adminCommandBuilder.literal("items", NQDescription.of("Manages custom NotQuests items."), "item", "i");
+        adminConversationCommandBuilder = adminCommandBuilder.literal("conversations", NQDescription.of("Manages conversations and their NPC attachments."), "c");
+        adminEditAddObjectiveCommandBuilder = adminEditCommandBuilder.literal("objectives", NQDescription.of("Manages objectives on the selected quest."), "o").literal("add", NQDescription.of("Adds a new objective to the selected quest."));
+        adminEditAddRequirementCommandBuilder = adminEditCommandBuilder.literal("requirements", NQDescription.of("Manages requirements that must pass before the selected quest can be taken."), "req").literal("add", NQDescription.of("Adds a requirement that must pass before players can take the selected quest."));
+        adminEditAddRewardCommandBuilder = adminEditCommandBuilder.literal("rewards", NQDescription.of("Manages rewards granted by the selected quest."), "rew").literal("add", NQDescription.of("Adds a reward granted by the selected quest."));
+        adminEditAddTriggerCommandBuilder = adminEditCommandBuilder.literal("triggers", NQDescription.of("Manages triggers attached to this quest."), "t")
+                .literal("add", NQDescription.of("Adds a trigger that runs an action when the selected quest changes state.")).required("action", actionArgument(main), NQDescription.of("Action which will be executed when the Trigger triggers."));
 
-        adminEditObjectivesBuilder = adminEditCommandBuilder.literal("objectives").literal("edit").required("objectiveId", objectiveArgument(main, 0), NQDescription.of("Objective-ID"));
-        adminEditObjectiveAddUnlockConditionCommandBuilder = adminEditObjectivesBuilder.literal("conditions").literal("unlock").literal("add");
-        adminEditObjectiveAddProgressConditionCommandBuilder = adminEditObjectivesBuilder.literal("conditions").literal("progress").literal("add");
-        adminEditObjectiveAddCompleteConditionCommandBuilder = adminEditObjectivesBuilder.literal("conditions").literal("complete").literal("add");
-        adminActionsCommandBuilder = adminCommandBuilder.literal("actions");
-        adminActionsEditCommandBuilder = adminActionsCommandBuilder.literal("edit").required("action", actionArgument(main), NQDescription.of("Action Name"));
+        adminEditObjectivesBuilder = adminEditCommandBuilder.literal("objectives", NQDescription.of("Manages objectives on the selected quest.")).literal("edit", NQDescription.of("Opens subcommands for editing a specific objective on the selected quest.")).required("objectiveId",
+                objectiveArgument(main, 0), NQDescription.of("Objective ID shown by this quest's objectives list."));
+        adminEditObjectiveAddUnlockConditionCommandBuilder = adminEditObjectivesBuilder.literal("conditions", NQDescription.of("Manages conditions attached to the selected objective.")).literal("unlock", NQDescription.of("Configures conditions required before the objective can unlock.")).literal("add", NQDescription.of("Adds an unlock condition to the selected objective."));
+        adminEditObjectiveAddProgressConditionCommandBuilder = adminEditObjectivesBuilder.literal("conditions", NQDescription.of("Manages conditions attached to the selected objective.")).literal("progress", NQDescription.of("Configures conditions required while the objective is progressing.")).literal("add", NQDescription.of("Adds a progress condition to the selected objective."));
+        adminEditObjectiveAddCompleteConditionCommandBuilder = adminEditObjectivesBuilder.literal("conditions", NQDescription.of("Manages conditions attached to the selected objective.")).literal("complete", NQDescription.of("Configures conditions required before the objective can complete.")).literal("add", NQDescription.of("Adds a completion condition to the selected objective."));
+        adminActionsCommandBuilder = adminCommandBuilder.literal("actions", NQDescription.of("Manages saved actions, inline actions, and action execution."));
+        adminActionsEditCommandBuilder = adminActionsCommandBuilder.literal("edit", NQDescription.of("Opens subcommands for editing a saved action.")).required("action", actionArgument(main),
+                NQDescription.of("Identifier of the saved action to edit; use /qa actions to list saved actions."));
 
         adminActionsAddConditionCommandBuilder =
-                adminActionsEditCommandBuilder.literal("conditions").literal("add");
+                adminActionsEditCommandBuilder.literal("conditions", NQDescription.of("Manages conditions required before the selected action can run.")).literal("add", NQDescription.of("Adds a condition to the selected saved action."));
 
         adminEditObjectiveAddRewardCommandBuilder =
-                adminEditObjectivesBuilder.literal("rewards", "rew").literal("add");
+                adminEditObjectivesBuilder.literal("rewards", NQDescription.of("Manages rewards granted by the selected objective."), "rew").literal("add", NQDescription.of("Adds a reward granted when the selected objective completes."));
 
         adminAddConditionCommandBuilder = adminCommandBuilder
-                .literal("conditions")
-                .literal("add")
-                .required("Condition Identifier", NQArguments.stringArgument(), NQDescription.of("Condition Identifier"),
+                .literal("conditions", NQDescription.of("Manages saved conditions that can be reused by quests, objectives, and actions."))
+                .literal("add", NQDescription.of("Creates a new saved condition."))
+                .required("Condition Identifier", NQArguments.stringArgument(),
+                        NQDescription.of("Unique identifier for the new saved condition."),
                         (context, input) -> java.util.List.of("[Enter new, unique Condition Identifier]"));
 
 
         adminConditionCheckCommandBuilder = adminCommandBuilder
-                .literal("conditions")
-                .literal("check");
+                .literal("conditions", NQDescription.of("Manages saved conditions that can be reused by quests, objectives, and actions."))
+                .literal("check", NQDescription.of("Checks a condition inline without saving it."));
 
         adminAddActionCommandBuilder = adminCommandBuilder
-                .literal("actions")
-                .literal("add")
-                .required("Action Identifier", NQArguments.stringArgument(), NQDescription.of("Action Identifier"),
+                .literal("actions", NQDescription.of("Manages saved actions, inline actions, and action execution."))
+                .literal("add", NQDescription.of("Creates a new saved action."))
+                .required("Action Identifier", NQArguments.stringArgument(),
+                        NQDescription.of("Unique identifier for the new saved action."),
                         (context, input) -> java.util.List.of("[Enter new, unique Action Identifier]"));
 
         adminExecuteActionCommandBuilder = adminCommandBuilder
-                .literal("actions")
-                .literal("execute");
+                .literal("actions", NQDescription.of("Manages saved actions, inline actions, and action execution."))
+                .literal("execute", NQDescription.of("Executes the selected action or command."));
     }
 
     public void setupCommands() {
@@ -339,13 +344,12 @@ public class CommandManager {
         // Help menu
         nqCommandManager.command(
                 userCommandBuilder
-                        .literal("help")
-                        .required("query", NQArguments.greedyStringArgument())
+                        .literal("help", NQDescription.of("Shows command help."))
+                        .required("query", NQArguments.greedyStringArgument(),
+                                NQDescription.of("Command name, topic, or search text to show help for."))
                         .handler(context -> {
-                            main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— available commands:");
-                            for (final String usageLine : nqCommandManager.rootUsage("nq")) {
-                                main.sendMessage(context.sender(), "<unimportant>" + usageLine);
-                            }
+                            nqCommandManager.sendRootHelp(
+                                    context.sender(), "nq", "<main>NotQuests <unimportant>— available commands:");
                         }));
 
         userCommands = new UserCommands(main, nqCommandManager, userCommandBuilder);
@@ -354,20 +358,17 @@ public class CommandManager {
         // Help Menu
         nqCommandManager.command(adminCommandBuilder.commandDescription(NQDescription.of("Opens the help menu"))
                 .handler((context) -> {
-                    main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— available admin commands:");
-                    for (final String usageLine : nqCommandManager.rootUsage("nqa")) {
-                        main.sendMessage(context.sender(), "<unimportant>" + usageLine);
-                    }
+                    nqCommandManager.sendRootHelp(
+                            context.sender(), "nqa", "<main>NotQuests <unimportant>— available admin commands:");
                     main.getUtilManager().sendFancyCommandCompletion(context.sender(), context.rawInput().input().split(" "), "[What would you like to do?]", "[...]");
                 }));
         nqCommandManager.command(adminCommandBuilder
-                .literal("help")
-                .optional("query", NQArguments.greedyStringArgument())
+                .literal("help", NQDescription.of("Shows command help."))
+                .optional("query", NQArguments.greedyStringArgument(),
+                        NQDescription.of("Optional command name, topic, or search text to show admin help for."))
                 .handler(context -> {
-                    main.sendMessage(context.sender(), "<main>NotQuests <unimportant>— available admin commands:");
-                    for (final String usageLine : nqCommandManager.rootUsage("nqa")) {
-                        main.sendMessage(context.sender(), "<unimportant>" + usageLine);
-                    }
+                    nqCommandManager.sendRootHelp(
+                            context.sender(), "nqa", "<main>NotQuests <unimportant>— available admin commands:");
                 }));
 
         adminCommands = new AdminCommands(main, nqCommandManager, adminCommandBuilder);

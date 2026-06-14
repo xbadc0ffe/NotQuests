@@ -59,15 +59,21 @@ public class SpawnMobAction extends Action {
             NQCommandBuilder builder,
             ActionFor actionFor) {
 
-        NQFlag spawnRadiusX = NQFlag.builder("spawnRadiusX")
+        NQFlag spawnRadiusX = NQFlag.builder(
+                        "spawnRadiusX",
+                        NQDescription.of("Horizontal X radius, in blocks, to randomize the spawn location around the target."))
                 .withArgument(NQArguments.integerArgument())
                 .build();
 
-        NQFlag spawnRadiusY = NQFlag.builder("spawnRadiusY")
+        NQFlag spawnRadiusY = NQFlag.builder(
+                        "spawnRadiusY",
+                        NQDescription.of("Vertical Y radius, in blocks, to randomize the spawn location around the target."))
                 .withArgument(NQArguments.integerArgument())
                 .build();
 
-        NQFlag spawnRadiusZ = NQFlag.builder("spawnRadiusZ")
+        NQFlag spawnRadiusZ = NQFlag.builder(
+                        "spawnRadiusZ",
+                        NQDescription.of("Horizontal Z radius, in blocks, to randomize the spawn location around the target."))
                 .withArgument(NQArguments.integerArgument())
                 .build();
 
@@ -77,7 +83,7 @@ public class SpawnMobAction extends Action {
                 .flag(spawnRadiusY)
                 .flag(spawnRadiusZ);
 
-        manager.command(commonBuilder.literal("PlayerLocation")
+        manager.command(commonBuilder.literal("PlayerLocation", NQDescription.of("Uses the target player's current location."))
                 .handler(
                         (context) -> {
                             final String entityType = context.get("entityType");
@@ -98,8 +104,8 @@ public class SpawnMobAction extends Action {
                             main.getActionManager().addAction(spawnMobAction, context, actionFor);
                         }));
 
-        manager.command(commonBuilder.literal("Location")
-                        .required("world", NQArguments.worldArgument(), NQDescription.of("World name"))
+        manager.command(commonBuilder.literal("Location", NQDescription.of("Uses a fixed world location for this command."))
+                        .required("world", NQArguments.worldArgument(), NQDescription.of("World where the mob should be spawned."))
                         /* .argumentTriplet(
                                 "coords",
                                 TypeToken.get(Vector.class),
@@ -111,9 +117,9 @@ public class SpawnMobAction extends Action {
                                 ArgumentDescription.of("Coordinates")
                         )*/
                         // Commented out, because this somehow breaks flags
-                        .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate"))
-                        .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate"))
-                        .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate"))
+                        .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate where the mob should be spawned."))
+                        .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate where the mob should be spawned."))
+                        .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate where the mob should be spawned."))
                         .handler(
                                 (context) -> {
                                     final String entityType = context.get("entityType");

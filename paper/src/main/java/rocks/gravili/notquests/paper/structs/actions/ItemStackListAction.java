@@ -82,7 +82,9 @@ public class ItemStackListAction extends Action {
 
 
             manager.command(main.getVariablesManager().registerVariableCommands(variableString, builder)
-                    .required("operator", NQArguments.stringArgument(), NQDescription.of("Operator."), (context, input) -> {
+                    .required("operator", NQArguments.stringArgument(),
+                            NQDescription.of("How to change the " + variableString + " item-list variable: set, add, remove, or clear."),
+                            (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("set");
                         completions.add("add");
@@ -91,8 +93,10 @@ public class ItemStackListAction extends Action {
                         return completions;
                     })
 
-                    .required("expression", itemStackListVariableArgument("expression", variable), NQDescription.of("Expression"))
-                    .required("amount", NQArguments.integerArgument(), NQDescription.of("Amount of items"))
+                    .required("expression", itemStackListVariableArgument("expression", variable),
+                            NQDescription.of("Item or item-list expression used by this " + variableString + " action."))
+                    .required("amount", NQArguments.integerArgument(),
+                            NQDescription.of("Stack amount to apply for each item in this item-list action."))
                     .handler((context) -> {
 
                         final String expression = context.get("expression");

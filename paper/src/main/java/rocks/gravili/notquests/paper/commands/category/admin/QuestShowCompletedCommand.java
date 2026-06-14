@@ -25,7 +25,7 @@ public class QuestShowCompletedCommand extends BaseCommand {
     @Override
     public void apply(NQCommandManager commandManager) {
         commandManager.command(builder.commandDescription(NQDescription.of("Completes an active quest for a player"))
-                .literal("completedQuests")
+                .literal("completedQuests", NQDescription.of("Shows completed quests for a player."))
                 .required("player", NQArguments.playerArgument(), NQDescription.of("Player to display the completed quests of."))
                 .handler((context) -> {
                     context.sender().sendMessage(Component.empty());
