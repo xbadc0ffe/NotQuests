@@ -170,7 +170,7 @@ public class AdminConversationCommands {
                     int counter = 1;
                     for (final Conversation conversation : conversationManager.getAllConversations()) {
                         context.sender().sendMessage(main.parse("<highlight>" + counter + ".</highlight> <main>" + conversation.getIdentifier()));
-                        context.sender().sendMessage(main.parse("<unimportant>--- Attached to NPC:</unimportant> <main>" + conversation.getNPCs().toString())); //TODO: Fix this
+                        context.sender().sendMessage(main.parse("<unimportant>--- Attached to NPC:</unimportant> <main>" + formatAttachedNPCs(conversation.getNPCs())));
                         context.sender().sendMessage(main.parse("<unimportant>--- Amount of starting conversation lines:</unimportant> <main>" + conversation.getStartingLines().size()));
                     }
                 }));
@@ -431,6 +431,22 @@ public class AdminConversationCommands {
                 }));
 
         handleLinesCommands();
+    }
+
+    static String formatAttachedNPCs(final List<NQNPC> npcs) {
+        if (npcs == null || npcs.isEmpty()) {
+            return "none";
+        }
+        final List<String> formatted = new ArrayList<>();
+        for (final NQNPC npc : npcs) {
+            if (npc == null) {
+                continue;
+            }
+            final String id = npc.getNPCType() + ":" + npc.getID().getEitherAsString();
+            final String name = npc.getName();
+            formatted.add(name == null || name.isBlank() ? id : id + " (" + name + ")");
+        }
+        return formatted.isEmpty() ? "none" : String.join(", ", formatted);
     }
 
     public void handleLinesCommands() {
