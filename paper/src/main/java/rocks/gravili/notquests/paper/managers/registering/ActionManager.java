@@ -83,8 +83,12 @@ public class ActionManager {
         registerAction("SpawnMob", SpawnMobAction.class);
         registerAction("SendMessage", SendMessageAction.class);
         registerAction("BroadcastMessage", BroadcastMessageAction.class);
+        registerAction("ShowTitle", ShowTitleAction.class);
+        registerAction("ShowActionBar", ShowActionBarAction.class);
 
         registerAction("PlaySound", PlaySoundAction.class);
+        registerAction("SpawnParticle", SpawnParticleAction.class);
+        registerAction("Teleport", TeleportAction.class);
 
 
         registerAction("Number", NumberAction.class);
@@ -167,7 +171,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminEditAddRewardCommandBuilder()
-                                .literal(identifier, NQDescription.of(identifier + " action type."))
+                                .literal(identifier, NQDescription.of(actionLiteralDescription(identifier)))
                                 .commandDescription(NQDescription.of("Creates a new " + identifier + " action")),
                         ActionFor.QUEST);
                 commandHandler.invoke(
@@ -176,7 +180,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminEditObjectiveAddRewardCommandBuilder()
-                                .literal(identifier, NQDescription.of(identifier + " action type."))
+                                .literal(identifier, NQDescription.of(actionLiteralDescription(identifier)))
                                 .commandDescription(NQDescription.of("Creates a new " + identifier + " action")),
                         ActionFor.OBJECTIVE);
                 commandHandler.invoke(
@@ -185,7 +189,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminAddActionCommandBuilder()
-                                .literal(identifier, NQDescription.of(identifier + " action type."))
+                                .literal(identifier, NQDescription.of(actionLiteralDescription(identifier)))
                                 .commandDescription(NQDescription.of("Creates a new " + identifier + " action"))
                                 .flag(main.getCommandManager().categoryFlag)
                                 .flag(main.getCommandManager().delayFlag),
@@ -198,7 +202,7 @@ public class ActionManager {
                         main.getCommandManager().getNQCommandManager(),
                         main.getCommandManager()
                                 .getAdminExecuteActionCommandBuilder()
-                                .literal(identifier, NQDescription.of(identifier + " action type."))
+                                .literal(identifier, NQDescription.of(actionLiteralDescription(identifier)))
                                 .commandDescription(NQDescription.of("Executes a new " + identifier + " action inline"))
                                 .flag(playerSelectorCommandFlag)
                                 .flag(main.getCommandManager().delayFlag),
@@ -208,6 +212,16 @@ public class ActionManager {
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String actionLiteralDescription(final String identifier) {
+        return switch (identifier) {
+            case "ShowTitle" -> "Shows a title overlay in the center of the target player's screen.";
+            case "ShowActionBar" -> "Shows a short message above the target player's hotbar.";
+            case "SpawnParticle" -> "Spawns a particle effect at the target player or a fixed location.";
+            case "Teleport" -> "Teleports the target player to a fixed world location.";
+            default -> identifier + " action type.";
+        };
     }
 
     public final Class<? extends Action> getActionClass(@NotNull final String type) {

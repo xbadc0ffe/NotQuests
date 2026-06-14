@@ -115,6 +115,8 @@ chat:
         base: 'Cins Yaratıklar: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Yaratıkları besle: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Eşyaları Teslim et: <main>%ITEMTODELIVERTYPE% (%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY> <WHITE>%NPCNAME% teslim et'
         deliver-to-npc-not-available: '      <GRAY>Teslimat NPC''si şu anda mevcut değil!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Eşyaları %ENCHANTMENT% ile Büyüleyin: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: <main>%AMOUNTOFSNEAKS%</main> kez eğil
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Eşyaları Pişir: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Gömülü hazineleri aç
       shearSheep:

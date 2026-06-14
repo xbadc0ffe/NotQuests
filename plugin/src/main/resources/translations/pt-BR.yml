@@ -115,6 +115,8 @@ chat:
         base: 'Reproduzir Criaturas: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Alimentar Criaturas: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Entregar Itens: <main>%ITEMTODELIVERTYPE% (%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Entregue para <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>O NPC de entrega não está disponível no momento!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Encante itens com %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Agache <main>%AMOUNTOFSNEAKS%</main> vezes
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Fundir Itens: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Abrir tesouros enterrados
       shearSheep:

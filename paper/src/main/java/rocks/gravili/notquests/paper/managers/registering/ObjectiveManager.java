@@ -73,6 +73,7 @@ public class ObjectiveManager {
         registerObjective("KillMobs", KillMobsObjective.class);
         registerObjective("ConsumeItems", ConsumeItemsObjective.class);
         registerObjective("DeliverItems", DeliverItemsObjective.class);
+        registerObjective("TradeWithVillager", TradeWithVillagerObjective.class);
         registerObjective("TalkToNPC", TalkToNPCObjective.class);
         registerObjective("EscortNPC", EscortNPCObjective.class);
         registerObjective("CraftItems", CraftItemsObjective.class);
@@ -83,13 +84,16 @@ public class ObjectiveManager {
         registerObjective("ReachLocation", ReachLocationObjective.class);
         registerObjective("BreedMobs", BreedObjective.class);
         registerObjective("FeedMobs", FeedMobsObjective.class);
+        registerObjective("TameMobs", TameMobsObjective.class);
         registerObjective("SlimefunResearch", SlimefunResearchObjective.class);
         registerObjective("RunCommand", RunCommandObjective.class);
         registerObjective("Interact", InteractObjective.class);
         registerObjective("Jump", JumpObjective.class);
         registerObjective("Sneak", SneakObjective.class);
+        registerObjective("Die", DieObjective.class);
         registerObjective("SmeltItems", SmeltObjective.class);
         registerObjective("BrewItems", BrewItemsObjective.class);
+        registerObjective("SmithItems", SmithItemsObjective.class);
         registerObjective("OpenBuriedTreasure", OpenBuriedTreasureObjective.class);
         registerObjective("ShearSheep", ShearSheepObjective.class);
         registerObjective("MilkCow", MilkCowObjective.class);
@@ -133,7 +137,7 @@ public class ObjectiveManager {
                     objectivesBuilder.literal("add", NQDescription.of("Adds a new objective to the selected quest."));
 
             commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilder
-                    .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
+                    .literal(identifier, NQDescription.of(objectiveLiteralDescription(identifier)))
                     .flag(main.getCommandManager().taskDescription), 0);
 
             //Level 1
@@ -149,7 +153,7 @@ public class ObjectiveManager {
 
             //Level 1
             commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilderLevel1
-                    .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
+                    .literal(identifier, NQDescription.of(objectiveLiteralDescription(identifier)))
                     .flag(main.getCommandManager().taskDescription), 1);
 
 
@@ -171,12 +175,22 @@ public class ObjectiveManager {
                     main,
                     main.getCommandManager().getNQCommandManager(),
                     adminEditAddObjectiveCommandBuilderLevel2
-                            .literal(identifier, NQDescription.of("Creates a new " + identifier + " objective"))
+                            .literal(identifier, NQDescription.of(objectiveLiteralDescription(identifier)))
                             .flag(main.getCommandManager().taskDescription), 2);
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String objectiveLiteralDescription(final String identifier) {
+        return switch (identifier) {
+            case "TradeWithVillager" -> "Counts matching result items taken from villager trade windows.";
+            case "TameMobs" -> "Counts mobs tamed by the player.";
+            case "SmithItems" -> "Counts matching result items taken from a smithing table.";
+            case "Die" -> "Counts player deaths, optionally filtered by damage cause.";
+            default -> "Creates a new " + identifier + " objective.";
+        };
     }
 
     public final Class<? extends Objective> getObjectiveClass(@NotNull final String type) {

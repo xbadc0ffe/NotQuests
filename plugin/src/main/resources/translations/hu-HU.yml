@@ -133,6 +133,8 @@ chat:
         base: 'Megölt Szörnyek: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Lények etetése: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -145,6 +147,8 @@ chat:
         base: 'Leszálltott Tárgyak: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%)%'
         deliver-to-npc: '      <GRAY>Száltsd le neki <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>A szállító NPC jelenelg nem elérhető!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Enchantolj tárgyakat %ENCHANTMENT% enchanttal: <main>%ITEMTOENCHANTTYPE% %
 
@@ -179,10 +183,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Guggolj <main>%AMOUNTOFSNEAKS%</main> alkalommal
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Kiégetett Tárgyak: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Nyiss ki egy elásott kincset
       shearSheep:

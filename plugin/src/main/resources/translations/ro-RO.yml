@@ -115,6 +115,8 @@ chat:
         base: 'Înmulțește creaturi: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Hrănește creaturi: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Livrează obiecte: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Livrează-l către <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>NPC-ul de livrare nu este disponibil momentan!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Încântă obiecte cu %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Furișează-te de <main>%AMOUNTOFSNEAKS%</main> ori
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Topește obiecte: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Deschide comori îngropate
       shearSheep:

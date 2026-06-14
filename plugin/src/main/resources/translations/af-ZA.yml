@@ -115,6 +115,8 @@ chat:
         base: 'Teel wesens: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Voer wesens: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Lewer items af: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Lewer dit af by <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>Die aflewerings-NPC is tans nie beskikbaar nie!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Betower items met %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Sluip <main>%AMOUNTOFSNEAKS%</main> keer
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Smelt items: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Maak begrawe skatte oop
       shearSheep:

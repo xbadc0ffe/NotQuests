@@ -115,6 +115,8 @@ chat:
         base: 'Reproduire des créatures : <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Nourrir des créatures : <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Livrer des items: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Livrez-le à <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>Le PNJ de livraison n''est actuellement pas disponible!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Enchanter des items avec %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Se baisser (sneak) <main>%AMOUNTOFSNEAKS%</main> fois
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Fondre des items : <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Ouvrir des trésors enfouis
       shearSheep:

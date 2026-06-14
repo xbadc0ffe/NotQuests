@@ -18,6 +18,9 @@ qa categories edit TestCategory displayName set Test Category With Spaces
 # ---- actions (literal-typed) ----
 qa actions add ActMsg SendMessage Hello there adventurer
 qa actions add ActBroadcast BroadcastMessage A server-wide announcement
+qa actions add ActTitle ShowTitle Quest Complete
+qa actions add ActTimedTitle ShowTitle timed 250ms 2s 500ms Quest Complete|Nice work
+qa actions add ActActionBar ShowActionBar Objective updated
 qa actions add ActConsole ConsoleCommand say hello from the console
 qa actions add ActPlayerCmd PlayerCommand me waves
 qa actions add ActChat Chat Hello from the player
@@ -29,6 +32,8 @@ qa actions add ActGiveItem GiveItem stone,dirt 5
 qa actions add ActGiveItemBoat GiveItem acacia_boat 2 --delay 500ms
 qa actions add ActSpawnMob SpawnMob zombie 3 Location world 100 64 100
 qa actions add ActPlaySound PlaySound entity.experience_orb.pickup
+qa actions add ActParticle SpawnParticle happy_villager 8 PlayerLocation
+qa actions add ActTeleport Teleport world 100 70 100
 qa actions add ActBeam Beam mybeam spawn world 100 70 100               # UNSURE
 qa actions add ActGiveQP GiveQuestPoints 10                             # UNSURE
 qa actions add ActGrantPerm GrantPermission notquests.e2e.test          # UNSURE
@@ -75,11 +80,16 @@ qa edit TestQuest objectives add ConsumeItems apple,bread 5
 qa edit TestQuest objectives add CraftItems torch,stick 5
 qa edit TestQuest objectives add SmeltItems iron_ingot,gold_ingot 5
 qa edit TestQuest objectives add BrewItems potion 5
+qa edit TestQuest objectives add SmithItems netherite_sword 1
+qa edit TestQuest objectives add TradeWithVillager emerald 1
 qa edit TestQuest objectives add FishItems cod,salmon 5
 qa edit TestQuest objectives add Enchant sharpness diamond_sword,iron_sword 5
 qa edit TestQuest objectives add KillMobs zombie 5
 qa edit TestQuest objectives add BreedMobs cow 5
 qa edit TestQuest objectives add FeedMobs cow 5
+qa edit TestQuest objectives add TameMobs wolf 1
+qa edit TestQuest objectives add Die 1
+qa edit TestQuest objectives add Die 1 --cause fall
 qa edit TestQuest objectives add Jump 10
 qa edit TestQuest objectives add Sneak 10
 qa edit TestQuest objectives add ShearSheep 5
@@ -114,6 +124,7 @@ qa edit TestQuest requirements add TagInteger testint moreOrEqualThan 1
 # ---- rewards (quest actions) ----
 qa edit TestQuest rewards add SendMessage You finished the quest
 qa edit TestQuest rewards add GiveItem diamond 1
+qa edit TestQuest rewards add ShowActionBar Reward delivered
 qa edit TestQuest rewards add TagInteger testint add 10
 
 # ---- triggers (each references an existing action + an event) ----
@@ -130,6 +141,11 @@ qa edit TestQuest triggers add ActMsg NPCDEATH 0 1                       # UNSUR
 qa variables check TagInteger testint
 qa variables check RandomNumberBetweenRange 1 10
 qa variables check Block world 100 64 100
+qa variables check FoodLevel
+qa variables check Saturation
+qa variables check DistanceToLocation world 100 64 100
+qa variables check NearbyEntityCount any 25
+qa variables check Weather
 qa conditions check WorldTime 0 12000
 qa edit TestQuest objectives list
 qa debug exportCommandSchema

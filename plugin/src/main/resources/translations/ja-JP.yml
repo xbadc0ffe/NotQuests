@@ -115,6 +115,8 @@ chat:
         base: 'モブ種: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'モブの餌付け: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'アイテムを届ける: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <WHITE>%NPCNAME% <GRAY>に配達しました'
         deliver-to-npc-not-available: '      <GRAY>配達NPCは現在利用できません！'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: '%ENCHANTMENT% でアイテムをエンチャント: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: <main>%AMOUNTOFSNEAKS%を</main> 回スニークする
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'アイテムを精錬: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: 埋蔵された宝物を開く
       shearSheep:

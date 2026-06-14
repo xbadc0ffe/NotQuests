@@ -115,6 +115,8 @@ chat:
         base: 'Avl mobs: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Fôr mobs: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Lever gjenstander: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Lever det til <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>Leverings-NPC-en er for øyeblikket ikke tilgjengelig!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Forheks gjenstander med %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Snik <main>%AMOUNTOFSNEAKS%</main> ganger
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Smelt gjenstander: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Åpne begravde skatter
       shearSheep:

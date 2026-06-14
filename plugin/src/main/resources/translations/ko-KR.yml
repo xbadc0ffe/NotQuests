@@ -115,6 +115,8 @@ chat:
         base: '몹 번식시키기: <main>%ENTITYTOBREED%'
       feedMobs:
         base: '몹 먹이주기: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: '아이템 배달하기: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>다음에게 배달하세요: <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>배달 대상 NPC가 현재 이용할 수 없습니다!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: '%ENCHANTMENT%(으)로 아이템 마법부여하기: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: <main>%AMOUNTOFSNEAKS%</main>번 웅크리기
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: '아이템 제련하기: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: 묻힌 보물 열기
       shearSheep:

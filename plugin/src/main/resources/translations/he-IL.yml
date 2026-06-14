@@ -115,6 +115,8 @@ chat:
         base: 'רבה יצורים: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'האכל יצורים: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'מסור פריטים: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>מסור אותו ל-<WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>דמות המסירה אינה זמינה כרגע!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'כשף פריטים עם %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: התגנב <main>%AMOUNTOFSNEAKS%</main> פעמים
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'התך פריטים: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: פתח אוצרות קבורים
       shearSheep:

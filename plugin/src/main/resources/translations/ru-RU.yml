@@ -115,6 +115,8 @@ chat:
         base: 'Разводите мобов: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Покормите мобов: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Принести Предметы: <main>%ITEMTODELIVERTYPE% (%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Доставить к<WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>доставка к NPC в настоящее время недоступна!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Зачаровать предметы с %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Прыгнуть <main>%AMOUNTOFSNEAKS%</main> раз
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Создать Предметы: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Открытые захороненные сокровища
       shearSheep:

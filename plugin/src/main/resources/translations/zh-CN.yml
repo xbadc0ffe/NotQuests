@@ -115,6 +115,8 @@ chat:
         base: 繁殖生物：<main>%ENTITYTOBREED%
       feedMobs:
         base: 喂养生物：<main>%ENTITYTOFEED%
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: '递送物品: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>把物品递交给 <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>负责收取物品的NPC暂时不在!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: '使用 %ENCHANTMENT% 附魔物品: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: 蹲 <main>%AMOUNTOFSNEAKS%</main> 次
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 烧炼物品：<main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: 打开埋藏的宝藏
       shearSheep:

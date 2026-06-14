@@ -101,6 +101,8 @@ chat:
         base: 'Αναπαραγωγή πλασμάτων: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Τάισμα πλασμάτων: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -113,6 +115,8 @@ chat:
         base: 'Παράδωσε αντικείμενα: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Παράδωσέ το στον <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>Ο NPC παράδοσης δεν είναι διαθέσιμος αυτή τη στιγμή!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Μαγέψε αντικείμενα με %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -145,10 +149,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Σύρσου <main>%AMOUNTOFSNEAKS%</main> φορές
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Λιώσε αντικείμενα: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Άνοιξε θαμμένους θησαυρούς
       shearSheep:

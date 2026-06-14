@@ -115,6 +115,8 @@ chat:
         base: 'Föd upp varelser: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Mata varelser: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Leverera föremål: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Leverera det till <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>Leverans-NPC:n är för närvarande inte tillgänglig!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Förtrolla föremål med %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Smyg <main>%AMOUNTOFSNEAKS%</main> gånger
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Smält föremål: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Öppna nedgrävda skatter
       shearSheep:

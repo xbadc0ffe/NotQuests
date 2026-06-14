@@ -84,10 +84,15 @@ public class VariablesManager {
         registerVariable("Name", PlayerNameVariable.class);
         registerVariable("Experience", PlayerExperienceVariable.class);
         registerVariable("ExperienceLevel", PlayerExperienceLevelVariable.class);
+        registerVariable("FoodLevel", PlayerFoodLevelVariable.class);
+        registerVariable("Saturation", PlayerSaturationVariable.class);
         registerVariable("CurrentWorld", PlayerCurrentWorldVariable.class);
         registerVariable("CurrentPositionX", PlayerCurrentPositionXVariable.class);
         registerVariable("CurrentPositionY", PlayerCurrentPositionYVariable.class);
         registerVariable("CurrentPositionZ", PlayerCurrentPositionZVariable.class);
+        registerVariable("DistanceToLocation", DistanceToLocationVariable.class);
+        registerVariable("NearbyEntityCount", NearbyEntityCountVariable.class);
+        registerVariable("Weather", WeatherVariable.class);
         registerVariable("RandomNumberBetweenRange", RandomNumberBetweenRangeVariable.class);
         registerVariable("PlaytimeTicks", PlayerPlaytimeTicksVariable.class);
         registerVariable("PlaytimeMinutes", PlayerPlaytimeMinutesVariable.class);
@@ -261,7 +266,7 @@ public class VariablesManager {
     public NQCommandBuilder registerVariableCommands(
             String variableString, NQCommandBuilder builder) {
         NQCommandBuilder newBuilder =
-                builder.literal(variableString, NQDescription.of("Selects the " + variableString + " variable for this action, condition, objective, or variable check."));
+                builder.literal(variableString, variableLiteralDescription(variableString));
 
         Variable<?> variable = getVariableFromString(variableString);
         if (variable != null) {
@@ -307,6 +312,8 @@ public class VariablesManager {
             final String variableString, final String identifier, final String valueKind) {
         final String normalized = identifier.toLowerCase(java.util.Locale.ROOT);
         final String description = switch (normalized) {
+            case "entitytype" -> "Entity type counted by the " + variableString + " variable. Use any to count all nearby entities.";
+            case "radius" -> "Radius in blocks around the player used by the " + variableString + " variable.";
             case "tagname" -> "Name of the NotQuests tag used by " + variableString + ". Tab-completion only shows tags with the matching value type.";
             case "class path" -> "Fully qualified Java class name that contains the static field read by " + variableString + ".";
             case "field" -> "Name of the static field read from the configured class.";
@@ -325,6 +332,18 @@ public class VariablesManager {
             case "min" -> "Minimum number in the accepted range.";
             case "max" -> "Maximum number in the accepted range.";
             default -> "Required " + valueKind + " parameter for the " + variableString + " variable.";
+        };
+        return NQDescription.of(description);
+    }
+
+    private NQDescription variableLiteralDescription(final String variableString) {
+        final String description = switch (variableString) {
+            case "FoodLevel" -> "Reads or changes the target player's visible hunger bar from 0 to 20.";
+            case "Saturation" -> "Reads or changes the target player's hidden food saturation value.";
+            case "DistanceToLocation" -> "Returns the target player's distance in blocks from a fixed world location.";
+            case "NearbyEntityCount" -> "Counts entities near the target player inside the configured radius.";
+            case "Weather" -> "Reads or changes the weather in the target player's current world.";
+            default -> "Selects the " + variableString + " variable for this action, condition, objective, or variable check.";
         };
         return NQDescription.of(description);
     }

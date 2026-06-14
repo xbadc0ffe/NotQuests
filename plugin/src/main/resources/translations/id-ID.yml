@@ -115,6 +115,8 @@ chat:
         base: 'Kembangbiakkan Mob: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Beri Makan Mob: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Antar Item: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Antarkan ke <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>NPC pengantaran saat ini tidak tersedia!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Enchant Item dengan %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Mengendap <main>%AMOUNTOFSNEAKS%</main> kali
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Lebur Item: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Buka harta karun terkubur
       shearSheep:

@@ -44,11 +44,14 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.inventory.BrewerInventory;
@@ -56,6 +59,7 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.loot.LootTables;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.arguments.wrappers.ItemStackSelection;
@@ -506,6 +510,68 @@ public class QuestEvents implements Listener {
         questPlayer.checkQueuedObjectives();
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onVillagerTradeResultTake(final InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof final Player player)
+                || !(e.getInventory() instanceof MerchantInventory)
+                || e.getRawSlot() != 2) {
+            return;
+        }
+
+        final ItemStack currentItem = e.getCurrentItem();
+        if (main.getUtilManager().isItemEmpty(currentItem)) {
+            return;
+        }
+
+        final int amount = getTakenResultAmount(player, currentItem, e.getCursor(), e.getClick(), e.getHotbarButton());
+        if (amount == 0) {
+            return;
+        }
+
+        final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+        if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
+            return;
+        }
+
+        questPlayer.queueObjectiveCheck(activeObjective -> {
+            if (activeObjective.getObjective() instanceof final TradeWithVillagerObjective tradeWithVillagerObjective
+                    && tradeWithVillagerObjective.countsTradeResult(currentItem)) {
+                activeObjective.addProgress(amount);
+            }
+        });
+        questPlayer.checkQueuedObjectives();
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onSmithItem(final SmithItemEvent e) {
+        if (!(e.getWhoClicked() instanceof final Player player)) {
+            return;
+        }
+
+        final ItemStack currentItem = e.getCurrentItem();
+        if (main.getUtilManager().isItemEmpty(currentItem)) {
+            return;
+        }
+
+        final int amount = getTakenResultAmount(player, currentItem, e.getCursor(), e.getClick(), e.getHotbarButton());
+        if (amount == 0) {
+            return;
+        }
+
+        final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+        if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
+            return;
+        }
+
+        questPlayer.queueObjectiveCheck(activeObjective -> {
+            if (activeObjective.getObjective() instanceof final SmithItemsObjective smithItemsObjective
+                    && smithItemsObjective.countsSmithingResult(currentItem)) {
+                activeObjective.addProgress(amount);
+            }
+        });
+        questPlayer.checkQueuedObjectives();
+    }
+
     private int consumeFreshBrewedAmount(final String brewingStandKey, final ItemStack takenItem) {
         final ArrayList<ItemStack> brewedItems = freshlyBrewedItems.get(brewingStandKey);
         if (brewedItems == null || brewedItems.isEmpty()) {
@@ -532,6 +598,66 @@ public class QuestEvents implements Listener {
             freshlyBrewedItems.remove(brewingStandKey);
         }
         return consumed;
+    }
+
+    private int getTakenResultAmount(
+            final Player player,
+            final ItemStack currentItem,
+            final ItemStack cursor,
+            final ClickType click,
+            final int hotbarButton) {
+        int amount = currentItem.getAmount();
+
+        switch (click) {
+            case LEFT:
+                if (!main.getUtilManager().isItemEmpty(cursor)) {
+                    if (!cursor.isSimilar(currentItem)
+                            || cursor.getAmount() + currentItem.getAmount() > cursor.getMaxStackSize()) {
+                        amount = 0;
+                    }
+                }
+                break;
+            case RIGHT:
+                if (!main.getUtilManager().isItemEmpty(cursor)) {
+                    if (!cursor.isSimilar(currentItem)
+                            || cursor.getAmount() + currentItem.getAmount() > cursor.getMaxStackSize()) {
+                        amount = 0;
+                    }
+                }
+                amount = (amount + 1) / 2;
+                break;
+            case NUMBER_KEY:
+                if (player.getInventory().getItem(hotbarButton) != null) {
+                    amount = 0;
+                }
+                break;
+            case DROP:
+                if (!main.getUtilManager().isItemEmpty(cursor)) {
+                    amount = 0;
+                }
+                amount = 1;
+                break;
+            case CONTROL_DROP:
+                if (!main.getUtilManager().isItemEmpty(cursor)) {
+                    amount = 0;
+                }
+                break;
+            case SWAP_OFFHAND:
+                if (!main.getUtilManager().isItemEmpty(player.getInventory().getItemInOffHand())) {
+                    amount = 0;
+                }
+                break;
+            case SHIFT_LEFT:
+            case SHIFT_RIGHT:
+                if (amount != 0) {
+                    amount = Math.min(getInventorySpaceLeftForItem(player.getInventory(), currentItem), amount);
+                }
+                break;
+            default:
+                amount = 0;
+        }
+
+        return Math.max(amount, 0);
     }
 
 
@@ -894,6 +1020,26 @@ public class QuestEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onEntityTame(final EntityTameEvent e) {
+        if (!(e.getOwner() instanceof final Player player)) {
+            return;
+        }
+
+        final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+        if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
+            return;
+        }
+
+        questPlayer.queueObjectiveCheck(activeObjective -> {
+            if (activeObjective.getObjective() instanceof final TameMobsObjective tameMobsObjective
+                    && tameMobsObjective.countsEntityType(e.getEntityType().toString())) {
+                activeObjective.addProgress(1);
+            }
+        });
+        questPlayer.checkQueuedObjectives();
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onBlockBreak(BlockBreakEvent e) {
@@ -1125,6 +1271,15 @@ public class QuestEvents implements Listener {
                         }
                     }
                 }
+
+                final String damageType = getDeathDamageType(e);
+                questPlayer.queueObjectiveCheck(activeObjective -> {
+                    if (activeObjective.getObjective() instanceof final DieObjective dieObjective
+                            && dieObjective.countsDamageType(damageType)) {
+                        activeObjective.addProgress(1);
+                    }
+                });
+                questPlayer.checkQueuedObjectives();
             }
 
             //Iterator<ActiveQuest> iter = questPlayer.getActiveQuests().iterator(); //Why was that needed?
@@ -1198,6 +1353,15 @@ public class QuestEvents implements Listener {
 
         }
 
+    }
+
+    private static String getDeathDamageType(final EntityDeathEvent e) {
+        if (e instanceof final PlayerDeathEvent playerDeathEvent
+                && playerDeathEvent.getDamageSource() != null
+                && playerDeathEvent.getDamageSource().getDamageType() != null) {
+            return playerDeathEvent.getDamageSource().getDamageType().getKey().getKey();
+        }
+        return "";
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

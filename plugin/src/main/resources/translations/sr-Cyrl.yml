@@ -121,6 +121,8 @@ chat:
         base: 'Размножи створења: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Нахрани створења: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -133,6 +135,8 @@ chat:
         base: 'Достави предмете: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Достави то <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>NPC за доставу тренутно није доступан!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Зачарај предмете са %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -165,10 +169,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Шуњај се <main>%AMOUNTOFSNEAKS%</main> пута
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Истопи предмете: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Откопај закопано благо
       shearSheep:

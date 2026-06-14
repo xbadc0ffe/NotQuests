@@ -115,6 +115,8 @@ chat:
         base: 'Lisää eläimiä: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Ruoki eläimiä: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Toimita esineitä: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Toimita se hahmolle <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>Toimitushahmo ei ole tällä hetkellä saatavilla!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Lumoa esineitä lumouksella %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Hiivi <main>%AMOUNTOFSNEAKS%</main> kertaa
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Sulata esineitä: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Avaa haudattuja aarteita
       shearSheep:

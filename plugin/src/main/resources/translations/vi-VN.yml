@@ -103,6 +103,8 @@ chat:
         base: 'Mobs giống: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Cho Mobs ăn: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -115,6 +117,8 @@ chat:
         base: 'Giao vật phẩm: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Giao nó cho<WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>NPC giao hàng hiện không có sẵn!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Phù phép vật phẩm với %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -147,10 +151,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Lén lút <main>%AMOUNTOFSNEAKS%</main> lần
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Nung vật phẩm: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Mở kho báu bị chôn vùi
       shearSheep:

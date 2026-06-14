@@ -109,6 +109,8 @@ chat:
         base: 'Rozmnož zvířata: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Nakrm zvířata: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -121,6 +123,8 @@ chat:
         base: 'Doruč itemy: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Doruč je <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>NPC pro doručení není právě dostupné!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Enchantuj itemy enchantem %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -153,10 +157,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Přikrč se <main>%AMOUNTOFSNEAKS%</main> krát
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Vypeč itemy: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Otevři zakopaný poklad
       shearSheep:

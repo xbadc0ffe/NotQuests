@@ -115,6 +115,8 @@ chat:
         base: 'تربية الوحوش: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'إطعام الوحوش: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'تسليم العناصر: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>سلّمها إلى <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>شخصية التسليم غير متاحة حاليًا!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'سحر العناصر بـ %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: تسلّل <main>%AMOUNTOFSNEAKS%</main> مرة
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'صهر العناصر: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: افتح الكنوز المدفونة
       shearSheep:

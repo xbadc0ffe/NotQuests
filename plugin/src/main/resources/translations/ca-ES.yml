@@ -115,6 +115,8 @@ chat:
         base: 'Cria Criatures: <main>%ENTITYTOBREED%'
       feedMobs:
         base: 'Alimenta Criatures: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
       harvest:
         base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
@@ -127,6 +129,8 @@ chat:
         base: 'Lliura Objectes: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Lliura-ho a <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>L''NPC de lliurament no està disponible actualment!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Encanta Objectes amb %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -159,10 +163,14 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: Ajup-te <main>%AMOUNTOFSNEAKS%</main> vegades
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Fon Objectes: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
       brewItems:
         base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: Obre tresors enterrats
       shearSheep:
