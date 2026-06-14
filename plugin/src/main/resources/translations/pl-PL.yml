@@ -159,6 +159,8 @@ chat:
         any: Zabij dowolnego Elitarnego Moba!
       runCommand:
         base: 'Wykonaj polecenie: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Lokalizacja: <main>%COORDINATES% <main>w świecie %WORLDNAME%'
       jump:

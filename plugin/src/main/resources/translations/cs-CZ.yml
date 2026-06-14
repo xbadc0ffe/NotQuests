@@ -149,6 +149,8 @@ chat:
         any: Zabij jakéhokoliv Elite moba!
       runCommand:
         base: Použij příkaz:<main>%COMMANDTORUN%
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Lokace: <main>%COORDINATES% <main>ve světě %WORLDNAME%'
       jump:

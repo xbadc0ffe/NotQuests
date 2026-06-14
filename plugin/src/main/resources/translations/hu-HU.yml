@@ -175,6 +175,8 @@ chat:
         any: Ölj meg bármilyen Elit Szörnyet!
       runCommand:
         base: 'Futtatott parancs: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Hely: <main>%COORDINATES% <main>a(z) %WORLDNAME% világban'
       jump:

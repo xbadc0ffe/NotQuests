@@ -141,6 +141,8 @@ chat:
         any: Σκότωσε οποιοδήποτε Elite πλάσμα!
       runCommand:
         base: 'Εκτέλεσε εντολή: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Τοποθεσία: <main>%COORDINATES% <main>στον κόσμο %WORLDNAME%'
       jump:

@@ -155,6 +155,8 @@ chat:
         any: Omoară orice creatură de elită!
       runCommand:
         base: 'Rulează comanda: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Locație: <main>%COORDINATES% <main>în lumea %WORLDNAME%'
       jump:

@@ -46,6 +46,7 @@ import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -838,6 +839,30 @@ public class QuestEvents implements Listener {
 
         questPlayer.queueObjectiveCheck(activeObjective -> {
             if (activeObjective.getObjective() instanceof JumpObjective) {
+                activeObjective.addProgress(1);
+            }
+        });
+        questPlayer.checkQueuedObjectives();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onProjectileHit(final ProjectileHitEvent e) {
+        if (!(e.getEntity() instanceof Arrow arrow)) {
+            return;
+        }
+        if (!(arrow.getShooter() instanceof final Player player)) {
+            return;
+        }
+
+        final QuestPlayer questPlayer = main.getQuestPlayerManager().getActiveQuestPlayer(player.getUniqueId());
+        if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
+            return;
+        }
+
+        final Location arrowLocation = arrow.getLocation();
+        questPlayer.queueObjectiveCheck(activeObjective -> {
+            if (activeObjective.getObjective() instanceof final ShootArrowObjective shootArrowObjective
+                    && shootArrowObjective.countsArrowLocation(arrowLocation)) {
                 activeObjective.addProgress(1);
             }
         });

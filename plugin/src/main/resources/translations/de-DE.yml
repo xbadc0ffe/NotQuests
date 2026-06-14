@@ -155,6 +155,8 @@ chat:
         any: Vernichte irgendeinen Elite-Mob!
       runCommand:
         base: 'Befehl ausführen: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Koordinaten: <main>%COORDINATES% <main>in Welt %WORLDNAME%'
       jump:

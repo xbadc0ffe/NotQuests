@@ -9,8 +9,11 @@ package rocks.gravili.notquests.paper.structs.objectives;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 import rocks.gravili.notquests.paper.commands.arguments.wrappers.ItemStackSelection;
@@ -64,5 +67,20 @@ class NewObjectiveMatchingTest {
         fallDeathObjective.setDamageType("fall");
         assertTrue(fallDeathObjective.countsDamageType("FALL"));
         assertFalse(fallDeathObjective.countsDamageType("lava"));
+    }
+
+    @Test
+    void shootArrowObjectiveCountsOnlyArrowsInsideTargetRadiusAndWorld() {
+        final World world = mock(World.class);
+        final World otherWorld = mock(World.class);
+
+        final ShootArrowObjective objective = new ShootArrowObjective(null);
+        objective.setTargetLocation(new Location(world, 10, 64, -5));
+        objective.setRadius(3);
+
+        assertTrue(objective.countsArrowLocation(new Location(world, 12, 64, -5)));
+        assertTrue(objective.countsArrowLocation(new Location(world, 13, 64, -5)));
+        assertFalse(objective.countsArrowLocation(new Location(world, 14, 64, -5)));
+        assertFalse(objective.countsArrowLocation(new Location(otherWorld, 10, 64, -5)));
     }
 }

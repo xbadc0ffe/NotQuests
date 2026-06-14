@@ -88,6 +88,7 @@ public class ObjectiveManager {
         registerObjective("SlimefunResearch", SlimefunResearchObjective.class);
         registerObjective("RunCommand", RunCommandObjective.class);
         registerObjective("Interact", InteractObjective.class);
+        registerObjective("ShootArrow", ShootArrowObjective.class);
         registerObjective("Jump", JumpObjective.class);
         registerObjective("Sneak", SneakObjective.class);
         registerObjective("Die", DieObjective.class);
@@ -189,6 +190,7 @@ public class ObjectiveManager {
             case "TameMobs" -> "Counts mobs tamed by the player.";
             case "SmithItems" -> "Counts matching result items taken from a smithing table.";
             case "Die" -> "Counts player deaths, optionally filtered by damage cause.";
+            case "ShootArrow" -> "Counts arrows shot by the player that land inside a target region.";
             default -> "Creates a new " + identifier + " objective.";
         };
     }

@@ -161,6 +161,8 @@ chat:
         any: Убиј било које елитно створење!
       runCommand:
         base: 'Покрени команду: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% локација: <main>%COORDINATES% <main>у свету %WORLDNAME%'
       jump:

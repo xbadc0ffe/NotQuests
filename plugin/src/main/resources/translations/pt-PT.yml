@@ -155,6 +155,8 @@ chat:
         any: Mata qualquer Criatura de Elite!
       runCommand:
         base: 'Executar comando: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Local: <main>%COORDINATES% <main>no mundo %WORLDNAME%'
       jump:

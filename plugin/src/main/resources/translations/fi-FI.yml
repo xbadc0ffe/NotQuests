@@ -155,6 +155,8 @@ chat:
         any: Tapa mikä tahansa eliittiolento!
       runCommand:
         base: 'Suorita komento: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Sijainti: <main>%COORDINATES% <main>maailmassa %WORLDNAME%'
       jump:

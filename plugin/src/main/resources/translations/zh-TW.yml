@@ -155,6 +155,8 @@ chat:
         any: 擊殺任意菁英生物!
       runCommand:
         base: '使用指令: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% 位置 <main>%COORDINATES% <main>在世界 %WORLDNAME%'
       jump:

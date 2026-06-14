@@ -155,6 +155,8 @@ chat:
         any: Herhangi bir Elit Yaratığı öldürün!
       runCommand:
         base: 'Komutu çalıştır: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Konum: %WORLDNAME% <main>%COORDINATES% <main> kordinatlarında'
       jump:

@@ -155,6 +155,8 @@ chat:
         any: Dræb en hvilken som helst Elite-mob!
       runCommand:
         base: 'Kør kommando: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% lokation: <main>%COORDINATES% <main>i verden %WORLDNAME%'
       jump:

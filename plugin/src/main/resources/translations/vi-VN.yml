@@ -143,6 +143,8 @@ chat:
         any: Giết con elite mob nào đấy!
       runCommand:
         base: 'Chạy lệnh: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Vị trí: <main>%COORDINATES% <main> trong thế giới %WORLDNAME%'
       jump:

@@ -155,6 +155,8 @@ chat:
         any: 击杀所有精英生物！
       runCommand:
         base: 执行命令：<main>%COMMANDTORUN%
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% 坐标：<main>%COORDINATES% <main>世界：%WORLDNAME%'
       jump:

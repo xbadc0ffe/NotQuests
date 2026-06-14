@@ -155,6 +155,8 @@ chat:
         any: エリートモブを倒せ！
       runCommand:
         base: 'コマンドを実行: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% 場所: <main>%COORDINATES% <main>のワールド %WORLDNAME%'
       jump:

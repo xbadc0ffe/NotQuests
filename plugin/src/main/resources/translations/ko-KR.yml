@@ -155,6 +155,8 @@ chat:
         any: 아무 엘리트 몹이나 처치하세요!
       runCommand:
         base: '명령어 실행하기: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% 위치: <main>%COORDINATES% <main>월드 %WORLDNAME%'
       jump:

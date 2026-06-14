@@ -155,6 +155,8 @@ chat:
         any: Uccidi un qualsiasi mob elite!
       runCommand:
         base: 'Esegui comando: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Posizione: <main>%COORDINATES% <main>nel mondo %WORLDNAME%'
       jump:

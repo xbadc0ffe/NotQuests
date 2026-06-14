@@ -155,6 +155,8 @@ chat:
         any: הרוג יצור עילית כלשהו!
       runCommand:
         base: 'הרץ פקודה: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% מיקום: <main>%COORDINATES% <main>בעולם %WORLDNAME%'
       jump:

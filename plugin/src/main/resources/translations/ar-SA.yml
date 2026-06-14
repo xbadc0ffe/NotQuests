@@ -155,6 +155,8 @@ chat:
         any: اقتل أي وحش نخبة!
       runCommand:
         base: 'نفّذ الأمر: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% الموقع: <main>%COORDINATES% <main>في العالم %WORLDNAME%'
       jump:

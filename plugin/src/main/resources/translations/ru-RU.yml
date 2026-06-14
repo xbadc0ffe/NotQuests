@@ -155,6 +155,8 @@ chat:
         any: Убейте Элитного Моба!
       runCommand:
         base: 'Выполнить команду: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Расположение: <main>%COORDINATES% <main>в мире %WORLDNAME%'
       jump:
