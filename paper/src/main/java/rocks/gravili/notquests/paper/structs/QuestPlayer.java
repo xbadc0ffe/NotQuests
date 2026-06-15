@@ -357,8 +357,9 @@ public class QuestPlayer {
 
 
             lowestDistanceLocation = blockLocation(lowestDistanceLocation);
+            final Location beamRenderLocation = beamRenderLocation(lowestDistanceLocation, isBeaconMode());
             final Location activeLocation = activeLocationAndBeams.get(locationName);
-            if (!force && sameBlockLocation(activeLocation, lowestDistanceLocation)) {
+            if (!force && sameBlockLocation(activeLocation, beamRenderLocation)) {
                 renderedLocations.add(locationName);
                 continue;
             }
@@ -367,27 +368,27 @@ public class QuestPlayer {
             }
 
             if(isBeaconMode()){
-                BlockState beaconBlockState = lowestDistanceLocation.getBlock().getState();
+                BlockState beaconBlockState = beamRenderLocation.getBlock().getState();
                 beaconBlockState.setType(Material.BEACON);
 
-                BlockState ironBlockState = lowestDistanceLocation.getBlock().getState();
+                BlockState ironBlockState = beamRenderLocation.getBlock().getState();
                 ironBlockState.setType(Material.IRON_BLOCK);
 
-                player.sendBlockChange(lowestDistanceLocation, beaconBlockState.getBlockData());
+                player.sendBlockChange(beamRenderLocation, beaconBlockState.getBlockData());
                 for (int x = -1; x <= 1; x++) {
                     for (int z = -1; z <= 1; z++) {
-                        player.sendBlockChange(lowestDistanceLocation.clone().add(x, -1, z), ironBlockState.getBlockData());
+                        player.sendBlockChange(beamRenderLocation.clone().add(x, -1, z), ironBlockState.getBlockData());
                     }
                 }
 
-                activeLocationAndBeams.put(locationName, lowestDistanceLocation.clone());
+                activeLocationAndBeams.put(locationName, beamRenderLocation.clone());
             }else{
-                BlockState beaconBlockState = lowestDistanceLocation.getBlock().getState();
+                BlockState beaconBlockState = beamRenderLocation.getBlock().getState();
                 beaconBlockState.setType(Material.END_GATEWAY);
 
-                player.sendBlockChange(lowestDistanceLocation, beaconBlockState.getBlockData());
+                player.sendBlockChange(beamRenderLocation, beaconBlockState.getBlockData());
 
-                activeLocationAndBeams.put(locationName, lowestDistanceLocation.clone());
+                activeLocationAndBeams.put(locationName, beamRenderLocation.clone());
             }
 
             renderedLocations.add(locationName);
@@ -424,6 +425,20 @@ public class QuestPlayer {
                 location.getBlockX(),
                 location.getBlockY(),
                 location.getBlockZ());
+    }
+
+    static Location beamRenderLocation(final Location markerLocation, final boolean beaconMode) {
+        final Location blockLocation = blockLocation(markerLocation);
+        if (blockLocation.getBlock().getType().isAir()) {
+            return blockLocation;
+        }
+
+        final int verticalOffset = beaconMode ? 2 : 1;
+        final Location shifted = blockLocation.clone().add(0, verticalOffset, 0);
+        if (shifted.getWorld() != null && shifted.getBlockY() < shifted.getWorld().getMaxHeight()) {
+            return blockLocation(shifted);
+        }
+        return blockLocation;
     }
 
     private static Map<String, Location> cloneLocations(final Map<String, Location> locations) {

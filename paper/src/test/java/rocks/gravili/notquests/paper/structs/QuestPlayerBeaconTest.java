@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import java.util.UUID;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,6 +85,37 @@ class QuestPlayerBeaconTest {
         assertTrue(QuestPlayer.sameBlockLocation(first, sameBlock));
         assertFalse(QuestPlayer.sameBlockLocation(first, differentBlock));
         assertFalse(QuestPlayer.sameBlockLocation(first, differentWorld));
+    }
+
+    @Test
+    void endGatewayBeamRendersAboveSolidTargetBlock() {
+        world.getBlockAt(10, 64, 10).setType(Material.CHEST);
+
+        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10), false);
+
+        assertEquals(10, renderLocation.getBlockX());
+        assertEquals(65, renderLocation.getBlockY());
+        assertEquals(10, renderLocation.getBlockZ());
+    }
+
+    @Test
+    void beaconBeamRendersHighEnoughToKeepSolidTargetBlockVisible() {
+        world.getBlockAt(10, 64, 10).setType(Material.CHEST);
+
+        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10), true);
+
+        assertEquals(10, renderLocation.getBlockX());
+        assertEquals(66, renderLocation.getBlockY());
+        assertEquals(10, renderLocation.getBlockZ());
+    }
+
+    @Test
+    void beamUsesTargetBlockWhenTargetBlockIsAlreadyAir() {
+        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10), false);
+
+        assertEquals(10, renderLocation.getBlockX());
+        assertEquals(64, renderLocation.getBlockY());
+        assertEquals(10, renderLocation.getBlockZ());
     }
 
     @Test
