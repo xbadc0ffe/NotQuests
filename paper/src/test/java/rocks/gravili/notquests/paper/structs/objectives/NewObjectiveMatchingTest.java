@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +81,24 @@ class NewObjectiveMatchingTest {
         fallDeathObjective.setDamageType("fall");
         assertTrue(fallDeathObjective.countsDamageType("FALL"));
         assertFalse(fallDeathObjective.countsDamageType("lava"));
+    }
+
+    @Test
+    void interactObjectiveCountsBothClicksWhenNoClickFlagWasConfigured() {
+        final InteractObjective objective = new InteractObjective(null);
+
+        assertTrue(objective.countsInteractionAction(Action.RIGHT_CLICK_BLOCK));
+        assertTrue(objective.countsInteractionAction(Action.LEFT_CLICK_BLOCK));
+        assertFalse(objective.countsInteractionAction(Action.RIGHT_CLICK_AIR));
+    }
+
+    @Test
+    void interactObjectiveRespectsExplicitClickFlags() {
+        final InteractObjective objective = new InteractObjective(null);
+        objective.setRightClick(true);
+
+        assertTrue(objective.countsInteractionAction(Action.RIGHT_CLICK_BLOCK));
+        assertFalse(objective.countsInteractionAction(Action.LEFT_CLICK_BLOCK));
     }
 
     @Test

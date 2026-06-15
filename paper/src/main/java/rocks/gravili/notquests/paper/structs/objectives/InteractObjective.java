@@ -23,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import rocks.gravili.notquests.paper.NotQuests;
@@ -148,6 +149,9 @@ public class InteractObjective extends Objective {
         if (isLeftClick() && isRightClick()) {
             interactType = "Left/Right-Click";
         }
+        if (!isLeftClick() && !isRightClick()) {
+            interactType = "Interact with";
+        }
 
         String worldName = "???";
         if (getLocationToInteract().getWorld() != null) {
@@ -224,6 +228,16 @@ public class InteractObjective extends Objective {
 
     public final boolean isRightClick() {
         return rightClick;
+    }
+
+    public boolean countsInteractionAction(final Action action) {
+        if (action == Action.RIGHT_CLICK_BLOCK) {
+            return rightClick || (!leftClick && !rightClick);
+        }
+        if (action == Action.LEFT_CLICK_BLOCK) {
+            return leftClick || (!leftClick && !rightClick);
+        }
+        return false;
     }
 
     public void setRightClick(final boolean rightClick) {

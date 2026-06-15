@@ -895,10 +895,7 @@ public class QuestEvents implements Listener {
                     + "</highlight>. Action: <highlight2>" + e.getAction() + "</highlight2>."
                 );
 
-                if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !interactObjective.isRightClick()) {
-                    return;
-                }
-                if (e.getAction() == Action.LEFT_CLICK_BLOCK && !interactObjective.isLeftClick()) {
+                if (!interactObjective.countsInteractionAction(e.getAction())) {
                     return;
                 }
                 if (e.getClickedBlock() == null || e.getClickedBlock().getLocation().getWorld() == null || interactObjective.getLocationToInteract().getWorld() == null) {
