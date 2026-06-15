@@ -27,6 +27,7 @@ import json
 E2E = pathlib.Path(__file__).resolve().parent
 SRC = E2E.parent / "paper" / "src" / "main" / "java"
 CMDS_FILE = E2E / "commands.txt"
+COMMAND_METADATA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated" / "metadata.json"
 COMMAND_SCHEMA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated" / "commands.json"
 
 EXCLUDE_INTEGRATION = {
@@ -144,13 +145,23 @@ def main():
 
     schema_errors = []
     try:
-        schema = json.loads(COMMAND_SCHEMA.read_text())
+        schema = load_metadata_or_command_schema()
         exported = schema.get("commands", [])
         syntaxes = {entry.get("syntax") for entry in exported}
         if not exported:
             schema_errors.append("schema contains no commands")
         if "/nqa debug exportCommandSchema" not in syntaxes:
             schema_errors.append("schema is missing /nqa debug exportCommandSchema")
+        if "/nqa debug exportMetadata" not in syntaxes:
+            schema_errors.append("schema is missing /nqa debug exportMetadata")
+        if COMMAND_METADATA.exists():
+            metadata = json.loads(COMMAND_METADATA.read_text())
+            registry = metadata.get("registry", {})
+            for key in ("objectives", "actions", "conditions", "triggers", "variables"):
+                if not registry.get(key):
+                    schema_errors.append(f"metadata registry has no {key}")
+        else:
+            schema_errors.append(f"metadata file was not written: {COMMAND_METADATA}")
         for entry in exported:
             for segment in entry.get("segments", []):
                 if weak_description(segment.get("description"), segment.get("name"), segment.get("token")):
@@ -171,7 +182,7 @@ def main():
                         + " -> "
                         + repr(flag.get("description")))
     except FileNotFoundError:
-        schema_errors.append(f"schema file was not written: {COMMAND_SCHEMA}")
+        schema_errors.append(f"schema file was not written: {COMMAND_METADATA}")
     except json.JSONDecodeError as exc:
         schema_errors.append(f"schema JSON is invalid: {exc}")
     if schema_errors:
@@ -210,6 +221,16 @@ def weak_description(description, name, token):
     token_text = str(token or "").strip().replace("[", "").replace("]", "").replace("<", "").replace(">", "")
     candidates = {str(name or "").strip(), token_text}
     return text.lower() in {candidate.lower() for candidate in candidates if candidate}
+
+
+def load_metadata_or_command_schema():
+    if COMMAND_METADATA.exists():
+        metadata = json.loads(COMMAND_METADATA.read_text())
+        commands = metadata.get("commands", {})
+        if isinstance(commands, dict):
+            return commands
+        return {"commands": commands}
+    return json.loads(COMMAND_SCHEMA.read_text())
 
 
 if __name__ == "__main__":

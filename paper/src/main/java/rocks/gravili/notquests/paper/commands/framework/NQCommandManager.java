@@ -44,6 +44,8 @@ import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.CommandI
 import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.CommandIndex;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.FlagInfo;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandSchema.SegmentInfo;
+import rocks.gravili.notquests.paper.metadata.NQMetadataExporter;
+import rocks.gravili.notquests.paper.metadata.NQMetadataSchema.MetadataIndex;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -168,11 +170,23 @@ public final class NQCommandManager {
         return new CommandIndex(main.getMain().getDescription().getVersion(), commandSchema());
     }
 
+    public MetadataIndex metadataIndex() {
+        return new NQMetadataExporter(main).metadataIndex();
+    }
+
     /** Write the current command schema to {@code plugins/NotQuests/generated/commands.json}. */
     public Path exportCommandSchema() throws IOException {
         final Path output = main.getMain().getDataFolder().toPath().resolve("generated").resolve("commands.json");
         Files.createDirectories(output.getParent());
         Files.writeString(output, commandIndex().toJson(), StandardCharsets.UTF_8);
+        return output;
+    }
+
+    /** Write the full runtime metadata bundle to {@code plugins/NotQuests/generated/metadata.json}. */
+    public Path exportMetadata() throws IOException {
+        final Path output = main.getMain().getDataFolder().toPath().resolve("generated").resolve("metadata.json");
+        Files.createDirectories(output.getParent());
+        Files.writeString(output, metadataIndex().toJson(), StandardCharsets.UTF_8);
         return output;
     }
 
@@ -206,6 +220,11 @@ public final class NQCommandManager {
             exportCommandSchema();
         } catch (final IOException e) {
             main.getLogManager().warn("Failed to export command schema: " + e.getMessage());
+        }
+        try {
+            exportMetadata();
+        } catch (final IOException e) {
+            main.getLogManager().warn("Failed to export runtime metadata: " + e.getMessage());
         }
     }
 

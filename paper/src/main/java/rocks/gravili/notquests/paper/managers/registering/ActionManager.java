@@ -214,7 +214,7 @@ public class ActionManager {
         }
     }
 
-    private static String actionLiteralDescription(final String identifier) {
+    public static String actionLiteralDescription(final String identifier) {
         return switch (identifier) {
             case "ShowTitle" -> "Shows a title overlay in the center of the target player's screen.";
             case "ShowActionBar" -> "Shows a short message above the target player's hotbar.";

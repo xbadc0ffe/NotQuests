@@ -76,11 +76,25 @@ public class TriggerManager {
                     main.getCommandManager().getNQCommandManager(),
                     main.getCommandManager()
                             .getAdminEditAddTriggerCommandBuilder()
-                            .literal(identifier, NQDescription.of(identifier + " trigger type."))
+                            .literal(identifier, NQDescription.of(triggerLiteralDescription(identifier)))
                             .commandDescription(NQDescription.of("Creates a new " + identifier + " trigger")));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String triggerLiteralDescription(final String identifier) {
+        return switch (identifier) {
+            case "BEGIN" -> "Runs the selected action when the quest starts.";
+            case "COMPLETE" -> "Runs the selected action when the quest is completed.";
+            case "DEATH" -> "Runs the selected action when the quest player dies.";
+            case "DISCONNECT" -> "Runs the selected action when the quest player disconnects.";
+            case "FAIL" -> "Runs the selected action when the quest fails.";
+            case "NPCDEATH" -> "Runs the selected action when a tracked NPC dies.";
+            case "WORLDENTER" -> "Runs the selected action when the quest player enters the configured world.";
+            case "WORLDLEAVE" -> "Runs the selected action when the quest player leaves the configured world.";
+            default -> "Selects the " + identifier + " trigger type.";
+        };
     }
 
     public final Class<? extends Trigger> getTriggerClass(@NotNull final String type) {

@@ -337,7 +337,11 @@ public class VariablesManager {
     }
 
     private NQDescription variableLiteralDescription(final String variableString) {
-        final String description = switch (variableString) {
+        return NQDescription.of(variableLiteralDescriptionText(variableString));
+    }
+
+    public static String variableLiteralDescriptionText(final String variableString) {
+        return switch (variableString) {
             case "FoodLevel" -> "Reads or changes the target player's visible hunger bar from 0 to 20.";
             case "Saturation" -> "Reads or changes the target player's hidden food saturation value.";
             case "DistanceToLocation" -> "Returns the target player's distance in blocks from a fixed world location.";
@@ -345,7 +349,6 @@ public class VariablesManager {
             case "Weather" -> "Reads or changes the weather in the target player's current world.";
             default -> "Selects the " + variableString + " variable for this action, condition, objective, or variable check.";
         };
-        return NQDescription.of(description);
     }
 
     public void registerVariable(

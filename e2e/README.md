@@ -24,9 +24,9 @@ In CI it runs as the **E2E command sweep** workflow on every push/PR.
 - `commands.txt` — the command list, one per line, dependency-ordered (tags → actions → quests).
   Append `# PLAYER-ONLY`, `# NEEDS-ECONOMY`, `# UNSURE`, or `# OBJECTIVE-SCOPED` to a line to mark it
   *tolerated*: it still runs (for completeness) but its errors don't fail the build.
-- `run-sweep.sh` — boots the server, feeds the commands (each tagged with an `NQE2E_MK` marker so
-  output maps back to its command), stops, and calls the analyzer.
-- `analyze.py` — checks coverage (against the source registries) and correctness (against the log).
+- `run-sweep.sh` — boots the server, feeds the commands, stops, and calls the analyzer.
+- `analyze.py` — checks coverage (against the source registries), correctness (against the log), and
+  the runtime metadata bundle written to `plugins/NotQuests/generated/metadata.json`.
 - `run-betonquest-sweep.sh` — boots the server with the vendored BetonQuest 3.0.0 jar, loads a
   tiny BetonQuest package containing every restored `nq_*` hook, and verifies the NotQuests
   BetonQuest action / reward / objective / variable commands from the console.

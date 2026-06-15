@@ -139,6 +139,22 @@ public class DebugCommand extends BaseCommand {
                     }
                 }));
 
+        commandManager.command(builder.commandDescription(NQDescription.of("Exports the generated runtime metadata bundle as JSON."))
+                .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
+                .literal("exportMetadata", NQDescription.of("Exports commands plus runtime-registered objectives, actions, conditions, triggers, and variables."))
+                .handler((context) -> {
+                    try {
+                        final Path output = commandManager.exportMetadata();
+                        notQuests.sendMessage(
+                                context.sender(),
+                                "<success>Runtime metadata exported to <highlight>" + output + "</highlight>");
+                    } catch (final IOException e) {
+                        notQuests.sendMessage(
+                                context.sender(),
+                                "<error>Could not export runtime metadata: " + e.getMessage());
+                    }
+                }));
+
         commandManager.command(builder.commandDescription(NQDescription.of("Enables NotQuests, saving & loading"))
                 .literal("debug", NQDescription.of("Opens NotQuests debug utilities."))
                 .literal("enablePluginAndSaving", NQDescription.of("Debug command that re-enables plugin saving."))

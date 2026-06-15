@@ -184,7 +184,7 @@ public class ObjectiveManager {
         }
     }
 
-    private static String objectiveLiteralDescription(final String identifier) {
+    public static String objectiveLiteralDescription(final String identifier) {
         return switch (identifier) {
             case "TradeWithVillager" -> "Counts matching result items taken from villager trade windows.";
             case "TameMobs" -> "Counts mobs tamed by the player.";
