@@ -36,33 +36,6 @@ public final class BreakBlocks {
                                         "%BLOCKTOBREAK%",
                                         objective.itemSelection("materials")
                                                 .getAllMaterialsListedTranslated("main"))))
-                .afterLoad((objective, load) -> {
-                    final String legacyNqItemPath = load.path() + ".specifics.nqitem";
-                    final String legacyMaterialPath = load.path() + ".specifics.blockToBreak.material";
-                    if (!load.configuration().contains(legacyNqItemPath)
-                            && !load.configuration().contains(legacyMaterialPath)) {
-                        return;
-                    }
-
-                    ItemStackSelection itemStackSelection = objective.value("materials", ItemStackSelection.class);
-                    if (itemStackSelection == null) {
-                        itemStackSelection = new ItemStackSelection(load.main());
-                    }
-                    final String nqItemName = load.configuration().getString(legacyNqItemPath, "");
-                    if (nqItemName.isBlank()) {
-                        itemStackSelection.addMaterialName(load.configuration().getString(legacyMaterialPath, ""));
-                    } else {
-                        itemStackSelection.addNqItemName(nqItemName);
-                    }
-                    objective.setValue("materials", itemStackSelection);
-                    itemStackSelection.saveToFileConfiguration(
-                            load.configuration(), load.path() + ".specifics.itemStackSelection");
-                    load.configuration().set(legacyNqItemPath, null);
-                    load.configuration().set(legacyMaterialPath, null);
-
-                    main.getLogManager().info("Converting old BreakBlocksObjective to new one... New itemStackSelection: "
-                            + itemStackSelection.getAllMaterialsListed());
-                })
                 .on(BlockBreakEvent.class, (event, objective) -> {
                     final ItemStackSelection itemStackSelection = objective.itemSelection("materials");
                     if (itemStackSelection != null && itemStackSelection.checkIfIsIncluded(event.getBlock().getType())) {

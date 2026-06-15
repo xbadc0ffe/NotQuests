@@ -11,13 +11,11 @@ import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
 import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.managers.npc.NQNPC;
-import rocks.gravili.notquests.paper.managers.npc.NQNPCID;
 import rocks.gravili.notquests.paper.structs.ActiveObjective;
 import rocks.gravili.notquests.paper.structs.Quest;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
 
 import java.util.Map;
-import java.util.UUID;
 
 import static rocks.gravili.notquests.paper.commands.arguments.ItemStackSelectionArgument.itemStackSelectionArgument;
 import static rocks.gravili.notquests.paper.commands.arguments.variables.NumberVariableArgument.numberVariableArgument;
@@ -143,39 +141,6 @@ public class DeliverItemsObjective extends Objective {
         this.itemStackSelection = new ItemStackSelection(main);
         itemStackSelection.loadFromFileConfiguration(configuration, initialPath + ".specifics.itemStackSelection");
 
-        //Convert old to new
-        if(configuration.contains(initialPath + ".specifics.nqitem") || configuration.contains(initialPath + ".specifics.itemToCollect.itemstack")){
-            main.getLogManager().info("Converting old DeliverItemsObjective to new one...");
-            final String nqItemName = configuration.getString(initialPath + ".specifics.nqitem", "");
-
-            if(nqItemName.isBlank()){
-                itemStackSelection.addItemStackFromConfiguration(configuration, initialPath + ".specifics.itemToCollect.itemstack");
-            }else{
-                itemStackSelection.addNqItemName(nqItemName);
-            }
-            itemStackSelection.saveToFileConfiguration(configuration, initialPath + ".specifics.itemStackSelection");
-            configuration.set(initialPath + ".specifics.nqitem", null);
-            configuration.set(initialPath + ".specifics.itemToCollect.itemstack", null);
-            //Let's hope it saves somewhere, else conversion will happen again...
-        }
-
         recipientNPC = NQNPC.fromConfig(main, configuration, initialPath + ".specifics.recipientNPC");
-
-        try{
-            if (recipientNPC == null) { //Convert
-                recipientNPC = main.getNPCManager().getOrCreateNQNpc("citizens", NQNPCID.fromInteger(configuration.getInt(initialPath + ".specifics.recipientNPCID")));
-
-                if (recipientNPC == null) {
-                    recipientNPC = main.getNPCManager().getOrCreateNQNpc("armorstand", NQNPCID.fromUUID(UUID.fromString(configuration.getString(initialPath + ".specifics.recipientArmorStandID", ""))));
-                }
-            }
-        }catch (Exception e){
-            main.getLogManager().warn("Some error happened when reading/converting NqNPC (which was null) for DeliverItemsObjective (Objective Holder: <highlight>%s</highlight>, config path: <highlight>%s</highlight>)", getObjectiveHolder().getIdentifier(), initialPath);
-            if(main.getConfiguration().debug){
-                e.printStackTrace();
-            }
-        }
-
-
     }
 }

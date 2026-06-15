@@ -1246,6 +1246,17 @@ public class DataManager {
         ));
 
 
+        final String previousConfigurationVersion = getGeneralConfig().getString("config-version-do-not-edit", "");
+        final String dataMigrationVersionPath = "data-migration-version-do-not-edit";
+        final String dataMigrationVersion = getGeneralConfig().getString(dataMigrationVersionPath, previousConfigurationVersion);
+        configuration.setDataMigrationVersion(dataMigrationVersion);
+        if (!getGeneralConfig().isString(dataMigrationVersionPath)) {
+            getGeneralConfig().set(dataMigrationVersionPath, dataMigrationVersion.isBlank() ? "0.0.0" : dataMigrationVersion);
+            getGeneralConfig().setComments(dataMigrationVersionPath, List.of(
+                    "Do not modify this line. NotQuests uses it to know which one-time data migrations already ran."));
+            valueChanged = true;
+        }
+
         configuration.setConfigurationVersion(getGeneralConfigString(
                 "config-version-do-not-edit",
                 main.getMain().getDescription().getVersion(),

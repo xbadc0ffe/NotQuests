@@ -216,30 +216,14 @@ public class QuestManager {
                 continue;
             }
 
-            String objectiveTypeString = config.getString( "objectiveType", "");
-            //Migrate from 5.8.3 => 5.8.4
-            if(objectiveTypeString.equals("CollectItems")){
-                main.getLogManager().info("Migrating old CollectItems objectives to PickupItems objectives...");
-                objectiveTypeString = "PickupItems";
-                config.set("objectiveType", "PickupItems");
-                objectiveHolder.saveConfig();
-            }
+            final String objectiveTypeString = config.getString( "objectiveType", "");
 
             if (main.getObjectiveManager().getObjectiveClass(objectiveTypeString) == null) {
                 main.getDataManager().disablePluginAndSaving("Error parsing objective Type of objective with ID <highlight>" + objectiveNumber + "</highlight>. Objective type: <highlight2>" + objectiveTypeString + ". Objective type lookup returned null. This would mean, that the objective type you're trying to use in notquests is not registered.", objectiveHolder, category);
                 return;
             }
 
-            final String progressNeededExpression;
-            //Convert old progressNeeded to progressNeededExpression
-            if(config.contains("progressNeeded")){
-                progressNeededExpression = ""+config.getInt("progressNeeded", 1);
-                config.set("progressNeeded", null);
-                config.set("progressNeededExpression", progressNeededExpression);
-                objectiveHolder.saveConfig();
-            }else {
-                progressNeededExpression = config.getString("progressNeededExpression", "1");
-            }
+            final String progressNeededExpression = config.getString("progressNeededExpression", "1");
 
             main.getLogManager().debug("ProgressNeededExpression: " + progressNeededExpression);
 
@@ -597,10 +581,6 @@ public class QuestManager {
 
                         }
                     }
-
-
-                    //Convert old dependencies
-                    //main.getUpdateManager().convertObjectiveDependenciesToNewObjectiveConditions(quest);
 
 
                     //Objective Conditions and Rewards

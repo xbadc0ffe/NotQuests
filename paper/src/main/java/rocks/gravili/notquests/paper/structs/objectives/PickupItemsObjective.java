@@ -104,25 +104,6 @@ public class PickupItemsObjective extends Objective {
         itemStackSelection.loadFromFileConfiguration(
                 configuration, initialPath + ".specifics.itemStackSelection");
 
-        // Convert old to new
-        if (configuration.contains(initialPath + ".specifics.nqitem")
-                || configuration.contains(initialPath + ".specifics.itemToCollect.itemstack")) {
-            main.getLogManager().info("Converting old PickupItemsObjective to new one...");
-            final String nqItemName = configuration.getString(initialPath + ".specifics.nqitem", "");
-
-            if (nqItemName.isBlank()) {
-                itemStackSelection.addItemStackFromConfiguration(
-                        configuration, initialPath + ".specifics.itemToCollect.itemstack");
-            } else {
-                itemStackSelection.addNqItemName(nqItemName);
-            }
-            itemStackSelection.saveToFileConfiguration(
-                    configuration, initialPath + ".specifics.itemStackSelection");
-            configuration.set(initialPath + ".specifics.nqitem", null);
-            configuration.set(initialPath + ".specifics.itemToCollect.itemstack", null);
-            // Let's hope it saves somewhere, else conversion will happen again...
-        }
-
         deductIfItemIsDropped =
                 configuration.getBoolean(initialPath + ".specifics.deductIfItemDropped", true);
         deductIfItemIsPlaced =

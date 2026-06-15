@@ -94,24 +94,5 @@ public class ConsumeItemsObjective extends Objective {
         this.itemStackSelection = new ItemStackSelection(main);
         itemStackSelection.loadFromFileConfiguration(
                 configuration, initialPath + ".specifics.itemStackSelection");
-
-        // Convert old to new
-        if (configuration.contains(initialPath + ".specifics.nqitem")
-                || configuration.contains(initialPath + ".specifics.itemToConsume.itemstack")) {
-            main.getLogManager().info("Converting old ConsumeItemsObjective to new one...");
-            final String nqItemName = configuration.getString(initialPath + ".specifics.nqitem", "");
-
-            if (nqItemName.isBlank()) {
-                itemStackSelection.addItemStackFromConfiguration(
-                        configuration, initialPath + ".specifics.itemToConsume.itemstack");
-            } else {
-                itemStackSelection.addNqItemName(nqItemName);
-            }
-            itemStackSelection.saveToFileConfiguration(
-                    configuration, initialPath + ".specifics.itemStackSelection");
-            configuration.set(initialPath + ".specifics.nqitem", null);
-            configuration.set(initialPath + ".specifics.itemToConsume.itemstack", null);
-            // Let's hope it saves somewhere, else conversion will happen again...
-        }
     }
 }

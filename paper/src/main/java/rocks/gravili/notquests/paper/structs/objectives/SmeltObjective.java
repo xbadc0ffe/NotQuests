@@ -95,24 +95,5 @@ public class SmeltObjective extends Objective {
         this.itemStackSelection = new ItemStackSelection(main);
         itemStackSelection.loadFromFileConfiguration(
                 configuration, initialPath + ".specifics.itemStackSelection");
-
-        // Convert old to new
-        if (configuration.contains(initialPath + ".specifics.nqitem")
-                || configuration.contains(initialPath + ".specifics.itemToSmelt.itemstack")) {
-            main.getLogManager().info("Converting old SmeltObjective to new one...");
-            final String nqItemName = configuration.getString(initialPath + ".specifics.nqitem", "");
-
-            if (nqItemName.isBlank()) {
-                itemStackSelection.addItemStackFromConfiguration(
-                        configuration, initialPath + ".specifics.itemToSmelt.itemstack");
-            } else {
-                itemStackSelection.addNqItemName(nqItemName);
-            }
-            itemStackSelection.saveToFileConfiguration(
-                    configuration, initialPath + ".specifics.itemStackSelection");
-            configuration.set(initialPath + ".specifics.nqitem", null);
-            configuration.set(initialPath + ".specifics.itemToSmelt.itemstack", null);
-            // Let's hope it saves somewhere, else conversion will happen again...
-        }
     }
 }

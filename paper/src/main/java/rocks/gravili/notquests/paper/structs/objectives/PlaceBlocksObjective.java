@@ -89,25 +89,6 @@ public class PlaceBlocksObjective extends Objective {
         itemStackSelection.loadFromFileConfiguration(
                 configuration, initialPath + ".specifics.itemStackSelection");
 
-        // Convert old to new
-        if (configuration.contains(initialPath + ".specifics.nqitem")
-                || configuration.contains(initialPath + ".specifics.blockToPlace.material")) {
-            main.getLogManager().info("Converting old PlaceBlocksObjective to new one...");
-            final String nqItemName = configuration.getString(initialPath + ".specifics.nqitem", "");
-
-            if (nqItemName.isBlank()) {
-                itemStackSelection.addMaterialName(
-                        configuration.getString(initialPath + ".specifics.blockToPlace.material", ""));
-            } else {
-                itemStackSelection.addNqItemName(nqItemName);
-            }
-            itemStackSelection.saveToFileConfiguration(
-                    configuration, initialPath + ".specifics.itemStackSelection");
-            configuration.set(initialPath + ".specifics.nqitem", null);
-            configuration.set(initialPath + ".specifics.blockToPlace.material", null);
-            // Let's hope it saves somewhere, else conversion will happen again...
-        }
-
         deductIfBlockIsBroken =
                 configuration.getBoolean(initialPath + ".specifics.deductIfBlockBroken", true);
     }

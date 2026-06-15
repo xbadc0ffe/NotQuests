@@ -22,6 +22,7 @@ public class Configuration {
   public int visualObjectiveTrackingBossBarTimer = 10;
 
   private String configurationVersion = "";
+  private String dataMigrationVersion = "";
   private int configurationVersionMajor;
   private int configurationVersionMinor;
   private int configurationVersionPatch;
@@ -253,6 +254,14 @@ public class Configuration {
     return configurationVersion;
   }
 
+  public String getDataMigrationVersion() {
+    return dataMigrationVersion;
+  }
+
+  public void setDataMigrationVersion(final String dataMigrationVersion) {
+    this.dataMigrationVersion = dataMigrationVersion == null ? "" : dataMigrationVersion;
+  }
+
   public final int getConfigurationVersionMajor(){
     return this.configurationVersionMajor;
   }
@@ -264,11 +273,24 @@ public class Configuration {
   }
 
   public void setConfigurationVersion(String configurationVersion) {
-    this.configurationVersion = configurationVersion;
-    final String[] configurationVersionSplit = configurationVersion.split("\\.");
-    this.configurationVersionMajor = Integer.parseInt(configurationVersionSplit[0]);
-    this.configurationVersionMinor = Integer.parseInt(configurationVersionSplit[1]);
-    this.configurationVersionPatch = Integer.parseInt(configurationVersionSplit[2]);
+    this.configurationVersion = configurationVersion == null || configurationVersion.isBlank()
+        ? "0.0.0"
+        : configurationVersion;
+    final String[] configurationVersionSplit = this.configurationVersion.split("\\.");
+    this.configurationVersionMajor = parseVersionPart(configurationVersionSplit, 0);
+    this.configurationVersionMinor = parseVersionPart(configurationVersionSplit, 1);
+    this.configurationVersionPatch = parseVersionPart(configurationVersionSplit, 2);
+  }
+
+  private int parseVersionPart(final String[] parts, final int index) {
+    if (index >= parts.length) {
+      return 0;
+    }
+    try {
+      return Integer.parseInt(parts[index].replaceAll("[^0-9].*", ""));
+    } catch (final NumberFormatException ignored) {
+      return 0;
+    }
   }
 
   public boolean isQuestVisibilityEvaluationLimits() {

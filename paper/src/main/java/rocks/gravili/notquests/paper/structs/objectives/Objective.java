@@ -330,7 +330,7 @@ public abstract class Objective extends ObjectiveHolder{
         : getTaskDescriptionProvided();
 
     return main.getLanguageManager().getString("chat.objectives.taskDescription.global.prefix", questPlayer, activeObjective)
-        + taskDescriptionToReturn.replace("    <veryUnimportant>└─ <unimportant>", "") //Convert old to new
+        + taskDescriptionToReturn.replace("    <veryUnimportant>└─ <unimportant>", "")
         + main.getLanguageManager().getString("chat.objectives.taskDescription.global.suffix", questPlayer, activeObjective);
   }
 

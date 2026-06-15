@@ -1060,16 +1060,6 @@ public class QuestEvents implements Listener {
                     playerPlacedHarvestBlocks.remove(blockKey(e.getBlock()));
 
             questPlayer.queueObjectiveCheck(activeObjective -> {
-                if (activeObjective.getObjective() instanceof final BreakBlocksObjective breakBlocksObjective) {
-                    final ItemStackSelection itemStackSelection = breakBlocksObjective.getItemStackSelection();
-
-                    if(itemStackSelection.checkIfIsIncluded(e.getBlock().getType())){
-                        activeObjective.addProgress(1);
-                    }
-
-                }
-            });
-            questPlayer.queueObjectiveCheck(activeObjective -> {
                 if (activeObjective.getObjective() instanceof final HarvestObjective harvestObjective) {
                     if (harvestObjective.countsHarvest(e.getBlock(), playerPlacedHarvestBlock)) {
                         activeObjective.addProgress(1);
@@ -1104,22 +1094,6 @@ public class QuestEvents implements Listener {
             if (questPlayer == null || questPlayer.getActiveQuests().isEmpty()) {
                 return;
             }
-            //Safety mechanism
-            questPlayer.queueObjectiveCheck(activeObjective -> {
-                questPlayer.sendDebugMessage("Checking for BreakBlocksObjective.");
-                if (activeObjective.getObjective() instanceof final BreakBlocksObjective breakBlocksObjective) {
-                    final ItemStackSelection itemStackSelection = breakBlocksObjective.getItemStackSelection();
-                    questPlayer.sendDebugMessage("Found BreakBlocksObjective.");
-
-                    if (itemStackSelection.checkIfIsIncluded(e.getBlock().getType())) {
-                        questPlayer.sendDebugMessage("Found right block.");
-                        if (breakBlocksObjective.isDeductIfBlockPlaced()) {
-                            questPlayer.sendDebugMessage("Deducting from BreakBlocksObjective!");
-                            activeObjective.removeProgress(1, false);
-                        }
-                    }
-                }
-            });
             //Safety mechanism
             questPlayer.queueObjectiveCheck(activeObjective -> {
                 questPlayer.sendDebugMessage("Checking for PickupItemsObjective.");

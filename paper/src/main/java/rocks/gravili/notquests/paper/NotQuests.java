@@ -26,6 +26,7 @@ import rocks.gravili.notquests.paper.managers.npc.NPCManager;
 import rocks.gravili.notquests.paper.managers.packets.PacketManager;
 import rocks.gravili.notquests.paper.managers.registering.*;
 import rocks.gravili.notquests.paper.managers.tags.TagManager;
+import rocks.gravili.notquests.paper.migrations.ConfigMigrationManager;
 import rocks.gravili.notquests.paper.minimessage.MessageManager;
 import rocks.gravili.notquests.paper.structs.Quest;
 import rocks.gravili.notquests.paper.structs.QuestPlayer;
@@ -218,6 +219,7 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
         integrationsManager.registerEvents();
 
         dataManager.loadCategories(); //Categories need to be loaded before the condition & actions stuff, as they depend on them
+        new ConfigMigrationManager(this).runStartupMigrations();
 
         conditionsYMLManager.loadConditions();
 

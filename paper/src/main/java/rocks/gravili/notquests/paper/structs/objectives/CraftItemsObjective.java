@@ -93,24 +93,5 @@ public class CraftItemsObjective extends Objective {
     this.itemStackSelection = new ItemStackSelection(main);
     itemStackSelection.loadFromFileConfiguration(
         configuration, initialPath + ".specifics.itemStackSelection");
-
-    // Convert old to new
-    if (configuration.contains(initialPath + ".specifics.nqitem")
-        || configuration.contains(initialPath + ".specifics.itemToCraft.itemstack")) {
-      main.getLogManager().info("Converting old CraftItemsObjective to new one...");
-      final String nqItemName = configuration.getString(initialPath + ".specifics.nqitem", "");
-
-      if (nqItemName.isBlank()) {
-        itemStackSelection.addItemStackFromConfiguration(
-            configuration, initialPath + ".specifics.itemToCraft.itemstack");
-      } else {
-        itemStackSelection.addNqItemName(nqItemName);
-      }
-      itemStackSelection.saveToFileConfiguration(
-          configuration, initialPath + ".specifics.itemStackSelection");
-      configuration.set(initialPath + ".specifics.nqitem", null);
-      configuration.set(initialPath + ".specifics.itemToCraft.itemstack", null);
-      // Let's hope it saves somewhere, else conversion will happen again...
-    }
   }
 }
