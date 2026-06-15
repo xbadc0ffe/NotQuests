@@ -1,10 +1,3 @@
-/*
- * NotQuests - A Questing plugin for Minecraft Servers
- * Copyright (C) 2022 Alessio Gravili
- *
- * Licensed under the GNU General Public License v3. See the LICENSE file.
- */
-
 package rocks.gravili.notquests.paper.structs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

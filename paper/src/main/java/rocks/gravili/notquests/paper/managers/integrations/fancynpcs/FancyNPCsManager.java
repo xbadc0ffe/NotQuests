@@ -1,10 +1,3 @@
-/*
- * NotQuests - A Questing plugin for Minecraft Servers
- * Copyright (C) 2022 Alessio Gravili
- *
- * Licensed under the GNU General Public License v3. See the LICENSE file.
- */
-
 package rocks.gravili.notquests.paper.managers.integrations.fancynpcs;
 
 import de.oliver.fancynpcs.api.FancyNpcsPlugin;
