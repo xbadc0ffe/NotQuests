@@ -664,8 +664,7 @@ public class QuestPlayerManager {
           // progress data.
           main.getLogManager().debug("  Active objective count (.next() for %s): %s", objectiveID, activeObjectiveHolder.getActiveObjectives().size());
           for (final ActiveObjective activeObjective : activeObjectiveHolder.getActiveObjectives()) {
-            if (activeObjective.getObjective().getClass()
-                    == main.getObjectiveManager().getObjectiveClass(objectiveTypeString)
+            if (main.getObjectiveManager().objectiveMatchesType(activeObjective.getObjective(), objectiveTypeString)
                     && activeObjective.getObjectiveID() == objectiveID) {
               main.getLogManager().debug("  >Handling active objective <highlight>%s</highlight> (ID: %s) of holder <highlight2>%s</highlight2>", activeObjective.getObjective().getIdentifier(), activeObjective.getObjectiveID(), activeObjectiveHolder.getObjectiveHolder().getIdentifier());
               main.getLogManager().debug("  Has been completed: %s, currentProgress: %s, progressNeeded: %s", hasBeenCompleted, currentProgress, progressNeeded);
@@ -897,7 +896,7 @@ public class QuestPlayerManager {
   }
 
   private void handleSavingOfActiveObjectives(final PreparedStatement insertIntoActiveObjectivesPS, final ActiveObjective activeObjective, final UUID questPlayerUUID, final String profile) throws SQLException {
-    insertIntoActiveObjectivesPS.setString(1, main.getObjectiveManager().getObjectiveType(activeObjective.getObjective().getClass()));
+    insertIntoActiveObjectivesPS.setString(1, main.getObjectiveManager().getObjectiveType(activeObjective.getObjective()));
 
     ActiveObjective lastActiveObjective = activeObjective;
     String counterWithSubId = "";
@@ -932,7 +931,7 @@ public class QuestPlayerManager {
   }
 
   private void handleSavingOfCompletedActiveObjectives(final PreparedStatement insertIntoActiveObjectivesPS, final ActiveObjective completedObjective, final UUID questPlayerUUID, final String profile) throws SQLException {
-    insertIntoActiveObjectivesPS.setString(1, main.getObjectiveManager().getObjectiveType(completedObjective.getObjective().getClass()));
+    insertIntoActiveObjectivesPS.setString(1, main.getObjectiveManager().getObjectiveType(completedObjective.getObjective()));
 
     ActiveObjective lastActiveObjective = completedObjective;
     String counterWithSubId = "";

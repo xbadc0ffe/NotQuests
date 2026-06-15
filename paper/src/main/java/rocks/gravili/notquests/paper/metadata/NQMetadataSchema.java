@@ -69,17 +69,51 @@ public final class NQMetadataSchema {
 
     public record TypeInfo(
             String id,
+            String displayName,
             String className,
             String description,
             String source,
-            boolean integrationOnly) {
+            boolean integrationOnly,
+            List<TypeFieldInfo> fields,
+            List<TypeFieldInfo> flags) {
+        public TypeInfo(
+                final String id,
+                final String className,
+                final String description,
+                final String source,
+                final boolean integrationOnly) {
+            this(id, id, className, description, source, integrationOnly, List.of(), List.of());
+        }
+
         void appendJson(final StringBuilder json, final int level) {
             indent(json, level).append("{\n");
             appendField(json, level + 1, "id", id).append(",\n");
+            appendField(json, level + 1, "displayName", displayName).append(",\n");
             appendField(json, level + 1, "className", className).append(",\n");
             appendField(json, level + 1, "description", description).append(",\n");
             appendField(json, level + 1, "source", source).append(",\n");
-            appendField(json, level + 1, "integrationOnly", integrationOnly).append('\n');
+            appendField(json, level + 1, "integrationOnly", integrationOnly).append(",\n");
+            appendFieldArray(json, level + 1, "fields", fields).append(",\n");
+            appendFieldArray(json, level + 1, "flags", flags).append('\n');
+            indent(json, level).append('}');
+        }
+    }
+
+    public record TypeFieldInfo(
+            String name,
+            String description,
+            String argumentType,
+            String valueType,
+            boolean required,
+            boolean flag) {
+        void appendJson(final StringBuilder json, final int level) {
+            indent(json, level).append("{\n");
+            appendField(json, level + 1, "name", name).append(",\n");
+            appendField(json, level + 1, "description", description).append(",\n");
+            appendField(json, level + 1, "argumentType", argumentType).append(",\n");
+            appendField(json, level + 1, "valueType", valueType).append(",\n");
+            appendField(json, level + 1, "required", required).append(",\n");
+            appendField(json, level + 1, "flag", flag).append('\n');
             indent(json, level).append('}');
         }
     }
@@ -124,6 +158,19 @@ public final class NQMetadataSchema {
 
     private static StringBuilder appendVariableArray(
             final StringBuilder json, final int level, final String name, final List<VariableInfo> values) {
+        indent(json, level).append('"').append(escape(name)).append("\": [\n");
+        for (int i = 0; i < values.size(); i++) {
+            values.get(i).appendJson(json, level + 1);
+            if (i + 1 < values.size()) {
+                json.append(',');
+            }
+            json.append('\n');
+        }
+        return indent(json, level).append(']');
+    }
+
+    private static StringBuilder appendFieldArray(
+            final StringBuilder json, final int level, final String name, final List<TypeFieldInfo> values) {
         indent(json, level).append('"').append(escape(name)).append("\": [\n");
         for (int i = 0; i < values.size(); i++) {
             values.get(i).appendJson(json, level + 1);

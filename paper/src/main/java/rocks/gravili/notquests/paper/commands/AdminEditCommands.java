@@ -1124,7 +1124,7 @@ public class AdminEditCommands {
 
                     context.sender().sendMessage(Component.empty());
                     context.sender().sendMessage(main.parse("<highlight>Information of objective with the ID <highlight2>" + objective.getObjectiveID() + "</highlight2> from Quest <highlight2>" + objective.getObjectiveHolder().getIdentifier() + "</highlight2>:"));
-                    context.sender().sendMessage(main.parse("<highlight>Objective Type: <main>" + main.getObjectiveManager().getObjectiveType(objective.getClass())));
+                    context.sender().sendMessage(main.parse("<highlight>Objective Type: <main>" + main.getObjectiveManager().getObjectiveType(objective)));
                     context.sender().sendMessage(main.parse("<highlight>Objective Content:</highlight>"));
                     context.sender().sendMessage(main.parse(main.getQuestManager().getObjectiveTaskDescription(objective, false, null)));
                     context.sender().sendMessage(main.parse("<highlight>Objective DisplayName: <main>" + objective.getDisplayName()));

@@ -321,7 +321,7 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
                 Map<String, Integer> valueMap = new HashMap<>();
                 for (Quest quest : getQuestManager().getAllQuests()) {
                     for (Objective objective : quest.getObjectives()) {
-                        String objectiveType = getObjectiveManager().getObjectiveType(objective.getClass());
+                        String objectiveType = getObjectiveManager().getObjectiveType(objective);
                         valueMap.put(objectiveType, valueMap.getOrDefault(objectiveType, 0) + 1);
                     }
                 }

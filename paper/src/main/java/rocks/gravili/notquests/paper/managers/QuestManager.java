@@ -243,10 +243,8 @@ public class QuestManager {
                 objectiveHolder.saveConfig();
             }
 
-            final Class<? extends Objective> objectiveType = main.getObjectiveManager().getObjectiveClass(objectiveTypeString);
-
-            if (objectiveType == null) {
-                main.getDataManager().disablePluginAndSaving("Error parsing objective Type of objective with ID <highlight>" + objectiveNumber + "</highlight>. Objective type: <highlight2>" + objectiveTypeString + ". Objective class lookup returned null. This would mean, that the objective type you're trying to use in notquests is not registered.", objectiveHolder, category);
+            if (main.getObjectiveManager().getObjectiveClass(objectiveTypeString) == null) {
+                main.getDataManager().disablePluginAndSaving("Error parsing objective Type of objective with ID <highlight>" + objectiveNumber + "</highlight>. Objective type: <highlight2>" + objectiveTypeString + ". Objective type lookup returned null. This would mean, that the objective type you're trying to use in notquests is not registered.", objectiveHolder, category);
                 return;
             }
 
@@ -282,7 +280,7 @@ public class QuestManager {
             final Objective objective;
 
             try {
-                objective = objectiveType.getDeclaredConstructor(NotQuests.class).newInstance(main);
+                objective = main.getObjectiveManager().createObjective(objectiveTypeString);
                 objective.setObjectiveHolder(objectiveHolder);
                 objective.setObjectiveID(objectiveID);
                 objective.setProgressNeededExpression(progressNeededExpression);

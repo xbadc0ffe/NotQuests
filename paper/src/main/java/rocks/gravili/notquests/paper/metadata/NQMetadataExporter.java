@@ -61,12 +61,8 @@ public final class NQMetadataExporter {
 
     private RegistryIndex registryIndex() {
         return new RegistryIndex(
-                typeInfo(
-                        main.getObjectiveManager().getObjectivesAndIdentifiers(),
-                        ObjectiveManager::objectiveLiteralDescription),
-                typeInfo(
-                        main.getActionManager().getActionsAndIdentifiers(),
-                        ActionManager::actionLiteralDescription),
+                objectiveInfo(),
+                actionInfo(),
                 typeInfo(
                         main.getConditionsManager().getConditionsAndIdentifiers(),
                         ConditionsManager::conditionLiteralDescription),
@@ -74,6 +70,41 @@ public final class NQMetadataExporter {
                         main.getTriggerManager().getTriggersAndIdentifiers(),
                         TriggerManager::triggerLiteralDescription),
                 variableInfo());
+    }
+
+    private List<TypeInfo> objectiveInfo() {
+        return main.getObjectiveManager().getObjectivesAndIdentifiers().entrySet().stream()
+                .map(entry -> {
+                    final String source = integrationSource(entry.getValue());
+                    final var objectiveType =
+                            main.getObjectiveManager().getObjectiveTypesAndIdentifiers().get(entry.getKey());
+                    if (objectiveType != null) {
+                        return objectiveType.metadata(source, source != null);
+                    }
+                    return new TypeInfo(
+                            entry.getKey(),
+                            entry.getValue().getName(),
+                            ObjectiveManager.objectiveLiteralDescription(entry.getKey()),
+                            source,
+                            source != null);
+                })
+                .sorted(Comparator.comparing(TypeInfo::id))
+                .toList();
+    }
+
+    private List<TypeInfo> actionInfo() {
+        return main.getActionManager().getActionsAndIdentifiers().entrySet().stream()
+                .map(entry -> {
+                    final String source = integrationSource(entry.getValue());
+                    return new TypeInfo(
+                            entry.getKey(),
+                            entry.getValue().getName(),
+                            ActionManager.actionLiteralDescription(entry.getKey()),
+                            source,
+                            source != null);
+                })
+                .sorted(Comparator.comparing(TypeInfo::id))
+                .toList();
     }
 
     private <T> List<TypeInfo> typeInfo(

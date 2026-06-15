@@ -27,6 +27,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.registry.DefinedObjective;
+import rocks.gravili.notquests.paper.registry.ObjectiveType;
 import rocks.gravili.notquests.paper.structs.objectives.*;
 import rocks.gravili.notquests.paper.structs.objectives.hooks.betonquest.BetonQuestObjectiveStateChangeObjective;
 import rocks.gravili.notquests.paper.structs.objectives.hooks.citizens.EscortNPCObjective;
@@ -42,6 +44,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
+import rocks.gravili.notquests.paper.objectives.BreakBlocks;
 
 import static rocks.gravili.notquests.paper.commands.arguments.ObjectiveArgument.objectiveArgument;
 
@@ -49,10 +52,12 @@ public class ObjectiveManager {
     private final NotQuests main;
 
     private final HashMap<String, Class<? extends Objective>> objectives;
+    private final HashMap<String, ObjectiveType> objectiveTypes;
 
     public ObjectiveManager(final NotQuests main) {
         this.main = main;
         objectives = new HashMap<>();
+        objectiveTypes = new HashMap<>();
 
         registerDefaultObjectives();
     }
@@ -61,8 +66,9 @@ public class ObjectiveManager {
         main.getLogManager().info("Registering objectives...");
 
         objectives.clear();
+        objectiveTypes.clear();
         registerObjective("Condition", ConditionObjective.class);
-        registerObjective("BreakBlocks", BreakBlocksObjective.class);
+        BreakBlocks.register(main, this);
         registerObjective("PlaceBlocks", PlaceBlocksObjective.class);
         registerObjective("Harvest", HarvestObjective.class);
         registerObjective("PickupItems", PickupItemsObjective.class);
@@ -116,6 +122,10 @@ public class ObjectiveManager {
         // registerObjectiveCommandCompletionHandler("KillMobs", this::eee);
     }
 
+    public ObjectiveType.Builder objective(final String identifier) {
+        return new ObjectiveType.Builder(main, this, identifier);
+    }
+
   /* public void registerObjectiveCommandCompletionHandler(final String identifier, final String commandCompletionHandler){
       main.getLogManager().info("Registering command completions for objective <highlight>" + identifier);
       objectiveCommandCompletionHandlers.put(identifier, commandCompletionHandler);
@@ -130,7 +140,8 @@ public class ObjectiveManager {
         objectives.put(identifier, objective);
 
         try {
-            Method commandHandler = objective.getMethod("handleCommands", main.getClass(), NQCommandManager.class, NQCommandBuilder.class, int.class);
+            final Method commandHandler = objective.getMethod("handleCommands", main.getClass(), NQCommandManager.class, NQCommandBuilder.class, int.class);
+            final NQDescription typeDescription = NQDescription.of(objectiveLiteralDescription(identifier));
 
             //Level 0
             final NQCommandBuilder objectivesBuilder = main.getCommandManager().getAdminEditCommandBuilder().literal("objectives", NQDescription.of("Manages objectives on the selected quest."), "o");
@@ -138,7 +149,7 @@ public class ObjectiveManager {
                     objectivesBuilder.literal("add", NQDescription.of("Adds a new objective to the selected quest."));
 
             commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilder
-                    .literal(identifier, NQDescription.of(objectiveLiteralDescription(identifier)))
+                    .literal(identifier, typeDescription)
                     .flag(main.getCommandManager().taskDescription), 0);
 
             //Level 1
@@ -154,7 +165,7 @@ public class ObjectiveManager {
 
             //Level 1
             commandHandler.invoke(objective, main, main.getCommandManager().getNQCommandManager(), adminEditAddObjectiveCommandBuilderLevel1
-                    .literal(identifier, NQDescription.of(objectiveLiteralDescription(identifier)))
+                    .literal(identifier, typeDescription)
                     .flag(main.getCommandManager().taskDescription), 1);
 
 
@@ -176,12 +187,60 @@ public class ObjectiveManager {
                     main,
                     main.getCommandManager().getNQCommandManager(),
                     adminEditAddObjectiveCommandBuilderLevel2
-                            .literal(identifier, NQDescription.of(objectiveLiteralDescription(identifier)))
+                            .literal(identifier, typeDescription)
                             .flag(main.getCommandManager().taskDescription), 2);
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void registerObjective(final ObjectiveType definition) {
+        if (main.getConfiguration().isVerboseStartupMessages()) {
+            main.getLogManager().info("Registering objective <highlight>" + definition.id());
+        }
+        objectives.put(definition.id(), DefinedObjective.class);
+        objectiveTypes.put(definition.id(), definition);
+
+        final NQCommandBuilder objectivesBuilder = main.getCommandManager()
+                .getAdminEditCommandBuilder()
+                .literal("objectives", NQDescription.of("Manages objectives on the selected quest."), "o");
+        final NQCommandBuilder adminEditAddObjectiveCommandBuilder =
+                objectivesBuilder.literal("add", NQDescription.of("Adds a new objective to the selected quest."));
+
+        definition.registerCommands(adminEditAddObjectiveCommandBuilder
+                .literal(definition.id(), NQDescription.of(definition.description()))
+                .flag(main.getCommandManager().taskDescription), 0);
+
+        final String objectiveIDIdentifier = "objectiveId";
+        final NQCommandBuilder objectivesBuilderLevel1 = objectivesBuilder
+                .literal("edit", NQDescription.of("Opens subcommands for editing a specific objective on the selected quest."))
+                .required(
+                        objectiveIDIdentifier,
+                        objectiveArgument(main, 0),
+                        NQDescription.of("Objective ID shown by this quest's objectives list."));
+        definition.registerCommands(
+                objectivesBuilderLevel1
+                        .literal("objectives", NQDescription.of("Manages child objectives inside the selected objective."), "o")
+                        .literal("add", NQDescription.of("Adds a child objective to the selected objective."))
+                        .literal(definition.id(), NQDescription.of(definition.description()))
+                        .flag(main.getCommandManager().taskDescription),
+                1);
+
+        final NQCommandBuilder objectivesBuilder2 = objectivesBuilderLevel1
+                .literal("objectives", NQDescription.of("Manages child objectives inside the selected objective."), "");
+        definition.registerCommands(
+                objectivesBuilder2
+                        .literal("edit", NQDescription.of("Opens subcommands for editing a specific child objective."))
+                        .required("objectiveId2", objectiveArgument(main, 1),
+                                NQDescription.of("Child objective ID shown inside the selected parent objective."))
+                        .literal("objectives", NQDescription.of("Manages child objectives inside the selected nested objective."), "o")
+                        .literal("add", NQDescription.of("Adds a child objective to the selected nested objective."))
+                        .literal(definition.id(), NQDescription.of(definition.description()))
+                        .flag(main.getCommandManager().taskDescription),
+                2);
+
+        definition.registerEventListeners();
     }
 
     public static String objectiveLiteralDescription(final String identifier) {
@@ -200,6 +259,16 @@ public class ObjectiveManager {
         return objectives.get(type);
     }
 
+    public final Objective createObjective(@NotNull final String type)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        final ObjectiveType definition = objectiveTypes.get(type);
+        if (definition != null) {
+            return definition.createObjective();
+        }
+        final Class<? extends Objective> objective = getObjectiveClass(type);
+        return objective == null ? null : objective.getDeclaredConstructor(NotQuests.class).newInstance(main);
+    }
+
     public final String getObjectiveType(final Class<? extends Objective> objective) {
         for (final String objectiveType : objectives.keySet()) {
             if (objectives.get(objectiveType).equals(objective)) {
@@ -209,8 +278,23 @@ public class ObjectiveManager {
         return null;
     }
 
+    public final String getObjectiveType(final Objective objective) {
+        if (objective instanceof final DefinedObjective definedObjective) {
+            return definedObjective.definition().id();
+        }
+        return getObjectiveType(objective.getClass());
+    }
+
+    public final boolean objectiveMatchesType(final Objective objective, final String type) {
+        return type != null && type.equals(getObjectiveType(objective));
+    }
+
     public final HashMap<String, Class<? extends Objective>> getObjectivesAndIdentifiers() {
         return objectives;
+    }
+
+    public final HashMap<String, ObjectiveType> getObjectiveTypesAndIdentifiers() {
+        return objectiveTypes;
     }
 
     public final Collection<Class<? extends Objective>> getObjectives() {
@@ -234,14 +318,18 @@ public class ObjectiveManager {
                 objective.setTaskDescription(taskDescription, true);
             }
         }
-        context.sender().sendMessage(main.parse("<success>" + getObjectiveType(objective.getClass()) + " Objective successfully added to Quest <highlight>" + objectiveHolder.getIdentifier() + "</highlight>!"));
+        context.sender().sendMessage(main.parse("<success>" + getObjectiveType(objective) + " Objective successfully added to Quest <highlight>" + objectiveHolder.getIdentifier() + "</highlight>!"));
         objectiveHolder.addObjective(objective, true);
     }
 
     public void updateVariableObjectives() {
         try {
-            for (final Class<? extends Objective> objective : getObjectives()) {
-                final String identifier = getObjectiveType(objective);
+            for (final java.util.Map.Entry<String, Class<? extends Objective>> entry : getObjectivesAndIdentifiers().entrySet()) {
+                final String identifier = entry.getKey();
+                if (objectiveTypes.containsKey(identifier)) {
+                    continue;
+                }
+                final Class<? extends Objective> objective = entry.getValue();
 
                 final Method commandHandler =
                         objective.getMethod(
@@ -249,7 +337,7 @@ public class ObjectiveManager {
                                 main.getClass(),
                                 NQCommandManager.class,
                                 NQCommandBuilder.class);
-                if (identifier != null && objective == NumberVariableObjective.class) {
+                if (objective == NumberVariableObjective.class) {
 
                     main.getLogManager()
                             .info("Re-registering objective " + identifier + " due to variable changes...");

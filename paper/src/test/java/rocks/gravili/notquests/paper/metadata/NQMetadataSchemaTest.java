@@ -67,10 +67,15 @@ class NQMetadataSchemaTest {
         assertEquals(
                 "{\n"
                         + "  \"id\": \"Quote\\\"Slash\\\\Line\\n\",\n"
+                        + "  \"displayName\": \"Quote\\\"Slash\\\\Line\\n\",\n"
                         + "  \"className\": \"example.Type\",\n"
                         + "  \"description\": \"Description with \\\"quotes\\\" and a newline\\ninside.\",\n"
                         + "  \"source\": null,\n"
-                        + "  \"integrationOnly\": false\n"
+                        + "  \"integrationOnly\": false,\n"
+                        + "  \"fields\": [\n"
+                        + "  ],\n"
+                        + "  \"flags\": [\n"
+                        + "  ]\n"
                         + "}",
                 json.toString());
     }

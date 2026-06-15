@@ -231,7 +231,7 @@ public abstract class Objective extends ObjectiveHolder{
     if (!objectiveDisplayName.isBlank()) {
       return getDisplayName();
     } else {
-      return main.getObjectiveManager().getObjectiveType(this.getClass());
+      return main.getObjectiveManager().getObjectiveType(this);
     }
   }
 
@@ -844,7 +844,7 @@ public abstract class Objective extends ObjectiveHolder{
                 getObjectiveHolder().getInitialConfigPath() + ".objectives." + getObjectiveID() + ".objectives."
                     + objective.getObjectiveID()
                     + ".objectiveType",
-                main.getObjectiveManager().getObjectiveType(objective.getClass()));
+                main.getObjectiveManager().getObjectiveType(objective));
         getObjectiveHolder().getConfig()
             .set(
                 getObjectiveHolder().getInitialConfigPath() + ".objectives." + getObjectiveID() + ".objectives."

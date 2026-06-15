@@ -785,7 +785,7 @@ public class Quest extends ObjectiveHolder {
                     + ".objectives."
                     + objective.getObjectiveID()
                     + ".objectiveType",
-                main.getObjectiveManager().getObjectiveType(objective.getClass()));
+                main.getObjectiveManager().getObjectiveType(objective));
         category
             .getQuestsConfig()
             .set(
