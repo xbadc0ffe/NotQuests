@@ -360,6 +360,8 @@ public class QuestPlayer {
             final Location beamRenderLocation = beamRenderLocation(lowestDistanceLocation);
             final Location activeLocation = activeLocationAndBeams.get(locationName);
             if (!force && sameBlockLocation(activeLocation, beamRenderLocation)) {
+                scheduleBeaconRemovalAt(beamRenderLocation, player);
+                sendBeamMarker(player, beamRenderLocation);
                 renderedLocations.add(locationName);
                 continue;
             }
@@ -367,29 +369,8 @@ public class QuestPlayer {
                 scheduleBeaconRemovalAt(activeLocation, player);
             }
 
-            if(isBeaconMode()){
-                BlockState beaconBlockState = beamRenderLocation.getBlock().getState();
-                beaconBlockState.setType(Material.BEACON);
-
-                BlockState ironBlockState = beamRenderLocation.getBlock().getState();
-                ironBlockState.setType(Material.IRON_BLOCK);
-
-                player.sendBlockChange(beamRenderLocation, beaconBlockState.getBlockData());
-                for (int x = -1; x <= 1; x++) {
-                    for (int z = -1; z <= 1; z++) {
-                        player.sendBlockChange(beamRenderLocation.clone().add(x, -1, z), ironBlockState.getBlockData());
-                    }
-                }
-
-                activeLocationAndBeams.put(locationName, beamRenderLocation.clone());
-            }else{
-                BlockState beaconBlockState = beamRenderLocation.getBlock().getState();
-                beaconBlockState.setType(Material.END_GATEWAY);
-
-                player.sendBlockChange(beamRenderLocation, beaconBlockState.getBlockData());
-
-                activeLocationAndBeams.put(locationName, beamRenderLocation.clone());
-            }
+            sendBeamMarker(player, beamRenderLocation);
+            activeLocationAndBeams.put(locationName, beamRenderLocation.clone());
 
             renderedLocations.add(locationName);
 
@@ -440,6 +421,28 @@ public class QuestPlayer {
             return blockLocation(below);
         }
         return blockLocation;
+    }
+
+    private void sendBeamMarker(final Player player, final Location beamRenderLocation) {
+        if(isBeaconMode()){
+            BlockState beaconBlockState = beamRenderLocation.getBlock().getState();
+            beaconBlockState.setType(Material.BEACON);
+
+            BlockState ironBlockState = beamRenderLocation.getBlock().getState();
+            ironBlockState.setType(Material.IRON_BLOCK);
+
+            player.sendBlockChange(beamRenderLocation, beaconBlockState.getBlockData());
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    player.sendBlockChange(beamRenderLocation.clone().add(x, -1, z), ironBlockState.getBlockData());
+                }
+            }
+            return;
+        }
+
+        BlockState beaconBlockState = beamRenderLocation.getBlock().getState();
+        beaconBlockState.setType(Material.END_GATEWAY);
+        player.sendBlockChange(beamRenderLocation, beaconBlockState.getBlockData());
     }
 
     private static Map<String, Location> cloneLocations(final Map<String, Location> locations) {

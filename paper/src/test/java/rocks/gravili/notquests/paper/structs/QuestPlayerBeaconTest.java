@@ -10,14 +10,19 @@ package rocks.gravili.notquests.paper.structs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +65,7 @@ class QuestPlayerBeaconTest {
 
     @Test
     void beaconCleanupDoesNotMutateTheMarkerLocation() {
-        final NotQuests main = mock(NotQuests.class);
+        final NotQuests main = mock(NotQuests.class, RETURNS_DEEP_STUBS);
         final Configuration configuration = mock(Configuration.class);
         when(main.getConfiguration()).thenReturn(configuration);
         when(configuration.getBeamMode()).thenReturn("beacon");
@@ -108,6 +113,25 @@ class QuestPlayerBeaconTest {
         assertEquals(10, renderLocation.getBlockX());
         assertEquals(minY, renderLocation.getBlockY());
         assertEquals(10, renderLocation.getBlockZ());
+    }
+
+    @Test
+    void unchangedBeamLocationIsResetAndResentToKeepClientFakeBlockAlive() {
+        final NotQuests main = mock(NotQuests.class, RETURNS_DEEP_STUBS);
+        final Configuration configuration = mock(Configuration.class);
+        when(main.getConfiguration()).thenReturn(configuration);
+        when(configuration.getBeamMode()).thenReturn("end_gateway");
+        final QuestPlayer questPlayer = new QuestPlayer(main, UUID.randomUUID(), "default");
+        final Player player = mock(Player.class);
+        when(player.getWorld()).thenReturn(world);
+        when(player.getLocation()).thenReturn(new Location(world, 11, 64, 10));
+        world.getBlockAt(10, 64, 10).setType(Material.CHEST);
+        questPlayer.getLocationsAndBeacons().put("objective-1", new Location(world, 10, 64, 10));
+
+        questPlayer.updateBeaconLocations(player, true);
+        questPlayer.updateBeaconLocations(player);
+
+        verify(player, times(3)).sendBlockChange(eq(new Location(world, 10, 63, 10)), any(BlockData.class));
     }
 
     @Test
