@@ -68,4 +68,43 @@ class PositionalNumberArgumentSuggestionTest {
         assertTrue(completions.contains("arena"), "all loaded world names should be suggested: " + completions);
         assertTrue(completions.contains("looking"), "the looking shortcut should be suggested after amount: " + completions);
     }
+
+    @Test
+    void coordinateArgumentsSuggestUsefulNumberExamples() throws Exception {
+        final CommandDispatcher<Object> dispatcher = new CommandDispatcher<>();
+        dispatcher.register(literal("ShootArrow")
+                .then(argument("amount", numberVariableArgument("amount", null, false))
+                        .then(argument("world", NQArguments.worldArgument())
+                                .then(argument("x", NQArguments.doubleArgument())
+                                        .then(argument("y", NQArguments.doubleArgument())
+                                                .then(argument("z", NQArguments.doubleArgument())
+                                                        .then(argument("radius", NQArguments.doubleArgument()))))))
+                        .then(literal("worldeditselection"))));
+
+        assertTrue(
+                completionsFor(dispatcher, "ShootArrow 1 ").contains("worldeditselection"),
+                "WorldEdit selection shortcut should be suggested next to world names");
+        assertTrue(
+                completionsFor(dispatcher, "ShootArrow 1 world ").contains("4"),
+                "x coordinate should suggest number examples");
+        assertTrue(
+                completionsFor(dispatcher, "ShootArrow 1 world 4 ").contains("5"),
+                "y coordinate should suggest number examples");
+        assertTrue(
+                completionsFor(dispatcher, "ShootArrow 1 world 4 5 ").contains("4"),
+                "z coordinate should suggest number examples");
+        assertTrue(
+                completionsFor(dispatcher, "ShootArrow 1 world 4 5 4 ").contains("5"),
+                "radius should suggest number examples");
+    }
+
+    private static List<String> completionsFor(final CommandDispatcher<Object> dispatcher, final String input)
+            throws Exception {
+        return dispatcher.getCompletionSuggestions(dispatcher.parse(input, new Object()))
+                .get()
+                .getList()
+                .stream()
+                .map(Suggestion::getText)
+                .toList();
+    }
 }

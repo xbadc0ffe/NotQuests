@@ -30,7 +30,7 @@ CMDS_FILE = E2E / "commands.txt"
 COMMAND_SCHEMA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated" / "commands.json"
 
 EXCLUDE_INTEGRATION = {
-    "EscortNPC", "JobsRebornReachJobLevel", "SlimefunResearch", "ReachLocation",
+    "EscortNPC", "JobsRebornReachJobLevel", "SlimefunResearch",
     "TownyNationReachTownCount", "TownyReachResidentCount", "TownyNationName",
     "UltimateClansClanLevel", "BetonQuestObjectiveStateChange", "BetonQuestFireEvent",
     "BetonQuestFireInlineEvent",

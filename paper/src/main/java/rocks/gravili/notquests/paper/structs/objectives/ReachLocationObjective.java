@@ -19,13 +19,13 @@
 package rocks.gravili.notquests.paper.structs.objectives;
 
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.framework.NQArguments;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
 import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.structs.ActiveObjective;
@@ -48,12 +48,11 @@ public class ReachLocationObjective extends Objective {
             NQCommandManager manager,
             NQCommandBuilder addObjectiveBuilder,
             final int level) {
-        if (!main.getIntegrationsManager().isWorldEditEnabled()) {
-            return;
-        }
-
-        manager.command(addObjectiveBuilder
-                .literal("worldeditselection", NQDescription.of("Use the player's current WorldEdit selection as the target region."))
+        manager.command(ObjectiveRegionCommandPart
+                .centerRadius(
+                        addObjectiveBuilder,
+                        "reach-location region",
+                        "Radius in blocks around the center that counts as reaching this location.")
                 .required("Location Name", NQArguments.greedyStringArgument(), NQDescription.of("Name shown to players for this location in objective task text."), (context, input) -> {
                     List<String> completions = new ArrayList<>();
                     completions.add("<Enter new Location name>");
@@ -61,8 +60,51 @@ public class ReachLocationObjective extends Objective {
                 })
                 .handler((context) -> {
                     final String locationName = context.get("Location Name");
-                    main.getIntegrationsManager().getWorldEditManager().handleReachLocationObjectiveCreation((Player) context.sender(), locationName, context, level);
+                    final ObjectiveRegion region = ObjectiveRegionCommandPart.centerRadius(context).asRegion();
+                    addReachLocationObjective(main, context, level, locationName, region);
                 }));
+
+        if (main.getIntegrationsManager().isWorldEditEnabled()) {
+            manager.command(addObjectiveBuilder
+                    .literal(
+                            ObjectiveRegionCommandPart.WORLD_EDIT_SELECTION,
+                            NQDescription.of("Uses your current WorldEdit selection as the target region."))
+                    .required("Location Name", NQArguments.greedyStringArgument(), NQDescription.of("Name shown to players for this location in objective task text."), (context, input) -> {
+                        List<String> completions = new ArrayList<>();
+                        completions.add("<Enter new Location name>");
+                        return completions;
+                    })
+                    .handler((context) -> {
+                        if (!(context.sender() instanceof final Player player)) {
+                            context.sender().sendMessage(main.parse(
+                                    "<error>This shortcut can only be used by a player. Use the coordinate form from console."));
+                            return;
+                        }
+                        final String locationName = context.get("Location Name");
+                        final ObjectiveRegion region =
+                                main.getIntegrationsManager().getWorldEditManager().getSelectionRegionOrNull(player);
+                        if (region == null) {
+                            context.sender().sendMessage(
+                                    main.parse("<error>Please make a region selection using WorldEdit first."));
+                            return;
+                        }
+                        addReachLocationObjective(main, context, level, locationName, region);
+                    }));
+        }
+    }
+
+    private static void addReachLocationObjective(
+            final NotQuests main,
+            final NQCommandContext context,
+            final int level,
+            final String locationName,
+            final ObjectiveRegion region) {
+        ReachLocationObjective reachLocationObjective = new ReachLocationObjective(main);
+        reachLocationObjective.setLocationName(locationName);
+        reachLocationObjective.setMinLocation(region.min());
+        reachLocationObjective.setMaxLocation(region.max());
+
+        main.getObjectiveManager().addObjective(reachLocationObjective, context, level);
     }
 
     @Override

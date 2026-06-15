@@ -97,6 +97,7 @@ qa edit TestQuest objectives add MilkCow 5
 qa edit TestQuest objectives add OpenBuriedTreasure 1
 qa edit TestQuest objectives add RunCommand 1 /spawn
 qa edit TestQuest objectives add ShootArrow 3 world 100 64 100 5
+qa edit TestQuest objectives add ReachLocation world 100 64 100 5 Test Target
 qa edit TestQuest objectives add TriggerCommand mytrigger 1
 qa edit TestQuest objectives add OtherQuest TestQuest 1
 qa edit TestQuest objectives add Condition CondTime

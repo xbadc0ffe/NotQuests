@@ -22,12 +22,12 @@ import static rocks.gravili.notquests.paper.commands.arguments.variables.NumberV
 
 import java.util.Map;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import rocks.gravili.notquests.paper.NotQuests;
-import rocks.gravili.notquests.paper.commands.framework.NQArguments;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
 import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.structs.ActiveObjective;
@@ -35,6 +35,8 @@ import rocks.gravili.notquests.paper.structs.QuestPlayer;
 
 public class ShootArrowObjective extends Objective {
     private Location targetLocation;
+    private Location targetRegionMin;
+    private Location targetRegionMax;
     private double radius = 1;
 
     public ShootArrowObjective(final NotQuests main) {
@@ -46,37 +48,94 @@ public class ShootArrowObjective extends Objective {
             final NQCommandManager manager,
             final NQCommandBuilder addObjectiveBuilder,
             final int level) {
-        manager.command(addObjectiveBuilder
+        final NQCommandBuilder amountBuilder = addObjectiveBuilder
                 .required(
                         "amount",
                         numberVariableArgument("amount", null, false),
-                        NQDescription.of("Number of arrows the player must land inside the target region."))
-                .required("world", NQArguments.worldArgument(), NQDescription.of("World containing the target arrow region."))
-                .required("x", NQArguments.doubleArgument(), NQDescription.of("Center X coordinate of the target arrow region."))
-                .required("y", NQArguments.doubleArgument(), NQDescription.of("Center Y coordinate of the target arrow region."))
-                .required("z", NQArguments.doubleArgument(), NQDescription.of("Center Z coordinate of the target arrow region."))
-                .required(
-                        "radius",
-                        NQArguments.doubleArgument(),
-                        NQDescription.of("Radius in blocks around the target center where arrows count."))
+                        NQDescription.of("Number of arrows the player must land inside the target region."));
+
+        manager.command(ObjectiveRegionCommandPart
+                .centerRadius(
+                        amountBuilder,
+                        "target arrow region",
+                        "Radius in blocks around the target center where arrows count.")
                 .handler(context -> {
-                    final String amountExpression = context.get("amount");
-                    final World world = context.get("world");
-                    final double x = context.get("x");
-                    final double y = context.get("y");
-                    final double z = context.get("z");
-                    final double radius = context.get("radius");
-
-                    final ShootArrowObjective shootArrowObjective = new ShootArrowObjective(main);
-                    shootArrowObjective.setTargetLocation(new Location(world, x, y, z));
-                    shootArrowObjective.setRadius(radius);
-                    shootArrowObjective.setProgressNeededExpression(amountExpression);
-
-                    main.getObjectiveManager().addObjective(shootArrowObjective, context, level);
+                    final ObjectiveRegionCommandPart.CenterRadius centerRadius =
+                            ObjectiveRegionCommandPart.centerRadius(context);
+                    addShootArrowObjective(main, context, level, centerRadius.center(), centerRadius.radius(), null);
                 }));
+
+        if (main.getIntegrationsManager().isWorldEditEnabled()) {
+            manager.command(amountBuilder
+                    .literal(
+                            ObjectiveRegionCommandPart.WORLD_EDIT_SELECTION,
+                            NQDescription.of("Uses your current WorldEdit selection as the arrow target region."))
+                    .handler(context -> {
+                        if (!(context.sender() instanceof final Player player)) {
+                            context.sender().sendMessage(main.parse(
+                                    "<error>This shortcut can only be used by a player. Use the coordinate form from console."));
+                            return;
+                        }
+                        final ObjectiveRegion region =
+                                main.getIntegrationsManager().getWorldEditManager().getSelectionRegionOrNull(player);
+                        if (region == null) {
+                            context.sender().sendMessage(
+                                    main.parse("<error>Please make a region selection using WorldEdit first."));
+                            return;
+                        }
+                        addShootArrowObjective(main, context, level, region.center(), region.enclosingRadius(), region);
+                    }));
+        }
+    }
+
+    private static void addShootArrowObjective(
+            final NotQuests main,
+            final NQCommandContext context,
+            final int level,
+            final Location center,
+            final double radius,
+            final ObjectiveRegion region) {
+        final String amountExpression = context.get("amount");
+
+        final ShootArrowObjective shootArrowObjective = new ShootArrowObjective(main);
+        shootArrowObjective.setTargetLocation(center);
+        shootArrowObjective.setRadius(radius);
+        if (region != null) {
+            shootArrowObjective.setTargetRegion(region);
+        }
+        shootArrowObjective.setProgressNeededExpression(amountExpression);
+
+        main.getObjectiveManager().addObjective(shootArrowObjective, context, level);
+    }
+
+    private ObjectiveRegion targetRegion() {
+        if (targetRegionMin == null || targetRegionMax == null) {
+            return null;
+        }
+        return new ObjectiveRegion(targetRegionMin, targetRegionMax);
+    }
+
+    public void setTargetRegion(final ObjectiveRegion region) {
+        targetRegionMin = region.min();
+        targetRegionMax = region.max();
+        targetLocation = region.center();
+        radius = region.enclosingRadius();
+        setLocation(targetLocation, false);
+    }
+
+    public boolean hasTargetRegion() {
+        return targetRegion() != null;
+    }
+
+    public ObjectiveRegion getTargetRegion() {
+        return targetRegion();
     }
 
     public boolean countsArrowLocation(final Location arrowLocation) {
+        final ObjectiveRegion region = targetRegion();
+        if (region != null) {
+            return region.contains(arrowLocation);
+        }
         if (targetLocation == null || arrowLocation == null) {
             return false;
         }
@@ -119,12 +178,16 @@ public class ShootArrowObjective extends Objective {
     @Override
     public void save(final FileConfiguration configuration, final String initialPath) {
         configuration.set(initialPath + ".specifics.targetLocation", targetLocation);
+        configuration.set(initialPath + ".specifics.targetRegionMin", targetRegionMin);
+        configuration.set(initialPath + ".specifics.targetRegionMax", targetRegionMax);
         configuration.set(initialPath + ".specifics.radius", radius);
     }
 
     @Override
     public void load(final FileConfiguration configuration, final String initialPath) {
         setTargetLocation(configuration.getLocation(initialPath + ".specifics.targetLocation"));
+        targetRegionMin = configuration.getLocation(initialPath + ".specifics.targetRegionMin");
+        targetRegionMax = configuration.getLocation(initialPath + ".specifics.targetRegionMax");
         radius = configuration.getDouble(initialPath + ".specifics.radius", 1);
     }
 
@@ -147,6 +210,8 @@ public class ShootArrowObjective extends Objective {
 
     public void setTargetLocation(final Location targetLocation) {
         this.targetLocation = targetLocation;
+        targetRegionMin = null;
+        targetRegionMax = null;
         setLocation(targetLocation, false);
     }
 

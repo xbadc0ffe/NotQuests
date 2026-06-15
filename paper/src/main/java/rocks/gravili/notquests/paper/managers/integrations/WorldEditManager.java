@@ -17,7 +17,6 @@
  */
 
 package rocks.gravili.notquests.paper.managers.integrations;
-import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
 
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
@@ -28,11 +27,9 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.SessionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.gravili.notquests.paper.NotQuests;
-import rocks.gravili.notquests.paper.structs.objectives.ReachLocationObjective;
+import rocks.gravili.notquests.paper.structs.objectives.ObjectiveRegion;
 
 public class WorldEditManager {
   private final NotQuests main;
@@ -44,11 +41,15 @@ public class WorldEditManager {
         (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
   }
 
-  public void handleReachLocationObjectiveCreation(
-      final Player player,
-      final String locationName,
-      final @NonNull NQCommandContext context,
-      final int level) {
+  public ObjectiveRegion getSelectionRegionOrNull(final Player player) {
+    try {
+      return getSelectionRegion(player);
+    } catch (IncompleteRegionException ignored) {
+      return null;
+    }
+  }
+
+  private ObjectiveRegion getSelectionRegion(final Player player) throws IncompleteRegionException {
     BukkitPlayer actor =
         BukkitAdapter.adapt(player); // WorldEdit's native Player class extends Actor
     SessionManager manager =
@@ -59,36 +60,25 @@ public class WorldEditManager {
             .getSessionManager();
     LocalSession localSession = manager.get(actor);
 
-    Region region;
     com.sk89q.worldedit.world.World selectionWorld = localSession.getSelectionWorld();
-    try {
-      if (selectionWorld == null) throw new IncompleteRegionException();
-      region = localSession.getSelection(selectionWorld);
-      final Location min =
-          new Location(
-              BukkitAdapter.adapt(selectionWorld),
-              region.getMinimumPoint().x(),
-              region.getMinimumPoint().y(),
-              region.getMinimumPoint().z());
-      final Location max =
-          new Location(
-              BukkitAdapter.adapt(selectionWorld),
-              region.getMaximumPoint().x(),
-              region.getMaximumPoint().y(),
-              region.getMaximumPoint().z());
-
-      // Create Objective
-      ReachLocationObjective reachLocationObjective = new ReachLocationObjective(main);
-      reachLocationObjective.setLocationName(locationName);
-      reachLocationObjective.setMinLocation(min);
-      reachLocationObjective.setMaxLocation(max);
-
-      main.getObjectiveManager().addObjective(reachLocationObjective, context, level);
-
-    } catch (IncompleteRegionException ex) {
-      player.sendMessage(
-          main.parse("<error>Please make a region selection using WorldEdit first."));
+    if (selectionWorld == null) {
+      throw new IncompleteRegionException();
     }
+
+    Region region = localSession.getSelection(selectionWorld);
+    final Location min =
+        new Location(
+            BukkitAdapter.adapt(selectionWorld),
+            region.getMinimumPoint().x(),
+            region.getMinimumPoint().y(),
+            region.getMinimumPoint().z());
+    final Location max =
+        new Location(
+            BukkitAdapter.adapt(selectionWorld),
+            region.getMaximumPoint().x(),
+            region.getMaximumPoint().y(),
+            region.getMaximumPoint().z());
+    return new ObjectiveRegion(min, max);
   }
 
   public WorldEditPlugin getWorldEdit() {

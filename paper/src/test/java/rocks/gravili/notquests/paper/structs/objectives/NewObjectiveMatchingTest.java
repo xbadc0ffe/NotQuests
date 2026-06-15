@@ -15,10 +15,23 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import rocks.gravili.notquests.paper.commands.arguments.wrappers.ItemStackSelection;
 
 class NewObjectiveMatchingTest {
+    @BeforeEach
+    void setUp() {
+        MockBukkit.mock();
+    }
+
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
+    }
+
     @Test
     void tradeObjectiveCountsOnlySelectedTradeResults() {
         final ItemStackSelection selection = new ItemStackSelection(null);
@@ -82,5 +95,22 @@ class NewObjectiveMatchingTest {
         assertTrue(objective.countsArrowLocation(new Location(world, 13, 64, -5)));
         assertFalse(objective.countsArrowLocation(new Location(world, 14, 64, -5)));
         assertFalse(objective.countsArrowLocation(new Location(otherWorld, 10, 64, -5)));
+    }
+
+    @Test
+    void shootArrowWorldEditRegionCountsOnlyArrowsInsideTheSelectedCuboid() {
+        final World world = mock(World.class);
+        final World otherWorld = mock(World.class);
+
+        final ShootArrowObjective objective = new ShootArrowObjective(null);
+        objective.setTargetRegion(new ObjectiveRegion(
+                new Location(world, 10, 64, -5),
+                new Location(world, 12, 66, -3)));
+
+        assertTrue(objective.hasTargetRegion());
+        assertTrue(objective.countsArrowLocation(new Location(world, 10, 64, -5)));
+        assertTrue(objective.countsArrowLocation(new Location(world, 12, 66, -3)));
+        assertFalse(objective.countsArrowLocation(new Location(world, 13, 66, -3)));
+        assertFalse(objective.countsArrowLocation(new Location(otherWorld, 11, 65, -4)));
     }
 }
