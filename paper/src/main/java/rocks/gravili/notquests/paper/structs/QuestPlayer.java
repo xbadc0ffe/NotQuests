@@ -357,7 +357,7 @@ public class QuestPlayer {
 
 
             lowestDistanceLocation = blockLocation(lowestDistanceLocation);
-            final Location beamRenderLocation = beamRenderLocation(lowestDistanceLocation, isBeaconMode());
+            final Location beamRenderLocation = beamRenderLocation(lowestDistanceLocation);
             final Location activeLocation = activeLocationAndBeams.get(locationName);
             if (!force && sameBlockLocation(activeLocation, beamRenderLocation)) {
                 renderedLocations.add(locationName);
@@ -427,16 +427,17 @@ public class QuestPlayer {
                 location.getBlockZ());
     }
 
-    static Location beamRenderLocation(final Location markerLocation, final boolean beaconMode) {
+    static Location beamRenderLocation(final Location markerLocation) {
         final Location blockLocation = blockLocation(markerLocation);
         if (blockLocation.getBlock().getType().isAir()) {
             return blockLocation;
         }
 
-        final int verticalOffset = beaconMode ? 2 : 1;
-        final Location shifted = blockLocation.clone().add(0, verticalOffset, 0);
-        if (shifted.getWorld() != null && shifted.getBlockY() < shifted.getWorld().getMaxHeight()) {
-            return blockLocation(shifted);
+        // Hide the fake beam source below solid targets. Rendering it at the target replaces the
+        // real block client-side; rendering it above creates a floating portal/beacon block.
+        final Location below = blockLocation.clone().add(0, -1, 0);
+        if (below.getWorld() != null && below.getBlockY() >= below.getWorld().getMinHeight()) {
+            return blockLocation(below);
         }
         return blockLocation;
     }

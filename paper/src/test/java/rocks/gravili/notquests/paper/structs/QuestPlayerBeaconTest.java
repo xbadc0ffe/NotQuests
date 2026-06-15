@@ -88,30 +88,31 @@ class QuestPlayerBeaconTest {
     }
 
     @Test
-    void endGatewayBeamRendersAboveSolidTargetBlock() {
+    void endGatewayBeamRendersBelowSolidTargetBlock() {
         world.getBlockAt(10, 64, 10).setType(Material.CHEST);
 
-        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10), false);
+        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10));
 
         assertEquals(10, renderLocation.getBlockX());
-        assertEquals(65, renderLocation.getBlockY());
+        assertEquals(63, renderLocation.getBlockY());
         assertEquals(10, renderLocation.getBlockZ());
     }
 
     @Test
-    void beaconBeamRendersHighEnoughToKeepSolidTargetBlockVisible() {
-        world.getBlockAt(10, 64, 10).setType(Material.CHEST);
+    void solidTargetAtWorldFloorUsesTargetBlock() {
+        final int minY = world.getMinHeight();
+        world.getBlockAt(10, minY, 10).setType(Material.CHEST);
 
-        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10), true);
+        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, minY, 10));
 
         assertEquals(10, renderLocation.getBlockX());
-        assertEquals(66, renderLocation.getBlockY());
+        assertEquals(minY, renderLocation.getBlockY());
         assertEquals(10, renderLocation.getBlockZ());
     }
 
     @Test
     void beamUsesTargetBlockWhenTargetBlockIsAlreadyAir() {
-        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10), false);
+        final Location renderLocation = QuestPlayer.beamRenderLocation(new Location(world, 10, 64, 10));
 
         assertEquals(10, renderLocation.getBlockX());
         assertEquals(64, renderLocation.getBlockY());
