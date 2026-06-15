@@ -1,19 +1,16 @@
-package rocks.gravili.notquests.paper.migrations;
+package rocks.gravili.notquests.paper.migrations.v6_3_0;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import rocks.gravili.notquests.paper.managers.data.Category;
+import rocks.gravili.notquests.paper.migrations.ConfigMigration;
+import rocks.gravili.notquests.paper.migrations.MigrationContext;
 
-final class LegacyQuestConfigMigration implements ConfigMigration {
+public final class QuestConfigMigration implements ConfigMigration {
   private static final String ITEM_SELECTION_PATH = "specifics.itemStackSelection";
 
   @Override
-  public String id() {
-    return "legacy-quest-config-to-current-yaml";
-  }
-
-  @Override
-  public String introducedInVersion() {
+  public String targetVersion() {
     return "6.3.0";
   }
 

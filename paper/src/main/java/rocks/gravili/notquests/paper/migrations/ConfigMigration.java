@@ -1,9 +1,7 @@
 package rocks.gravili.notquests.paper.migrations;
 
-interface ConfigMigration {
-  String id();
-
-  String introducedInVersion();
+public interface ConfigMigration {
+  String targetVersion();
 
   boolean migrate(MigrationContext context);
 }

@@ -2,6 +2,7 @@ package rocks.gravili.notquests.paper.migrations;
 
 import java.util.List;
 import rocks.gravili.notquests.paper.NotQuests;
+import rocks.gravili.notquests.paper.migrations.v6_3_0.QuestConfigMigration;
 
 public final class ConfigMigrationManager {
   private final NotQuests main;
@@ -9,7 +10,10 @@ public final class ConfigMigrationManager {
 
   public ConfigMigrationManager(final NotQuests main) {
     this.main = main;
-    this.migrations = List.of(new LegacyQuestConfigMigration());
+    this.migrations = List.<ConfigMigration>of(new QuestConfigMigration()).stream()
+        .sorted((first, second) -> VersionNumber.parse(first.targetVersion())
+            .compareTo(VersionNumber.parse(second.targetVersion())))
+        .toList();
   }
 
   public void runStartupMigrations() {
@@ -19,10 +23,10 @@ public final class ConfigMigrationManager {
 
     boolean changed = false;
     for (final ConfigMigration migration : migrations) {
-      if (!VersionNumber.parse(previousVersion).isBefore(migration.introducedInVersion())) {
+      if (!VersionNumber.parse(previousVersion).isBefore(migration.targetVersion())) {
         continue;
       }
-      main.getLogManager().info("Running config migration <highlight>" + migration.id()
+      main.getLogManager().info("Running config migration up to <highlight>" + migration.targetVersion()
           + "</highlight> from version <highlight2>" + displayVersion(previousVersion)
           + "</highlight2>...");
       changed |= migration.migrate(context);

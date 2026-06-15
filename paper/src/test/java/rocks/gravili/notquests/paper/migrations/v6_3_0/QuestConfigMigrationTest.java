@@ -1,4 +1,4 @@
-package rocks.gravili.notquests.paper.migrations;
+package rocks.gravili.notquests.paper.migrations.v6_3_0;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,8 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
-class LegacyQuestConfigMigrationTest {
-  private final LegacyQuestConfigMigration migration = new LegacyQuestConfigMigration();
+class QuestConfigMigrationTest {
+  private final QuestConfigMigration migration = new QuestConfigMigration();
 
   @Test
   void migratesLegacyObjectiveItemSelectionAndProgressNeeded() {
