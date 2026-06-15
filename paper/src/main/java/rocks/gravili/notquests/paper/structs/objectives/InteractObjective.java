@@ -55,7 +55,7 @@ public class InteractObjective extends Objective {
             NQCommandBuilder addObjectiveBuilder,
             final int level) {
         manager.command(addObjectiveBuilder
-                .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of interactions needed"))
+                .required("amount", numberVariableArgument("amount", null, false), NQDescription.of("Amount of interactions needed"))
                 .required("world", NQArguments.worldArgument(), NQDescription.of("World containing the block or location the player must interact with."))
                 /* .argumentTriplet(
                         "coords",

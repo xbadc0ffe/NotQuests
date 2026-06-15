@@ -52,7 +52,7 @@ public class RunCommandObjective extends Objective {
       NQCommandBuilder addObjectiveBuilder,
       final int level) {
     manager.command(addObjectiveBuilder
-            .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of times the command needs to be run"))
+            .required("amount", numberVariableArgument("amount", null, false), NQDescription.of("Amount of times the command needs to be run"))
                     .required("Command", NQArguments.stringArgument(), NQDescription.of("Command to run"), (context, input) -> {
                         List<String> completions = new ArrayList<>();
                         completions.add("<Enter command (put between \" \" if you want to use spaces)>");

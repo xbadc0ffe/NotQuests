@@ -57,7 +57,7 @@ public class DeliverItemsObjective extends Objective {
                                       final int level) {
         manager.command(addObjectiveBuilder
                         .required("materials", itemStackSelectionArgument(main), NQDescription.of("Material of the item which needs to be delivered"))
-                        .required("amount", numberVariableArgument("amount", null), NQDescription.of("Amount of items which need to be delivered"))
+                        .required("amount", numberVariableArgument("amount", null, false), NQDescription.of("Amount of items which need to be delivered"))
                         .required("NPC", nqNPCArgument(main, false, true), NQDescription.of("NPC to whom the items should be delivered."))
                 .handler((context) -> {
                     final Quest quest = context.get("quest");
