@@ -191,6 +191,7 @@ public class ObjectiveManager {
             case "SmithItems" -> "Counts matching result items taken from a smithing table.";
             case "Die" -> "Counts player deaths, optionally filtered by damage cause.";
             case "ShootArrow" -> "Counts arrows shot by the player that land inside a target region.";
+            case "Interact" -> "Counts player left-clicks or right-clicks on a configured block or location.";
             default -> "Creates a new " + identifier + " objective.";
         };
     }

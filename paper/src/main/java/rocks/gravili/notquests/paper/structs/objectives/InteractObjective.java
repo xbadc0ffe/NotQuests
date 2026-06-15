@@ -20,13 +20,15 @@ package rocks.gravili.notquests.paper.structs.objectives;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import rocks.gravili.notquests.paper.NotQuests;
 import rocks.gravili.notquests.paper.commands.framework.NQArguments;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandBuilder;
+import rocks.gravili.notquests.paper.commands.framework.NQCommandContext;
 import rocks.gravili.notquests.paper.commands.framework.NQCommandManager;
 import rocks.gravili.notquests.paper.commands.framework.NQDescription;
 import rocks.gravili.notquests.paper.commands.framework.NQFlag;
@@ -38,6 +40,7 @@ import java.util.Map;
 import static rocks.gravili.notquests.paper.commands.arguments.variables.NumberVariableArgument.numberVariableArgument;
 
 public class InteractObjective extends Objective {
+    private static final int LOOKING_TARGET_RANGE = 120;
 
     private Location locationToInteract;
     private boolean leftClick = false;
@@ -54,8 +57,10 @@ public class InteractObjective extends Objective {
             NQCommandManager manager,
             NQCommandBuilder addObjectiveBuilder,
             final int level) {
-        manager.command(addObjectiveBuilder
-                .required("amount", numberVariableArgument("amount", null, false), NQDescription.of("Amount of interactions needed"))
+        final NQCommandBuilder amountBuilder = addObjectiveBuilder
+                .required("amount", numberVariableArgument("amount", null, false), NQDescription.of("Amount of interactions needed"));
+
+        manager.command(withInteractionFlags(main, amountBuilder
                 .required("world", NQArguments.worldArgument(), NQDescription.of("World containing the block or location the player must interact with."))
                 /* .argumentTriplet(
                         "coords",
@@ -70,36 +75,64 @@ public class InteractObjective extends Objective {
                 // Commented out, because this somehow breaks flags
                 .required("x", NQArguments.integerArgument(), NQDescription.of("X coordinate of the block or location the player must interact with."))
                 .required("y", NQArguments.integerArgument(), NQDescription.of("Y coordinate of the block or location the player must interact with."))
-                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate of the block or location the player must interact with."))
-                .flag(NQFlag.builder("leftClick", NQDescription.of("Count left-clicks of the location.")).build())
-                .flag(NQFlag.builder("rightClick", NQDescription.of("Count right-clicks of the location.")).build())
-                .flag(NQFlag.builder("cancelInteraction", NQDescription.of("Makes it so the interaction will be cancelled while this objective is active")).build())
-                .flag(main.getCommandManager().maxDistance)
+                .required("z", NQArguments.integerArgument(), NQDescription.of("Z coordinate of the block or location the player must interact with.")))
                 .handler(
                         (context) -> {
-                            final String amountExpression = context.get("amount");
-
                             final World world = context.get("world");
                             final Vector coordinates =
                                     new Vector(context.get("x"), context.get("y"), context.get("z"));
-                            final Location location = coordinates.toLocation(world);
-
-                            final boolean leftClick = context.flags().isPresent("leftClick");
-                            final boolean rightClick = context.flags().isPresent("rightClick");
-                            final int maxDistance =
-                                    context.flags().getValue(main.getCommandManager().maxDistance, 1);
-                            final boolean cancelInteraction = context.flags().isPresent("cancelInteraction");
-
-                            InteractObjective interactObjective = new InteractObjective(main);
-                            interactObjective.setLocationToInteract(location);
-                            interactObjective.setLeftClick(leftClick);
-                            interactObjective.setRightClick(rightClick);
-                            interactObjective.setMaxDistance(maxDistance);
-                            interactObjective.setCancelInteraction(cancelInteraction);
-                            interactObjective.setProgressNeededExpression(amountExpression);
-
-                            main.getObjectiveManager().addObjective(interactObjective, context, level);
+                            addInteractObjective(main, context, level, coordinates.toLocation(world));
                         }));
+
+        manager.command(withInteractionFlags(main, amountBuilder
+                .literal("looking", NQDescription.of("Uses the block you are looking at as the interaction location.")))
+                .handler(
+                        (context) -> {
+                            if (!(context.sender() instanceof final Player player)) {
+                                context.sender().sendMessage(main.parse("<error>This shortcut can only be used by a player. Use the coordinate form from console."));
+                                return;
+                            }
+
+                            final Block targetBlock = player.getTargetBlockExact(LOOKING_TARGET_RANGE);
+                            if (targetBlock == null) {
+                                context.sender().sendMessage(main.parse("<error>No block found in your line of sight."));
+                                return;
+                            }
+
+                            addInteractObjective(main, context, level, targetBlock.getLocation());
+                        }));
+    }
+
+    private static NQCommandBuilder withInteractionFlags(final NotQuests main, final NQCommandBuilder builder) {
+        return builder
+                .flag(NQFlag.builder("leftClick", NQDescription.of("Count left-clicks of the location.")).build())
+                .flag(NQFlag.builder("rightClick", NQDescription.of("Count right-clicks of the location.")).build())
+                .flag(NQFlag.builder("cancelInteraction", NQDescription.of("Makes it so the interaction will be cancelled while this objective is active")).build())
+                .flag(main.getCommandManager().maxDistance);
+    }
+
+    private static void addInteractObjective(
+            final NotQuests main,
+            final NQCommandContext context,
+            final int level,
+            final Location location) {
+        final String amountExpression = context.get("amount");
+
+        final boolean leftClick = context.flags().isPresent("leftClick");
+        final boolean rightClick = context.flags().isPresent("rightClick");
+        final int maxDistance =
+                context.flags().getValue(main.getCommandManager().maxDistance, 1);
+        final boolean cancelInteraction = context.flags().isPresent("cancelInteraction");
+
+        InteractObjective interactObjective = new InteractObjective(main);
+        interactObjective.setLocationToInteract(location);
+        interactObjective.setLeftClick(leftClick);
+        interactObjective.setRightClick(rightClick);
+        interactObjective.setMaxDistance(maxDistance);
+        interactObjective.setCancelInteraction(cancelInteraction);
+        interactObjective.setProgressNeededExpression(amountExpression);
+
+        main.getObjectiveManager().addObjective(interactObjective, context, level);
     }
 
     @Override

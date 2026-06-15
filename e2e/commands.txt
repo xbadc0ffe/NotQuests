@@ -103,6 +103,7 @@ qa edit TestQuest objectives add Condition CondTime
 qa edit TestQuest objectives add NumberVariable TagInteger testint equals 5
 qa edit TestQuest objectives add DeliverItems stone,dirt 5 -1            # UNSURE
 qa edit TestQuest objectives add Interact 1 world 100 64 100            # UNSURE
+qa edit TestQuest objectives add Interact 1 looking                     # PLAYER-ONLY
 qa edit TestQuest objectives add Objective TestHolder                   # UNSURE
 qa edit TestQuest objectives add TalkToNPC -1                           # PLAYER-ONLY
 

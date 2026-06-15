@@ -53,7 +53,8 @@ class PositionalNumberArgumentSuggestionTest {
         final CommandDispatcher<Object> dispatcher = new CommandDispatcher<>();
         dispatcher.register(literal("Interact")
                 .then(argument("amount", numberVariableArgument("amount", null, false))
-                        .then(argument("world", NQArguments.worldArgument()))));
+                        .then(argument("world", NQArguments.worldArgument()))
+                        .then(literal("looking"))));
 
         final List<String> completions = dispatcher.getCompletionSuggestions(
                         dispatcher.parse("Interact 1 ", new Object()))
@@ -65,5 +66,6 @@ class PositionalNumberArgumentSuggestionTest {
 
         assertTrue(completions.contains("world"), "world suggestions should appear after amount: " + completions);
         assertTrue(completions.contains("arena"), "all loaded world names should be suggested: " + completions);
+        assertTrue(completions.contains("looking"), "the looking shortcut should be suggested after amount: " + completions);
     }
 }
