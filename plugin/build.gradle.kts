@@ -9,7 +9,7 @@ plugins {
 }
 
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = rootProject.version
 
 java {
@@ -59,7 +59,7 @@ dependencies {
 /**
  * Configure NotQuests for shading
  */
-val shadowPath = "rocks.gravili.notquests"
+val shadowPath = "com.notquests"
 val minecraftTargetVersion = "26.1.2"
 
 /*processResources {
@@ -132,7 +132,7 @@ tasks {
 bukkit {
     name = "NotQuests"
     version = rootProject.version.toString()
-    main = "rocks.gravili.notquests.Main"
+    main = "com.notquests.Main"
     apiVersion = "26.1.2"
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
@@ -191,7 +191,7 @@ bukkit {
 paper {
     name = "NotQuests"
     version = rootProject.version.toString()
-    main = "rocks.gravili.notquests.Main"
+    main = "com.notquests.Main"
     apiVersion = "26.1.2"
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"

@@ -1,7 +1,7 @@
 import org.gradle.api.JavaVersion.VERSION_25
 
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = rootProject.version
 
 java {
@@ -25,7 +25,7 @@ dependencies {
 /**
  * Configure NotQuests for shading
  */
-val shadowPath = "rocks.gravili.notquests.shadow"
+val shadowPath = "com.notquests.shadow"
 
 /*processResources {
     def props = [version: version]
@@ -73,7 +73,7 @@ tasks {
 /*publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "rocks.gravili.notquests"
+            groupId = "com.notquests"
             artifactId = "NotQuests"
             version = "4.0.0-dev"
 

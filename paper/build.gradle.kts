@@ -5,7 +5,7 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = rootProject.version
 
 java {
@@ -143,7 +143,7 @@ dependencies {
 /**
  * Configure NotQuests for shading
  */
-val shadowPath = "rocks.gravili.notquests.paper.shadow"
+val shadowPath = "com.notquests.paper.shadow"
 
 
 tasks {

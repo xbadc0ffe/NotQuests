@@ -17,7 +17,7 @@ subprojects {
     plugins.apply("com.gradleup.shadow")
 }
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = "6.3.0"
 
 
@@ -40,7 +40,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 /**
  * Configure NotQuests for shading
  */
-val path = "rocks.gravili.notquests"
+val path = "com.notquests"
 
 
 tasks {
