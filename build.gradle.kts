@@ -33,14 +33,14 @@ subprojects {
 }
 
 group = "rocks.gravili.notquests"
-version = "6.0.0"
+version = "6.3.0"
 
 
 repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("26.1.1.build.29-alpha")
+    paperweight.paperDevBundle("26.2.build.62-beta")
 }
 
 java {
@@ -80,7 +80,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.1.1")
+        minecraftVersion("26.2")
     }
 }
 

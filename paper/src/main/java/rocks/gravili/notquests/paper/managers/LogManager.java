@@ -84,9 +84,7 @@ public class LogManager {
             prefixDownsampled.append(main.parse(color)).append(
             GsonComponentSerializer.gson()
                 .deserializeFromTree( // Convert back to component
-                    GsonComponentSerializer.builder()
-                        .downsampleColors()
-                        .build()
+                    GsonComponentSerializer.colorDownsamplingGson()
                         .serializeToTree( // Convert to text
                             component))));
       }
