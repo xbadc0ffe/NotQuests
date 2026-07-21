@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("26.1.1.build.29-alpha")
+    paperweight.paperDevBundle("26.2.build.62-beta")
 
     implementation(project(path= ":common", configuration= "shadowRuntimeElements"))
     implementation(project(path= ":paper", configuration= "shadowRuntimeElements"))
@@ -153,7 +153,8 @@ tasks {
         // DO NOT minimize the jar, since cloud doesnt like it
         // Reference: https://discord.com/channels/766366162388123678/1170254709722984460/1242027222773006376
 
-        archiveClassifier.set("")
+        archiveBaseName.set("notquests")
+        archiveClassifier.set("26.2")
 
         relocate("io.papermc.lib", "$shadowPath.paperlib")
     }
@@ -175,7 +176,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.1.1")
+        minecraftVersion("26.2")
     }
 
     register<Copy>("copyToServer") {
@@ -196,7 +197,7 @@ bukkit {
     name = "NotQuests"
     version = rootProject.version.toString()
     main = "rocks.gravili.notquests.Main"
-    apiVersion = "26.1.1"
+    apiVersion = "26.2"
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
     website = "https://www.notquests.com"
@@ -254,7 +255,7 @@ paper {
     name = "NotQuests"
     version = rootProject.version.toString()
     main = "rocks.gravili.notquests.Main"
-    apiVersion = "26.1.1"
+    apiVersion = "26.2"
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
     website = "https://www.notquests.com"

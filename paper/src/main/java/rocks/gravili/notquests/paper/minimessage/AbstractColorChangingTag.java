@@ -23,7 +23,7 @@
  */
 package rocks.gravili.notquests.paper.minimessage;
 
-import net.kyori.adventure.internal.Internals;
+import net.kyori.examination.string.StringExaminer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
@@ -153,7 +153,7 @@ abstract class AbstractColorChangingTag implements Modifying, Examinable {
 
   @Override
   public final @NotNull String toString() {
-    return Internals.toString(this);
+    return this.examine(StringExaminer.simpleEscaping());
   }
 
   @Override
