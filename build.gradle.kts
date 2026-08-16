@@ -1,29 +1,14 @@
-/*
- * NotQuests - A Questing plugin for Minecraft Servers
- * Copyright (C) 2022 Alessio Gravili
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import org.gradle.api.JavaVersion.VERSION_25
 
 plugins {
     `java-library`
     `maven-publish`
-    id("com.gradleup.shadow") version "9.4.1"
+    id("com.gradleup.shadow") version "9.4.2"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
-    id("xyz.jpenilla.run-paper") version "3.0.2"
+    // run-paper is only applied to :plugin (the real, server-ready plugin). Declared here so the
+    // subproject can apply it without repeating the version. Booting :paper/:common (intermediate
+    // library jars with no plugin.yml) would just error, so they don't get a runServer task.
+    id("xyz.jpenilla.run-paper") version "3.0.2" apply false
 }
 
 subprojects {
@@ -32,7 +17,7 @@ subprojects {
     plugins.apply("com.gradleup.shadow")
 }
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = "6.3.0"
 
 
@@ -40,6 +25,8 @@ repositories {
 }
 
 dependencies {
+    // FORK DIVERGENCE: upstream targets 26.1.2; this fork targets 26.2, which the production
+    // server runs. Keep this in sync with :paper and :plugin — all three must name the same bundle.
     paperweight.paperDevBundle("26.2.build.62-beta")
 }
 
@@ -55,7 +42,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 /**
  * Configure NotQuests for shading
  */
-val path = "rocks.gravili.notquests"
+val path = "com.notquests"
 
 
 tasks {
@@ -76,25 +63,4 @@ tasks {
     processResources {
         filteringCharset = Charsets.UTF_8.name()
     }
-    runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.2")
-    }
 }
-
-
-
-/*publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "rocks.gravili.notquests"
-            artifactId = "NotQuests"
-            version = "4.0.0-dev"
-
-            from(components["java"])
-        }
-    }
-}*/
-

@@ -1,21 +1,3 @@
-/*
- * NotQuests - A Questing plugin for Minecraft Servers
- * Copyright (C) 2022 Alessio Gravili
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import org.gradle.api.JavaVersion.VERSION_25
 
 plugins {
@@ -27,7 +9,7 @@ plugins {
 }
 
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = rootProject.version
 
 java {
@@ -37,6 +19,8 @@ java {
 }
 
 repositories {
+    // This module only pulls the Paper platform + PaperLib; no plugin dependencies are declared
+    // here, so (like the paper module) it lists no plugin maven repos.
     mavenCentral()
 
     maven("https://repo.papermc.io/repository/maven-public/"){
@@ -47,75 +31,20 @@ repositories {
         }
     }
 
-    maven("https://repo.citizensnpcs.co/"){
-        content {
-            includeGroup("net.citizensnpcs")
-        }
-    }
-
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/"){
-        content {
-            includeGroup("me.clip")
-        }
-    }
-
-    maven("https://jitpack.io"){
-        content {
-            includeGroup("com.github.MilkBowl")
-            includeGroup("com.github.TheBusyBiscuit")
-            includeGroup("com.github.retrooper")
-            includeGroup("com.github.retrooper.packetevents")
-            includeGroup("io.github.retrooper")
-            includeGroup("com.github.AlessioGr")
-            includeGroup("com.github.TownyAdvanced")
-            includeGroup("com.github.Zrips")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-
-    maven("https://repo.minebench.de/"){
-        content {
-            includeGroup("de.themoep")
-        }
-    }
-
-    maven("https://mvn.lumine.io/repository/maven-public/"){
-        content {
-            includeGroup("io.lumine.xikage")
-        }
-    }
-
-
-    maven("https://maven.enginehub.org/repo/"){
-        content {
-            includeGroup("com.sk89q.worldedit")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-
-    maven("https://repo.incendo.org/content/repositories/snapshots"){
-        content {
-            includeGroup("org.incendo.interfaces")
-        }
-    }
-
+    // Mojang libraries (brigadier / authlib / datafixerupper transitives of the dev bundle)
     maven("https://libraries.minecraft.net/"){
         content {
             includeGroup("com.mojang")
         }
     }
 
-   // maven("https://oss.sonatype.org/content/repositories/snapshots")
-
     //mavenLocal()
 
 }
 
 dependencies {
+    // FORK DIVERGENCE: upstream targets 26.1.2; this fork targets 26.2, which the production
+    // server runs. Keep this in sync with the root project and :paper.
     paperweight.paperDevBundle("26.2.build.62-beta")
 
     implementation(project(path= ":common", configuration= "shadowRuntimeElements"))
@@ -132,7 +61,10 @@ dependencies {
 /**
  * Configure NotQuests for shading
  */
-val shadowPath = "rocks.gravili.notquests"
+val shadowPath = "com.notquests"
+// FORK DIVERGENCE: upstream builds for 26.1.2; this fork builds for 26.2. Drives both the output
+// jar name and the runServer target below, so changing it here changes both.
+val minecraftTargetVersion = "26.2"
 
 /*processResources {
     def props = [version: version]
@@ -149,12 +81,20 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+    // Don't emit the thin (un-shaded) plugin jar into build/libs: it has a valid plugin.yml but
+    // none of the shaded code, so loading it would crash at enable. The shadowJar is the only
+    // server-ready artifact.
+    jar {
+        enabled = false
+    }
     shadowJar {
         // DO NOT minimize the jar, since cloud doesnt like it
         // Reference: https://discord.com/channels/766366162388123678/1170254709722984460/1242027222773006376
 
-        archiveBaseName.set("notquests")
-        archiveClassifier.set("26.2")
+        // The :plugin module produces the real, server-ready jar. Include the Minecraft target in
+        // the filename so release artifacts and local build outputs use the same naming convention.
+        archiveFileName.set("notquests-${project.version}-$minecraftTargetVersion.jar")
+        archiveClassifier.set("")
 
         relocate("io.papermc.lib", "$shadowPath.paperlib")
     }
@@ -176,7 +116,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.2")
+        minecraftVersion(minecraftTargetVersion)
     }
 
     register<Copy>("copyToServer") {
@@ -196,7 +136,8 @@ tasks {
 bukkit {
     name = "NotQuests"
     version = rootProject.version.toString()
-    main = "rocks.gravili.notquests.Main"
+    main = "com.notquests.Main"
+    // FORK DIVERGENCE: 26.2, matching paperDevBundle / minecraftTargetVersion.
     apiVersion = "26.2"
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
@@ -209,6 +150,7 @@ bukkit {
         "ViaRewind",
         "Geyser-Spigot",
         "Citizens",
+        "FancyNpcs",
         "Vault",
         "PlaceholderAPI",
         "MythicMobs",
@@ -219,10 +161,10 @@ bukkit {
         "Towny",
         "Jobs",
 
-        "EcoBosses",
+        "EcoMobs",
         "eco",
-        "UltimateJobs",
-        "Floodgate"
+        "Floodgate",
+        "BetonQuest"
     )
 
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD
@@ -254,7 +196,8 @@ bukkit {
 paper {
     name = "NotQuests"
     version = rootProject.version.toString()
-    main = "rocks.gravili.notquests.Main"
+    main = "com.notquests.Main"
+    // FORK DIVERGENCE: 26.2, matching paperDevBundle / minecraftTargetVersion.
     apiVersion = "26.2"
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
@@ -280,6 +223,9 @@ paper {
             required = false
         }
         register("Citizens") {
+            required = false
+        }
+        register("FancyNpcs") {
             required = false
         }
         register("Vault") {
@@ -309,17 +255,44 @@ paper {
         register("Jobs") {
             required = false
         }
-        register("EcoBosses") {
+        register("EcoMobs") {
             required = false
         }
         register("eco") {
             required = false
         }
-        register("UltimateJobs") {
-            required = false
-        }
         register("Floodgate") {
             required = false
+        }
+        register("BetonQuest") {
+            required = false
+            load = net.minecrell.pluginyml.paper.PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+    }
+
+    // IMPORTANT: Paper prefers paper-plugin.yml over plugin.yml when both exist, so the permission
+    // defaults MUST be declared here too. Without this, notquests.use (default true, which lets every
+    // player run /notquests) is never registered, so non-OP players are denied the command.
+    permissions {
+        register("notquests.admin") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+            description = "Gives the player permission to everything in the plugin."
+            childrenMap = mapOf(
+                "notquests.admin.armorstandeditingitems" to true,
+                "notquests.use" to true
+            )
+        }
+        register("notquests.admin.armorstandeditingitems") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+            description = "Gives the player permission to use quest editing items for armor stands."
+        }
+        register("notquests.use") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.TRUE
+            description = "Gives the player permission to use the /notquests user command. They can not create new quests or other administrative tasks with just this permission."
+        }
+        register("notquests.user.profiles") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+            description = "Gives the player permission to use the /notquests profiles command, and to create, delete and switch profiles."
         }
     }
 

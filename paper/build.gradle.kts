@@ -1,30 +1,11 @@
-/*
- * NotQuests - A Questing plugin for Minecraft Servers
- * Copyright (C) 2022 Alessio Gravili
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import org.gradle.api.JavaVersion.VERSION_25
 
 
 plugins {
     id("io.papermc.paperweight.userdev")
-    id("xyz.jpenilla.run-paper")
 }
 
-group = "rocks.gravili.notquests"
+group = "com.notquests"
 version = rootProject.version
 
 java {
@@ -34,6 +15,10 @@ java {
 }
 
 repositories {
+    // NOTE: We deliberately do NOT add any maven repository for a *plugin* dependency.
+    // Every plugin integration API is vendored locally in paper/libs/ (see the dependencies block),
+    // so a relocated/deleted plugin repo can never break our build. Only repos for libraries we
+    // actually shade into our jar (or the platform itself) are listed here.
     mavenCentral()
 
     maven("https://repo.papermc.io/repository/maven-public/") {
@@ -43,178 +28,160 @@ repositories {
         }
     }
 
-    maven("https://repo.citizensnpcs.co/") {
-        content {
-            includeGroup("net.citizensnpcs")
-        }
-    }
-
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
-        content {
-            includeGroup("me.clip")
-        }
-    }
-
+    // packetevents — shaded library
     maven("https://repo.codemc.io/repository/maven-releases/") {
         content {
             includeGroup("com.github.retrooper")
         }
     }
 
-    maven("https://jitpack.io") {
-        content {
-            includeGroup("com.github.MilkBowl")
-            includeGroup("com.github.TheBusyBiscuit")
-            includeGroup("com.github.TownyAdvanced")
-            includeGroup("com.github.Zrips")
-            includeGroup("com.willfp")
-            includeGroup("com.github.war-systems")
-            includeGroup("com.github.UlrichBR")
-            includeGroup("com.github.Slimefun")
-            includeGroup("net.citizensnpcs")
-            includeGroup("com.github.Redempt")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-
-    maven("https://repo.glaremasters.me/repository/towny/") {
-        content {
-            includeGroup("com.palmergames.bukkit.towny")
-        }
-    }
-
-    maven("https://mvn.lumine.io/repository/maven-public/") {
-        content {
-            includeGroup("io.lumine.xikage")
-            includeGroup("io.lumine")
-        }
-    }
-
-
-    maven("https://maven.enginehub.org/repo/") {
-        content {
-            includeGroup("com.sk89q.worldedit")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-
-    maven("https://oss.sonatype.org/content/repositories/snapshots") {
-        content {
-            includeGroup("org.incendo")
-        }
-    }
-
+    // Mojang libraries (brigadier / authlib / datafixerupper transitives)
     maven("https://libraries.minecraft.net/") {
         content {
             includeGroup("com.mojang")
         }
     }
 
+    // Crunch — shaded expression-evaluation library
     maven("https://redempt.dev") {
         content {
             includeGroup("com.github.Redempt")
         }
     }
 
-    maven("https://repo.opencollab.dev/main/") {
-        content {
-            includeGroup("org.geysermc.floodgate")
-            includeGroup("org.geysermc.cumulus")
-            includeGroup("org.geysermc")
-            includeGroup("org.geysermc.event")
-            includeGroup("org.geysermc.geyser")
-        }
-    }
-
+    // InvUI — shaded GUI library
     maven("https://repo.xenondevs.xyz/releases")
-    maven("https://maven.citizensnpcs.co/repo")
-    maven("https://repo.magmaguy.com/releases")
     //mavenLocal()
 
 }
 
+paperweight {
+    // Keep the Paper dev bundle (NMS / Mojang-mapped server) on the COMPILE classpath only,
+    // so it is NOT on the test runtime classpath where it conflicts with MockBukkit's own
+    // Bukkit implementation ("two service providers" / "Bukkit not initialized").
+    // See https://docs.mockbukkit.org/docs/en/user_guide/advanced/paperweight
+    addServerDependencyTo.set(configurations.named("compileOnly").map { setOf(it) })
+}
+
 dependencies {
     implementation(project(path = ":common", configuration = "shadow"))
+    // FORK DIVERGENCE: upstream targets 26.1.2; this fork targets 26.2, which the production
+    // server runs. Keep this in sync with the root project and :plugin.
     paperweight.paperDevBundle("26.2.build.62-beta")
 
-    compileOnly("org.projectlombok:lombok:1.18.44")
-    annotationProcessor("org.projectlombok:lombok:1.18.44")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
 
-    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
-        exclude(group = "*", module = "*")
-    }
-
-    compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-
-
-    compileOnly("io.lumine:Mythic-Dist:5.3.0-SNAPSHOT")
-    compileOnly("com.magmaguy:EliteMobs:9.1.9")
-    compileOnly(files("libs/EliteMobs-8.7.11.jar"))
-
-
-    compileOnly("com.sk89q.worldedit:worldedit-core:7.3.0-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT")
-
-    compileOnly("com.github.Slimefun:Slimefun4:RC-37")
-
-    compileOnly("net.luckperms:api:5.4")
-
-    compileOnly("com.github.TownyAdvanced:Towny:0.98.4.4")
-
-    compileOnly("com.github.Zrips:Jobs:v4.17.2")
-
-    compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
-
-
-    //Shaded
+    // --- Plugin integration APIs ---
+    // ALL vendored locally in paper/libs/ ON PURPOSE: the build must never depend on an external
+    // maven repository for a *plugin* (those repos are frequently relocated / deleted / broken).
+    // If every one of those repos disappeared, NotQuests would still compile. These are compileOnly
+    // because the real plugin provides the classes at runtime. To update one, drop the new jar in
+    // paper/libs/ and bump the filename here.
+    compileOnly(files("libs/Citizens-2.0.42-SNAPSHOT.jar"))
+    compileOnly(files("libs/FancyNpcs-2.10.1.jar"))
+    compileOnly(files("libs/PlaceholderAPI-2.12.2.jar"))
+    compileOnly(files("libs/VaultAPI-1.7.1.jar"))
+    compileOnly(files("libs/Mythic-Dist-5.12.1.jar"))
+    compileOnly(files("libs/EliteMobs-10.4.0.jar"))
+    compileOnly(files("libs/worldedit-core-7.4.3.jar"))
+    compileOnly(files("libs/worldedit-bukkit-7.4.3.jar"))
+    compileOnly(files("libs/Slimefun4-RC-37.jar"))
+    compileOnly(files("libs/LuckPerms-api-5.5.jar"))
+    compileOnly(files("libs/Towny-0.103.0.0.jar"))
+    compileOnly(files("libs/Jobs-5.2.6.5.jar"))
+    compileOnly(files("libs/floodgate-api-2.2.5-SNAPSHOT.jar"))
+    compileOnly(files("libs/EcoMobs-11.7.0.jar"))
+    compileOnly(files("libs/eco-7.6.3.jar"))
+    compileOnly(files("libs/BetonQuest-3.0.0.jar"))
+    // libreforge-loader provides com.willfp.libreforge.loader.configs.RegistrableCategory, which
+    // EcoMobs' registry (EcoMobs.INSTANCE) extends; needed on the compile classpath. Vendored like
+    // the other eco-ecosystem plugins.
+    compileOnly(files("libs/libreforge-loader-5.6.0-all.jar"))
 
 
-    implementation("net.kyori:adventure-api:4.18.0") {}
+    // --- Shaded libraries (bundled into our jar; fine to resolve from maven) ---
 
-    //CloudCommands
-    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT") {
-        exclude(group = "org.incendo.cloud", module = "cloud-bukkit")
-    }
-    implementation("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT")
+    // Adventure.
+    //
+    // UPSTREAM'S RULE, DELIBERATELY OVERRIDDEN HERE — upstream pins this to 4.26.1 and says:
+    //     "Do NOT move to 5.x — Paper provides 4.x at runtime, so a 5.x compile target would
+    //      break against the server."
+    // That reasoning is correct FOR UPSTREAM, because upstream targets Paper 26.1.2, which bundles
+    // Adventure 4.26.1. This fork targets Paper 26.2, which bundles Adventure 5.2.0. Here the rule
+    // inverts: pinning 4.x would be the mismatch. The constraint is not "never 5.x", it is "match
+    // whatever Adventure the targeted Paper bundles" — so this moves in lockstep with
+    // paperDevBundle above.
+    //
+    // Two removed 4.x APIs are already ported for this (both verified 1:1, no behaviour change):
+    //   minimessage/AbstractColorChangingTag  Internals.toString(this)
+    //                                           -> this.examine(StringExaminer.simpleEscaping())
+    //   managers/LogManager                   GsonComponentSerializer.builder().downsampleColors()
+    //                                           -> GsonComponentSerializer.colorDownsamplingGson()
+    //
+    // If this fork is ever moved back to 26.1.x, revert this to 4.26.1 AND revert those two call
+    // sites. Do not change one without the other.
+    implementation("net.kyori:adventure-api:5.2.0") {}
 
-    //Else it errors:
-    implementation("io.leangen.geantyref:geantyref:1.3.13")
-
-    //InvUI
+    // InvUI
+    // FORK DIVERGENCE: upstream ships 2.1.1, which targets the pre-26.2 API. InvUI 2.x compiles
+    // against a single MC version: 2.0.0-RC.1..2.1.x build their private DIRTY_MARKER ItemStack
+    // from net.minecraft.world.item.Items.GREEN_CANDLE, which 26.2 removed in favour of
+    // Items.DYED_CANDLE + ColorCollection.green(). On 26.2, 2.1.1 dies in
+    // CustomContainerMenu.<clinit> with NoSuchFieldError. 2.2.0 targets 26.2.
+    // WARNING: 2.2.0 is 26.2-only and crashes symmetrically on 26.1.x.
     implementation("xyz.xenondevs.invui:invui:2.2.0")
 
-    implementation("com.github.retrooper:packetevents-spigot:2.12.0")
+    implementation("com.github.retrooper:packetevents-spigot:2.12.2")
 
 
-    implementation("commons-io:commons-io:2.11.0")
-
-    //compileOnly("com.willfp:EcoBosses:8.0.0")
-    compileOnly(files("libs/EcoBosses-v8.78.0.jar"))
-    compileOnly("com.willfp:eco:6.38.3")
-
-    compileOnly(files("libs/znpcs-4.8.jar"))
+    implementation("commons-io:commons-io:2.22.0")
 
 
     implementation("com.github.Redempt:Crunch:2.0.3")
 
 
 
-    implementation("com.zaxxer:HikariCP:6.0.0")
-
-    compileOnly("com.github.war-systems:UltimateJobs:0.3.6")
+    implementation("com.zaxxer:HikariCP:7.0.2")
 
 
+    // --- Testing (JUnit 6 + MockBukkit) ---
+    testImplementation(platform("org.junit:junit-bom:6.1.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // MockBukkit for Paper 26.2 (in-JVM mock server; no real server needed).
+    //
+    // FORK DIVERGENCE: upstream pins mockbukkit-v26.1.2 / paper-api 26.1.2 to match its own target.
+    // Both are version-locked artifacts, and both must track the platform this fork actually ships,
+    // for a hard reason and not just tidiness: testImplementation extends implementation, so the
+    // Adventure 5.2.0 declared above lands on the test classpath too. Against the 26.1.2 artifacts
+    // (built for Adventure 4.26.1) Gradle's highest-version-wins resolution silently upgraded them
+    // to 5.2.0, and 12 tests died on APIs that 5.x removed or sealed -- NoClassDefFoundError on
+    // net.kyori.adventure.audience.MessageType, and IncompatibleClassChangeError because
+    // org.bukkit.inventory.meta.BookMeta is not a permitted subclass of the now-sealed
+    // net.kyori.adventure.inventory.Book.
+    //
+    // Keep these two in lockstep with paperDevBundle above. Pinning them back to 26.1.2 would make
+    // the suite pass while validating a platform this fork does not ship.
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:4.116.1")
+    // MockBukkit does NOT bundle the Bukkit API (it assumes the plugin already provides it).
+    // Our paper-api comes from the paperweight dev bundle, which is compileOnly (off the test
+    // classpath), so add the regular paper-api + JetBrains annotations for the test compile.
+    testImplementation("io.papermc.paper:paper-api:26.2.build.62-beta")
+    testImplementation("org.jetbrains:annotations:26.1.0")
+
+    // Mockito (spies/mocks) — ready for future tests (e.g. failing-Connection DB tests)
+    testImplementation("org.mockito:mockito-core:5.23.0")
+
+    // SQLite JDBC driver for deterministic DB-integrity tests (matches the runtime driver)
+    testImplementation("org.xerial:sqlite-jdbc:3.53.2.0")
 }
 
 /**
  * Configure NotQuests for shading
  */
-val shadowPath = "rocks.gravili.notquests.paper.shadow"
+val shadowPath = "com.notquests.paper.shadow"
 
 
 tasks {
@@ -223,9 +190,6 @@ tasks {
         // DO NOT minimize the jar, since cloud doesnt like it
         // Reference: https://discord.com/channels/766366162388123678/1170254709722984460/1242027222773006376
 
-        relocate("cloud.commandframework", "$shadowPath.cloud")
-        relocate("cloud.commandframework.bukkit.internal", "$shadowPath.cloud.bukkit.internal")
-        relocate("io.leangen.geantyref", "$shadowPath.geantyref")
         relocate("de.themoep", "$shadowPath.de.themoep")
 
         relocate("org.apache.commons.io", "$shadowPath.commons.io")
@@ -252,8 +216,6 @@ tasks {
             include(dependency("commons-io:commons-io:.*"))
             include(dependency("xyz.xenondevs.invui:.*:.*"))
 
-            include(dependency("org.incendo:.*:.*"))
-            include(dependency("io.leangen.geantyref:.*:.*"))
             include(dependency("me.lucko:.*:.*"))
 
             include(dependency("com.github.retrooper:.*:.*"))
@@ -271,9 +233,31 @@ tasks {
             include(dependency("com.zaxxer:.*:.*"))
         }
 
+        // Strip plugin metadata from shaded libraries. PacketEvents ships its own plugin.yml (it can
+        // run as a standalone plugin); if it survives into this shaded jar, the jar masquerades as
+        // PacketEvents and Paper tries to load io.github.retrooper.packetevents.PacketEventsPlugin as
+        // the main class. The real plugin.yml/paper-plugin.yml is generated by the :plugin module.
+        exclude("plugin.yml")
+        exclude("paper-plugin.yml")
 
-        archiveClassifier.set("")
+        // Give the shaded jar a distinct classifier so it does NOT overwrite the thin `:paper:jar`
+        // (both would otherwise be paper-<version>.jar). When the thin jar wins that race, the
+        // consuming :plugin module bundles un-relocated paper classes WITHOUT the shaded libraries
+        // (e.g. packetevents), and the plugin crashes at enable with NoClassDefFoundError. The
+        // shadowRuntimeElements configuration that :plugin depends on tracks this task's output by
+        // task, not filename, so it still resolves to this (now collision-free) shaded jar.
+        archiveClassifier.set("all")
 
+    }
+
+    test {
+        useJUnitPlatform()
+        // Quiet Mockito's self-attaching agent on JDK 25+ and allow MockBukkit's reflection.
+        jvmArgs("-XX:+EnableDynamicAgentLoading", "--add-opens", "java.base/java.lang=ALL-UNNAMED")
+        testLogging {
+            events("passed", "skipped", "failed")
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        }
     }
 
     compileJava {
@@ -288,9 +272,5 @@ tasks {
 
     processResources {
         filteringCharset = Charsets.UTF_8.name()
-    }
-
-    runServer {
-        minecraftVersion("26.2")
     }
 }

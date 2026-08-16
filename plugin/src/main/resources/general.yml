@@ -138,6 +138,8 @@ visual:
       enabled: true
       show-time: 10
       show-if-objective-is-completed: false
+    location-compass:
+      enabled: false
 gui:
   main-gui-name: 'main-base'
   npc-gui-name: 'npc-available-quests'
@@ -206,7 +208,5 @@ integrations: #These should usually be left to true. These integrations will onl
     enabled: true
   projectkorra:
     enabled: true
-  ecoBosses:
-    enabled: true
-  ultimatejobs:
+  ecoMobs:
     enabled: true

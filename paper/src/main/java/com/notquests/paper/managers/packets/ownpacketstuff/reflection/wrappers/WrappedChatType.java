@@ -1,0 +1,7 @@
+package com.notquests.paper.managers.packets.ownpacketstuff.reflection.wrappers;
+
+public enum WrappedChatType {
+  CHAT,
+  SYSTEM,
+  GAME_INFO
+}
