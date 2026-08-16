@@ -97,6 +97,12 @@ chat:
         base: 'Break Blocks: <main>%BLOCKTOBREAK%'
       breed:
         base: 'Breed Mobs: <main>%ENTITYTOBREED%'
+      feedMobs:
+        base: 'Feed Mobs: <main>%ENTITYTOFEED%'
+      tameMobs:
+        base: 'Tame Mobs: <main>%ENTITYTOTAME%'
+      harvest:
+        base: 'Harvest: <main>%CROPTOHARVEST%'
       pickupItems:
         base: 'Pickup Items: <main>%ITEMTOPICKUPTYPE% %(%%ITEMTOPICKUPNAME%%)%'
       consumeItems:
@@ -107,6 +113,8 @@ chat:
         base: 'Deliver Items: <main>%ITEMTODELIVERTYPE% %(%%ITEMTODELIVERNAME%%(%'
         deliver-to-npc: '      <GRAY>Deliver it to <WHITE>%NPCNAME%'
         deliver-to-npc-not-available: '      <GRAY>The delivery NPC is currently not available!'
+      tradeWithVillager:
+        base: 'Trade with Villager: <main>%ITEMTOTRADETYPE% %(%%ITEMTOTRADENAME%%)%'
       enchant:
         base: 'Enchant Items with %ENCHANTMENT%: <main>%ITEMTOENCHANTTYPE% %(%%ITEMTOENCHANTNAME%%(%'
       escortNPC:
@@ -131,6 +139,8 @@ chat:
         any: 'Kill any Elite Mob!'
       runCommand:
         base: 'Run command: <main>%COMMANDTORUN%'
+      shootArrow:
+        base: 'Shoot Arrow: <main>%COORDINATES%</main> in world <main>%WORLDNAME%</main> within <main>%RADIUS%</main> blocks'
       interact:
         base: '%INTERACTTYPE% Location: <main>%COORDINATES% <main>in world %WORLDNAME%'
       jump:
@@ -139,12 +149,20 @@ chat:
         base: '%OBJECTIVEHOLDERNAME%'
       sneak:
         base: 'Sneak <main>%AMOUNTOFSNEAKS%</main> times'
+      die:
+        base: 'Die: <main>%DAMAGETYPE%'
       smelt:
         base: 'Smelt Items: <main>%ITEMTOSMELTTYPE% %(%%ITEMTOSMELTNAME%%)%'
+      brewItems:
+        base: 'Brew Items: <main>%ITEMTOBREWTYPE% %(%%ITEMTOBREWNAME%%)%'
+      smithItems:
+        base: 'Smith Items: <main>%ITEMTOSMITHTYPE% %(%%ITEMTOSMITHNAME%%)%'
       openBuriedTreasure:
         base: 'Open buried treasures'
       shearSheep:
         base: 'Shear <main>%AMOUNTOFSHEEP%</main> sheep'
+      milkCow:
+        base: 'Milk <main>%AMOUNTOFCOWS%</main> cows'
       townyReachResidentCount:
         base: 'Reach resident amount: <main>%AMOUNT%'
       townyNationReachTownCount:
@@ -157,8 +175,6 @@ chat:
         base: 'Use Ability: <main>%ABILITY%'
       BetonQuestCompleteObjective:
         base: 'Finish Objective: <main>%BETONQUESTOBJECTIVENAME%'
-      ultimateJobsReachJobLevel:
-        base: 'Reach job level <main>%AMOUNT%</main> with job <main>%JOBID%'
   conditions:
     boolean:
       not-fulfilled: "<warn>Following needs to be %BOOLEANREQUIREMENT%: <highlight>%VARIABLESINGULAR%</highlight>."
