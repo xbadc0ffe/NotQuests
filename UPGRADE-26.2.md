@@ -4,6 +4,54 @@ Bump of the local fork from the Paper **26.1.x** line to **26.2**
 (`26.2.build.62-beta`, the MC version the production server reports).
 Everything below is evidenced by disassembly / build output, not inference.
 
+> ## Post-merge amendment (2026-08-16, `2073fb97`)
+>
+> This document was written at `a41e26ec`, **before** the fork merged 94
+> upstream commits. The analysis below is still correct; three things it
+> says are now out of date. Corrections, in the order you will hit them:
+>
+> 1. **Package paths.** Everything below says
+>    `rocks.gravili.notquests.paper.*`. Upstream renamed the root package
+>    to **`com.notquests`** (and moved `structs/{actions,objectives,
+>    conditions}` to `builtin/*`). The shaded InvUI package is now
+>    `com.notquests.paper.shadow.invui` — so the class named throughout is
+>    `com.notquests.paper.shadow.invui.internal.menu.CustomContainerMenu`.
+> 2. **"No upstream merge or rebase onto `origin/main`"** under
+>    *Deliberately left unchanged* is **no longer true.** The merge is
+>    `2073fb97` on `merge/upstream-main`. All four conflicts were resolved
+>    toward 26.2; the InvUI 2.2.0 and Adventure 5 decisions recorded here
+>    were carried through deliberately, over upstream's explicit
+>    `// Do NOT move to 5.x` comment. That override, and the reasoning for
+>    it, is documented inline at `paper/build.gradle.kts:105-133`.
+> 3. **`OpenGuiAction` no longer exists.** Upstream replaced it with
+>    `builtin/actions/OpenGui.java` under the new `ActionCatalog` DSL. The
+>    fork's case-insensitive-flag fix was ported forward as a
+>    `--targetplayer` → `--player` alias (`OpenGui.java:29,50`).
+>    `FlagParser` still has exactly one caller.
+> 4. **Jar naming changed.** The `archiveBaseName` + `archiveClassifier`
+>    approach in the *Exact changes* table was replaced by upstream's
+>    `archiveFileName` + `minecraftTargetVersion`
+>    (`plugin/build.gradle.kts:67,100`). The output filename is unchanged:
+>    `notquests-6.3.0-26.2.jar`.
+>
+> **Re-verified against the post-merge jar** (md5
+> `d983c85b2fc8f1c8fd65e6d35a4fd327`, 94 tests passing): the relocated
+> `CustomContainerMenu.<clinit>` does
+> `getstatic Items.DYED_CANDLE:ColorCollection` →
+> `invokevirtual ColorCollection.green()` → `putstatic DIRTY_MARKER`, and
+> `GREEN_CANDLE` occurs **0 times** across all 260 shaded InvUI classes.
+> The core finding of this document survives the merge intact.
+>
+> **One thing the merge added that this document should have warned about:**
+> the fork's Adventure 5.2.0 leaks onto the *test* classpath
+> (`testImplementation` extends `implementation`), so version-locked test
+> artifacts must track the platform too. See
+> `paper/build.gradle.kts:167,171`.
+>
+> Still unrun: **nothing from the merge has been executed on a Paper
+> server.** The smoke test at the bottom of this file has not been
+> performed against the merged jar.
+
 ## Symptom
 
 On Paper 26.2, right-clicking a Citizens quest-giver NPC threw:
