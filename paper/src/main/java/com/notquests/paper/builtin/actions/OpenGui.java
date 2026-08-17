@@ -74,7 +74,17 @@ public final class OpenGui {
     private static Player targetPlayer(
             final String targetPlayerName, final com.notquests.paper.structs.QuestPlayer questPlayer) {
         if (targetPlayerName != null && !targetPlayerName.isBlank()) {
-            return Bukkit.getPlayerExact(targetPlayerName);
+            final Player named = Bukkit.getPlayerExact(targetPlayerName);
+            if (named != null) {
+                return named;
+            }
+            // Fall through to the quest player rather than aborting. An unresolvable name is the
+            // normal case, not an error: the shipped GUIs all write --targetplayer %player_name%,
+            // and %player_name% is a PlaceholderAPI placeholder, so it only gets substituted when
+            // placeholders.support_placeholderapi_in_translation_strings is enabled AND
+            // PlaceholderAPI is installed (ActionItem#replaceWithPlaceholders). With the default
+            // config that flag is false, so the literal "%player_name%" reaches this lookup and
+            // resolves to null -- which previously killed every GUI-to-GUI navigation click.
         }
         return questPlayer == null ? null : questPlayer.getPlayer();
     }
