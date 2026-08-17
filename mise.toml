@@ -1,4 +1,5 @@
-# NotQuests (main) — targets Paper 26.1.2, which requires Java 25.
+# FORK DIVERGENCE: upstream targets Paper 26.1.2; this fork targets 26.2, which
+# the production server runs. Both require Java 25.
 # Gradle pinned to match gradle/wrapper/gradle-wrapper.properties (9.5.1).
 
 [tools]
