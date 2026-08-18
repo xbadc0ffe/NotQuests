@@ -2,7 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ main ]
+    # FORK DIVERGENCE: the fork's trunk is `genesis`, not `main`. Deliberately not named
+    # `main` so it cannot be confused with upstream AlessioGr/NotQuests' own `main`.
+    branches: [ genesis ]
   pull_request:
 
 permissions:
