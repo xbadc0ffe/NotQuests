@@ -62,9 +62,22 @@ dependencies {
  * Configure NotQuests for shading
  */
 val shadowPath = "com.notquests"
-// FORK DIVERGENCE: upstream builds for 26.1.2; this fork builds for 26.2. Drives both the output
-// jar name and the runServer target below, so changing it here changes both.
-val minecraftTargetVersion = "26.2"
+// FORK DIVERGENCE: upstream builds for 26.1.2; this fork builds for 26.2.
+//
+// The fork version scheme is <mc major>.<mc minor>.<fork build counter>, so the Minecraft
+// version this plugin targets IS the first two fields of the project version. Derive it here
+// instead of declaring it a second time: that is what keeps the jar name and the two
+// apiVersion declarations (bukkit + paper blocks) from silently drifting apart.
+//
+// Single source of truth is `version` in the root build.gradle.kts. Bump that and the jar
+// name, the runServer target and both api-version fields all follow.
+val minecraftTargetVersion = project.version.toString().split(".").let { fields ->
+    require(fields.size >= 3) {
+        "Project version '${project.version}' does not match the required " +
+            "<mc major>.<mc minor>.<fork build counter> scheme."
+    }
+    "${fields[0]}.${fields[1]}"
+}
 
 /*processResources {
     def props = [version: version]
@@ -91,9 +104,9 @@ tasks {
         // DO NOT minimize the jar, since cloud doesnt like it
         // Reference: https://discord.com/channels/766366162388123678/1170254709722984460/1242027222773006376
 
-        // The :plugin module produces the real, server-ready jar. Include the Minecraft target in
-        // the filename so release artifacts and local build outputs use the same naming convention.
-        archiveFileName.set("notquests-${project.version}-$minecraftTargetVersion.jar")
+        // The :plugin module produces the real, server-ready jar. The project version already
+        // carries the Minecraft target in its first two fields, so no separate suffix is needed.
+        archiveFileName.set("notquests-${project.version}.jar")
         archiveClassifier.set("")
 
         relocate("io.papermc.lib", "$shadowPath.paperlib")
@@ -137,8 +150,10 @@ bukkit {
     name = "NotQuests"
     version = rootProject.version.toString()
     main = "com.notquests.Main"
-    // FORK DIVERGENCE: 26.2, matching paperDevBundle / minecraftTargetVersion.
-    apiVersion = "26.2"
+    // FORK DIVERGENCE: derived from the project version's first two fields (see
+    // minecraftTargetVersion above) so this cannot drift from the jar name or the other
+    // descriptor block. Must stay in step with paperDevBundle.
+    apiVersion = minecraftTargetVersion
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
     website = "https://www.notquests.com"
@@ -197,8 +212,10 @@ paper {
     name = "NotQuests"
     version = rootProject.version.toString()
     main = "com.notquests.Main"
-    // FORK DIVERGENCE: 26.2, matching paperDevBundle / minecraftTargetVersion.
-    apiVersion = "26.2"
+    // FORK DIVERGENCE: derived from the project version's first two fields (see
+    // minecraftTargetVersion above) so this cannot drift from the jar name or the other
+    // descriptor block. Must stay in step with paperDevBundle.
+    apiVersion = minecraftTargetVersion
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
     website = "https://www.notquests.com"
