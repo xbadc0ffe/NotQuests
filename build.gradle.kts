@@ -50,8 +50,24 @@ val path = "com.notquests"
 
 
 tasks {
+    // The root project has no sources of its own (`:compileJava NO-SOURCE`), so `jar` and
+    // `shadowJar` both emit an empty ~333-byte archive containing nothing but a manifest.
+    //
+    // That was harmless while the deployable :plugin artifact was named
+    // `notquests-<version>-<mc>.jar`, because the root's `notquests-<version>.jar` had a
+    // different name. Once the version scheme change dropped the `-<mc>` suffix the two
+    // collided: `build/libs/notquests-26.2.1.jar` (333 bytes, no classes, no plugin
+    // descriptor) and `plugin/build/libs/notquests-26.2.1.jar` (7.9 MB, the real one).
+    // Deploying the former silently gets you a plugin Paper cannot load.
+    //
+    // `archiveClassifier.set("")` on the root shadowJar is what put it on that exact name;
+    // :plugin already sets `jar { enabled = false }` for the same reason. Disable both here
+    // so :plugin is the only module that ever emits a `notquests-*.jar`.
+    jar {
+        enabled = false
+    }
     shadowJar {
-        archiveClassifier.set("")
+        enabled = false
     }
 
     //build {
