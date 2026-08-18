@@ -25,7 +25,6 @@ import com.notquests.paper.conditions.ConditionCatalog;
 import com.notquests.paper.conditions.SavedConditions;
 import com.notquests.paper.managers.*;
 import com.notquests.paper.managers.integrations.IntegrationsManager;
-import com.notquests.paper.managers.integrations.bstats.Metrics;
 import com.notquests.paper.managers.items.ItemsManager;
 import com.notquests.paper.managers.npc.NPCManager;
 import com.notquests.paper.managers.packets.PacketManager;
@@ -33,19 +32,9 @@ import com.notquests.paper.managers.tags.TagManager;
 import com.notquests.paper.migrations.ConfigMigrationManager;
 import com.notquests.paper.minimessage.MessageManager;
 import com.notquests.paper.objectives.ObjectiveCatalog;
-import com.notquests.paper.structs.Quest;
 import com.notquests.paper.structs.QuestPlayer;
-import com.notquests.paper.actions.Action;
-import com.notquests.paper.conditions.Condition;
-import com.notquests.paper.objectives.Objective;
 import com.notquests.paper.triggers.TriggerCatalog;
-import com.notquests.paper.triggers.Trigger;
 import com.notquests.paper.variables.VariableCatalog;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
     private static NotQuests instance;
@@ -85,12 +74,6 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
 
     private IntegrationsManager integrationsManager;
     private VariableCatalog variableCatalog;
-
-    public ArrayList<Action> allActions = new ArrayList<>(); //For bStats
-    public ArrayList<Condition> allConditions = new ArrayList<>(); //For bStats
-
-    //Metrics
-    private Metrics metrics;
 
     public final JavaPlugin getMain(){
         return main;
@@ -246,7 +229,7 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
 
             conversationManager = new ConversationManager(this);
 
-            setupBStats();
+            setupPacketManager();
 
             updateManager = new UpdateManager(this);
 
@@ -286,86 +269,13 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
         guiService.loadAllGuis();
     }
 
-    public void setupBStats() {
-        //bStats statistics
-        final int pluginId = 12824; // <- Plugin ID (on bstats)
-        metrics = new Metrics(main, pluginId);
-
-        metrics.addCustomChart(new Metrics.SingleLineChart("quests", new Callable<Integer>() {
-            @Override
-            public Integer call() {
-                return getQuestManager().getAllQuests().size();
-            }
-        }));
-
-        metrics.addCustomChart(new Metrics.SingleLineChart("conversations", new Callable<Integer>() {
-            @Override
-            public Integer call() {
-                if(getConversationManager() == null) {
-                    return 0;
-                }
-                return getConversationManager().getAllConversations().size();
-            }
-        }));
-
-        metrics.addCustomChart(new Metrics.AdvancedPie("ObjectiveTypes", new Callable<Map<String, Integer>>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> valueMap = new HashMap<>();
-                for (Quest quest : getQuestManager().getAllQuests()) {
-                    for (Objective objective : quest.getObjectives()) {
-                        String objectiveType = getObjectiveCatalog().getObjectiveType(objective);
-                        valueMap.put(objectiveType, valueMap.getOrDefault(objectiveType, 0) + 1);
-                    }
-                }
-                return valueMap;
-            }
-        }));
-
-
-        metrics.addCustomChart(new Metrics.AdvancedPie("ConditionTypes", new Callable<Map<String, Integer>>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> map = new HashMap<>();
-                for (Condition condition : allConditions) {
-                    String conditionType = getQuestManager().getDisplayConditionType(condition);
-
-                    map.put(conditionType, map.getOrDefault(conditionType, 0) + 1);
-                }
-
-                return map;
-            }
-        }));
-
-        metrics.addCustomChart(new Metrics.AdvancedPie("AllActionTypes", new Callable<Map<String, Integer>>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> map = new HashMap<>();
-                for (Action action : allActions) {
-                    String actionType = getQuestManager().getDisplayActionType(action);
-
-
-                    map.put(actionType, map.getOrDefault(actionType, 0) + 1);
-                }
-                return map;
-            }
-        }));
-
-        metrics.addCustomChart(new Metrics.AdvancedPie("TriggerTypes", new Callable<Map<String, Integer>>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> map = new HashMap<>();
-                for (Quest quest : getQuestManager().getAllQuests()) {
-                    for (Trigger trigger : quest.getTriggers()) {
-                        String triggerType = trigger.getTriggerType();
-                        map.put(triggerType, map.getOrDefault(triggerType, 0) + 1);
-                    }
-                }
-                return map;
-            }
-        }));
-
-
+    // FORK DIVERGENCE: this method used to be setupBStats() and registered upstream's bStats
+    // metrics (plugin id 12824) alongside the packet manager setup. The bStats reporting has been
+    // removed outright — the fork's version numbers do not correspond to any upstream release and
+    // would pollute another project's public dashboard. The vendored Metrics class was deleted
+    // with it, so a future merge that re-adds a call site will fail to compile rather than
+    // silently start reporting again. Only the packet manager setup remains.
+    public void setupPacketManager() {
         if (packetManager == null) {
             packetManager = new PacketManager(this);
         }
@@ -446,16 +356,6 @@ public class NotQuests extends NotQuestsMainAbstract<Component, CommandSender> {
     public SavedConditions getSavedConditions() {
         return savedConditions;
     }
-
-    /**
-     * Returns an instance of the bStats Metrics object
-     *
-     * @return bStats Metrics object
-     */
-    public Metrics getMetrics() {
-        return metrics;
-    }
-
 
     public LanguageManager getLanguageManager() {
         return languageManager;

@@ -41,8 +41,6 @@ class ActionActionTest {
         main = mock(NotQuests.class, RETURNS_DEEP_STUBS);
         actionCatalog = mock(ActionCatalog.class);
         actionRunner = mock(ActionRunner.class);
-        main.allActions = new ArrayList<>();
-        main.allConditions = new ArrayList<>();
         when(main.getDataManager().getDefaultCategory()).thenReturn(mock(Category.class));
         when(main.getDataManager().isDisabled()).thenReturn(false);
         when(main.getActionCatalog()).thenReturn(actionCatalog);
