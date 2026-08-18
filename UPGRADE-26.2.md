@@ -28,11 +28,14 @@ Everything below is evidenced by disassembly / build output, not inference.
 >    fork's case-insensitive-flag fix was ported forward as a
 >    `--targetplayer` → `--player` alias (`OpenGui.java:29,50`).
 >    `FlagParser` still has exactly one caller.
-> 4. **Jar naming changed.** The `archiveBaseName` + `archiveClassifier`
->    approach in the *Exact changes* table was replaced by upstream's
->    `archiveFileName` + `minecraftTargetVersion`
->    (`plugin/build.gradle.kts:67,100`). The output filename is unchanged:
->    `notquests-6.3.0-26.2.jar`.
+> 4. **Jar naming changed twice.** The `archiveBaseName` +
+>    `archiveClassifier` approach in the *Exact changes* table was first
+>    replaced by upstream's `archiveFileName` + `minecraftTargetVersion`,
+>    producing `notquests-6.3.0-26.2.jar`. The fork version scheme change
+>    then dropped the suffix: the Minecraft target is now the first two
+>    fields of `project.version`, so `archiveFileName`
+>    (`plugin/build.gradle.kts:109`) is just
+>    `notquests-${project.version}.jar` → **`notquests-26.2.1.jar`**.
 >
 > **Re-verified against the post-merge jar** (md5
 > `d983c85b2fc8f1c8fd65e6d35a4fd327`, 94 tests passing): the relocated
@@ -133,12 +136,32 @@ Build scripts (Step 0 reconcile of the mislabeled deployed jar, then the 26.2 bu
 
 | File:line | 26.2 value |
 |---|---|
-| `build.gradle.kts` version | `6.3.0` |
+| `build.gradle.kts` version | `26.2.1` (was `6.3.0`; see *Version scheme* below) |
 | `build.gradle.kts` / `paper` / `plugin` `paperDevBundle` | `26.2.build.62-beta` |
-| `build.gradle.kts` / `paper` / `plugin` `minecraftVersion` (runServer) | `26.2` |
-| `plugin/build.gradle.kts` `apiVersion` (bukkit + paper) | `26.2` |
+| `build.gradle.kts` / `paper` / `plugin` `minecraftVersion` (runServer) | derived — `minecraftTargetVersion` |
+| `plugin/build.gradle.kts` `apiVersion` (bukkit + paper) | derived — `minecraftTargetVersion` |
 | `paper/build.gradle.kts` InvUI | `xyz.xenondevs.invui:invui:2.2.0` |
-| `plugin/build.gradle.kts` shadowJar | `archiveBaseName = "notquests"`, `archiveClassifier = "26.2"` → `notquests-<ver>-26.2.jar` |
+| `plugin/build.gradle.kts` shadowJar | `archiveFileName.set("notquests-${project.version}.jar")` → `notquests-26.2.1.jar` |
+
+### Version scheme
+
+The fork versions as `<mc major>.<mc minor>.<fork build counter>`. Fields one
+and two track the supported Minecraft version; field three is a globally
+monotonic build counter that never resets and never decrements, so it keeps
+climbing across Minecraft versions (`26.2.8` → `26.3.9`, not `26.3.1`).
+
+Because the Minecraft target *is* the first two fields of the version,
+`minecraftTargetVersion` (`plugin/build.gradle.kts:74`) is derived from
+`project.version` instead of being declared separately. It drives the
+`runServer` target and both `apiVersion` declarations (bukkit + paper
+blocks), so the jar name and the two shipped descriptors cannot drift apart.
+`version` in the root `build.gradle.kts` is the single source of truth. A
+version without three dot-separated fields fails the build at configuration
+time.
+
+The `paperDevBundle` / `mockbukkit` / `paper-api` coordinates are deliberately
+**not** derived — they pin exact build numbers (`26.2.build.62-beta`) and
+remain separate declarations.
 
 Source (Adventure 5.x only — see table above): `LogManager.java`,
 `AbstractColorChangingTag.java`. **No NMS/packet-layer edits.**
@@ -160,10 +183,12 @@ Source (Adventure 5.x only — see table above): `LogManager.java`,
 Output (deployable, mojang-mapped production jar):
 
 ```
-plugin/build/libs/notquests-6.3.0-26.2.jar
+plugin/build/libs/notquests-26.2.1.jar
 ```
 
-`plugin.yml`: `version: 6.3.0`, `api-version: "26.2"`.
+Both descriptors ship in the jar and both read `version: 26.2.1`,
+`api-version: "26.2"` — `plugin.yml` (from the `bukkit` block) and
+`paper-plugin.yml` (from the `paper` block). Paper loads via the latter.
 
 ## ⚠ Version coupling — InvUI 2.2.0 is 26.2-only
 

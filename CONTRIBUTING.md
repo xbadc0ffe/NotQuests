@@ -41,13 +41,25 @@ The Gradle wrapper jar (`gradle/wrapper/gradle-wrapper.jar`) **is** committed, s
 The final plugin jar is at:
 
 ```
-plugin/build/libs/notquests-6.3.0-26.2.jar
+plugin/build/libs/notquests-26.2.1.jar
 ```
 
-The name is `notquests-<project.version>-<minecraftTargetVersion>.jar`
-(`plugin/build.gradle.kts:96`). Changing `minecraftTargetVersion`
-(`plugin/build.gradle.kts:67`) changes both the jar name and the `runServer`
-target below.
+The name is `notquests-<project.version>.jar`
+(`plugin/build.gradle.kts:109`).
+
+The fork versions as `<mc major>.<mc minor>.<fork build counter>`. The first
+two fields track the supported Minecraft version; the third is a globally
+monotonic build counter that never resets and never decrements, so it keeps
+climbing across Minecraft versions (`26.2.8` → `26.3.9`, not `26.3.1`).
+
+Because the Minecraft target is the first two fields of the version,
+`minecraftTargetVersion` (`plugin/build.gradle.kts:74`) is *derived* from
+`project.version` rather than declared separately, and it feeds the
+`runServer` target and both `apiVersion` declarations. **`version` in the
+root `build.gradle.kts` is the single source of truth** — bump that one value
+and the jar name, the `runServer` target and both descriptors follow. A
+version that does not have three dot-separated fields fails the build at
+configuration time.
 
 ## Running a test server
 
