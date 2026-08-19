@@ -98,6 +98,16 @@ echo "=== SWEEP DONE; analyzing ==="
 # Analyze before teardown so the exit code is produced even if shutdown is slow.
 python3 "$E2E/analyze.py" "$LOG"; rc=$?
 
+# Stage the generated schema/metadata next to the logs so CI can collect the whole artifact
+# from /tmp. Mixing /tmp with a workspace-relative path would move upload-artifact's least
+# common ancestor to /, burying every entry under its full path. Copied here, not in the
+# BetonQuest sweep, because these are the files analyze.py just judged — the BetonQuest boot
+# overwrites them afterwards.
+for generated in commands metadata; do
+  src="$RUN/plugins/NotQuests/generated/$generated.json"
+  [ -f "$src" ] && cp "$src" "/tmp/nq-e2e-$generated.json"
+done
+
 # Graceful teardown: ask the server to stop and wait for the gradle process to exit, so no orphaned
 # server JVM lingers (an abruptly killed server can leave a half-written world that hangs the next
 # boot). The EXIT trap force-kills only as a last resort.
