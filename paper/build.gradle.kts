@@ -199,6 +199,25 @@ tasks {
 
         relocate("net.kyori.adventure.text.serializer.bungeecord", "$shadowPath.kyori.bungeecord")
 
+        // FORK DIVERGENCE: Paper 26.2 ships Adventure 5.x, which dropped the net.kyori.examination
+        // dependency entirely — none of the 12 kyori jars Paper provides contain it. Both this
+        // plugin (minimessage/AbstractColorChangingTag implements Examinable, SimpleGradientTag's
+        // examinableProperties) and the shaded PacketEvents adventure serializers
+        // (CharacterAndFormat and LegacyFormat extend/implement Examinable) still reference it, so
+        // without shading it the plugin only enables when some *other* plugin on the server happens
+        // to publish net/kyori/examination/Examinable into Paper's PluginClassLoaderGroup. On a
+        // server where nothing else supplies it, onLoad dies with NoClassDefFoundError.
+        //
+        // Relocated rather than shaded bare: an unrelocated net.kyori.examination would be
+        // published into that same shared group, where other plugins could bind to our copy — the
+        // mirror image of the accident that was masking this bug.
+        //
+        // Upstream is on Adventure 4.x, where Paper still provides examination, so it needs neither
+        // the include nor the relocate. Do NOT "fix" this by dropping `implements Examinable` from
+        // AbstractColorChangingTag: that would conflict on every future upstream merge touching
+        // that file, and would leave the four shaded PacketEvents classes still broken.
+        relocate("net.kyori.examination", "$shadowPath.kyori.examination")
+
         relocate("xyz.xenondevs.invui", "$shadowPath.invui")
 
         relocate("redempt.crunch", "$shadowPath.crunch")
@@ -222,6 +241,14 @@ tasks {
             include(dependency("io.github.retrooper:.*:.*"))
 
             include(dependency("net.kyori:adventure-text-serializer-bungeecord:.*"))
+
+            // FORK DIVERGENCE: see the net.kyori.examination relocate above. Both artifacts already
+            // resolve transitively via com.github.retrooper:packetevents-spigot, so this adds no new
+            // repository and no new version pin. examination-string carries StringExaminer, used by
+            // AbstractColorChangingTag's toString; examination-api carries Examinable itself, which
+            // the other five referencing classes need.
+            include(dependency("net.kyori:examination-api:.*"))
+            include(dependency("net.kyori:examination-string:.*"))
 
             include(dependency("com.github.Redempt:.*:.*"))
 
