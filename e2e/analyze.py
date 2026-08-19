@@ -19,6 +19,7 @@ traces / custom "Cannot parse" errors have no such echo and are always treated a
 
 Usage: analyze.py <server.log>
 """
+import os
 import re
 import sys
 import pathlib
@@ -27,14 +28,53 @@ import json
 E2E = pathlib.Path(__file__).resolve().parent
 SRC = E2E.parent / "paper" / "src" / "main" / "java"
 CMDS_FILE = E2E / "commands.txt"
-COMMAND_METADATA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated" / "metadata.json"
-COMMAND_SCHEMA = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated" / "commands.json"
+GENERATED = E2E.parent / "plugin" / "run" / "plugins" / "NotQuests" / "generated"
+# E2E_METADATA / E2E_COMMAND_SCHEMA let the harness be pointed at a downloaded CI artifact
+# instead of a local run, so the gate can be verified against the exact bytes CI produced.
+COMMAND_METADATA = pathlib.Path(os.environ.get("E2E_METADATA", GENERATED / "metadata.json"))
+COMMAND_SCHEMA = pathlib.Path(os.environ.get("E2E_COMMAND_SCHEMA", GENERATED / "commands.json"))
 
+REGISTRY_KINDS = ("objectives", "actions", "conditions", "triggers", "variables")
+# The four kinds whose types are created through a `/nqa ... add <Type>` command and therefore
+# can be exercised by commands.txt. `variables` is excluded from the coverage assertion — see
+# the VARIABLE COVERAGE note in main().
+COVERED_KINDS = ("objectives", "actions", "conditions", "triggers")
+# Builder entry point per kind: `objectives.objective("KillMobs")`, `actions.action("Beam")`, …
+# The receiver name is pinned deliberately; matching any `*.trigger(` also catches
+# `trigger.trigger(activeQuest)` in triggers/ActiveTrigger.java, which is not a registration.
+CATALOG_ENTRY = {"objectives": "objective", "actions": "action",
+                 "conditions": "condition", "triggers": "trigger"}
+# Minimum registered count per kind. Floors, not equalities: an exact count turns every new
+# type into a CI failure, which is the friction that gets assertions deleted. Values are one
+# safe step below the counts confirmed identical in CI and locally (33/26/8/8/66).
+REGISTRY_FLOORS = {"objectives": 30, "actions": 24, "conditions": 8, "triggers": 8, "variables": 60}
+# Tolerated edge errors are a ceiling, not an equality, for the same reason: removing a
+# tolerated command is an improvement and must not fail the build.
+TOLERATED_CEILING = 6
+
+# Types that only register when their host plugin is installed, so an integration-free sweep
+# can never exercise them. This list is load-bearing, not decorative: assertion (b) fails if a
+# gated type is missing from it, and assertion (c) fails if an entry no longer exists in the
+# source. Grouped by host so an entry's reason is visible without grepping.
 EXCLUDE_INTEGRATION = {
-    "EscortNPC", "JobsRebornReachJobLevel", "SlimefunResearch",
-    "TownyNationReachTownCount", "TownyReachResidentCount", "TownyNationName",
-    "UltimateClansClanLevel", "BetonQuestObjectiveStateChange", "BetonQuestFireEvent",
-    "BetonQuestFireInlineEvent",
+    # EliteMobs
+    "KillEliteMobs",
+    # Citizens (escort routing)
+    "EscortNPC",
+    # Jobs Reborn
+    "JobsRebornReachJobLevel",
+    # Slimefun
+    "SlimefunResearch",
+    # Towny
+    "TownyNationReachTownCount", "TownyReachResidentCount",
+    "TownyNationName", "TownyNationTownCount", "TownyTownResidentCount", "TownyTownPlotCount",
+    # PlaceholderAPI
+    "PlaceholderAPINumber", "PlaceholderAPIString",
+    # Floodgate
+    "FloodgateIsFloodgatePlayer",
+    # BetonQuest 3
+    "BetonQuestObjectiveStateChange", "BetonQuestFireEvent", "BetonQuestFireInlineEvent",
+    "BetonQuestCondition",
 }
 EXCLUDE_VARIABLE = {"Number", "String", "Boolean", "List", "ItemStackList"}
 TOLERANT_TAGS = ("PLAYER-ONLY", "NEEDS-ECONOMY", "UNSURE", "OBJECTIVE-SCOPED")
@@ -68,15 +108,63 @@ CRASH = re.compile(
     r"Caused by:|Unhandled exception")
 
 
-def registered_types():
-    kinds = {"objective": "registerObjective", "action": "registerAction",
-             "condition": "registerCondition", "trigger": "registerTrigger"}
-    found = {k: set() for k in kinds}
-    pat = {k: re.compile(fn + r'\("([A-Za-z0-9]+)"') for k, fn in kinds.items()}
+def runtime_types(metadata):
+    """Types actually registered by the running plugin, from its own metadata export.
+
+    This replaces a source regex that matched `registerObjective("Name"` — an API the
+    upstream merge deleted. Every surviving registerX call takes a definition object, never
+    a string literal, so the old scanner returned four empty sets and the coverage gate was
+    a permanent no-op that printed `objective=0` on every run for months. Reading the
+    plugin's own export cannot drift from the registration API that way.
+    """
+    registry = metadata.get("registry", {})
+    return {kind: {entry.get("id") for entry in registry.get(kind, []) if entry.get("id")}
+            for kind in REGISTRY_KINDS}
+
+
+def source_types():
+    """Every type name registered anywhere in the Java source, by kind.
+
+    Two idioms are in use and BOTH must be resolved:
+        objectives.objective("BreakBlocks")            — 25 of 40 objectives, all actions,
+                                                          conditions and triggers
+        public static final String TYPE = "KillMobs";  — the other 15 objectives
+        objectives.objective(TYPE)
+    A literal-only scanner finds 25 of 40 and looks healthy doing it, which is a worse
+    failure than finding zero. Variables use a third entry point, registerVariable("Name", …),
+    and must be included or EXCLUDE_INTEGRATION's variable entries (TownyNationName) look
+    stale when they are not.
+    """
+    found = {kind: set() for kind in REGISTRY_KINDS}
+    unresolved = []
     for path in SRC.rglob("*.java"):
         text = path.read_text(errors="replace")
-        for k, rx in pat.items():
-            found[k].update(m.group(1) for m in rx.finditer(text))
+        constants = dict(re.findall(
+            r'static\s+final\s+String\s+([A-Za-z_]\w*)\s*=\s*"([^"]+)"', text))
+
+        def take(kind, arg, where):
+            if arg.startswith('"'):
+                found[kind].add(arg.strip('"'))
+            elif arg in constants:
+                found[kind].add(constants[arg])
+            else:
+                unresolved.append(f"{path.name}: {where}({arg})")
+
+        for kind, method in CATALOG_ENTRY.items():
+            for arg in re.findall(r'\b' + kind + r'\.' + method + r'\(\s*([^)\s,]+)\s*\)', text):
+                take(kind, arg, f"{kind}.{method}")
+        for arg in re.findall(r'\bregisterVariable\(\s*([^,\s]+)\s*,', text):
+            take("variables", arg, "registerVariable")
+
+    if unresolved:
+        sys.exit(
+            "COVERAGE SCANNER ERROR — type name(s) could not be resolved to a string literal:\n"
+            + "\n".join("   - " + u for u in unresolved)
+            + "\n\nThe scanner refuses to guess. Either a name is now built dynamically, which\n"
+              "breaks this gate's premise, or a new registration idiom was introduced and\n"
+              "source_types() needs teaching. Do NOT 'fix' this by skipping the name — silently\n"
+              "dropping unresolvable names is exactly how a scanner under-counts and still\n"
+              "reports success.")
     return found
 
 
@@ -108,15 +196,59 @@ def main():
     all_cmds = [c for c, _ in commands]
 
     # ---------- coverage ----------
-    reg = registered_types()
-    blob = "\n".join(all_cmds)
-    missing = []
-    for kind, names in reg.items():
-        for n in sorted(names):
-            if n in EXCLUDE_INTEGRATION or n in EXCLUDE_VARIABLE:
-                continue
-            if not re.search(r"(?<![A-Za-z0-9])" + re.escape(n) + r"(?![A-Za-z0-9])", blob):
-                missing.append(f"{kind} {n}")
+    # Three assertions over two independently-derived sets. RUNTIME is what the plugin says it
+    # registered; SOURCE is what the tree declares. Their difference is the integration-gated
+    # set, and every member of it must be excluded BY HAND — `integrationOnly` in the export is
+    # false on all 286 entries across an integration-free run and a run with the host plugin
+    # present, so it cannot carry the exclusion (measured, CI run 32313184030).
+    reg = {kind: set() for kind in REGISTRY_KINDS}
+    coverage = []
+    uncovered_variables = []
+    metadata = read_metadata()
+    if metadata is None:
+        coverage.append(f"metadata was not written ({COMMAND_METADATA}); the coverage gate could not run")
+    else:
+        reg = runtime_types(metadata)
+        src = source_types()
+        blob = "\n".join(all_cmds)
+
+        def covered(name):
+            return re.search(r"(?<![A-Za-z0-9])" + re.escape(name) + r"(?![A-Za-z0-9])", blob)
+
+        # (a) everything that registered in an integration-free run must have a test command
+        for kind in COVERED_KINDS:
+            for n in sorted(reg[kind]):
+                if n in EXCLUDE_VARIABLE:
+                    continue
+                if not covered(n):
+                    coverage.append(f"(a) {kind[:-1]} {n} registered at runtime but has no command in commands.txt")
+
+        # (b) everything in source but NOT registered is integration-gated and must be listed
+        gated = set()
+        for kind in REGISTRY_KINDS:
+            gated |= src[kind] - reg[kind]
+        for n in sorted(gated - EXCLUDE_INTEGRATION):
+            coverage.append(f"(b) {n} is integration-gated (declared in source, never registered) "
+                            f"but is not listed in EXCLUDE_INTEGRATION")
+
+        # (c) the exclusion list must not rot in the other direction
+        all_source = set().union(*src.values())
+        for n in sorted(EXCLUDE_INTEGRATION - all_source):
+            coverage.append(f"(c) EXCLUDE_INTEGRATION lists {n}, which no longer exists in the source")
+
+        # (d) floors — a catastrophic registration failure must be loud, not a silent zero
+        for kind in REGISTRY_KINDS:
+            count = len(reg[kind])
+            if count == 0:
+                coverage.append(f"(d) {kind} registry is EMPTY — nothing registered at runtime")
+            elif count < REGISTRY_FLOORS[kind]:
+                coverage.append(f"(d) {kind} = {count}, below the floor of {REGISTRY_FLOORS[kind]}")
+
+        # VARIABLE COVERAGE: reported, not asserted. 50 of 66 registered variables have no
+        # `qa variables check` line, so making this fail would ship a red gate on day one and
+        # the assertion would simply be deleted. Printed every run so the number cannot be
+        # forgotten; promote it to a hard assertion once commands.txt covers them.
+        uncovered_variables = sorted(n for n in reg["variables"] if not covered(n))
 
     # ---------- correctness ----------
     ready = any("Done (" in l for l in log)
@@ -145,13 +277,28 @@ def main():
     print("=" * 72)
     print(f"server reached READY : {ready}")
     print(f"commands in sweep    : {len(commands)}")
-    print("registered types     : " + ", ".join(f"{k}={len(v)}" for k, v in reg.items()))
-    print(f"tolerated edge errors: {len(tolerated)}")
+    print("registered types     : " + ", ".join(f"{k}={len(reg[k])}" for k in REGISTRY_KINDS))
+    print(f"tolerated edge errors: {len(tolerated)} (ceiling {TOLERATED_CEILING})")
+    # Always printed, pass or fail. A gate that only speaks up when it fails gives no evidence
+    # it ran at all — which is how `objective=0` went unnoticed on every run for months.
+    labels = {"(a)": "runtime types have a test command",
+              "(b)": "gated types are excluded by hand",
+              "(c)": "exclusions still exist in source",
+              "(d)": "registry counts meet their floors"}
+    print("coverage gate        :")
+    for tag, label in labels.items():
+        failed = sum(1 for c in coverage if c.startswith(tag))
+        print(f"   {tag} {label:38} {'ok' if not failed else f'FAIL ({failed})'}")
     print()
-    if missing:
-        print(f"COVERAGE GAP — {len(missing)} registered type(s) with no test command:")
-        for m in missing:
-            print(f"   - {m}")
+    if uncovered_variables:
+        print(f"VARIABLE COVERAGE NOTE — {len(uncovered_variables)} of {len(reg['variables'])} "
+              f"registered variables have no test command (reported, not asserted):")
+        print("   " + ", ".join(uncovered_variables))
+        print()
+    if coverage:
+        print(f"COVERAGE GATE — {len(coverage)} failure(s):")
+        for c in coverage:
+            print(f"   - {c}")
         print()
     if real_fails:
         print(f"FAILURES — {len(real_fails)} unexpected error(s):")
@@ -213,9 +360,26 @@ def main():
             print(f"   - {error}")
         print()
 
-    ok = ready and not missing and not real_fails and not schema_errors
+    if len(tolerated) > TOLERATED_CEILING:
+        print(f"TOLERATED CEILING EXCEEDED — {len(tolerated)} tolerated edge errors, "
+              f"ceiling is {TOLERATED_CEILING}. A new command started failing and was absorbed "
+              f"by an existing tolerance tag.")
+        print()
+
+    ok = (ready and not coverage and not real_fails and not schema_errors
+          and len(tolerated) <= TOLERATED_CEILING)
     print("RESULT:", "PASS" if ok else "FAIL")
     sys.exit(0 if ok else 1)
+
+
+def read_metadata():
+    """The runtime metadata bundle, or None if the plugin never wrote it."""
+    if not COMMAND_METADATA.exists():
+        return None
+    try:
+        return json.loads(COMMAND_METADATA.read_text())
+    except json.JSONDecodeError:
+        return None
 
 
 def weak_description(description, name, token):
