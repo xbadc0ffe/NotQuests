@@ -42,7 +42,9 @@ public final class Enchant {
                         FieldTypes.optionalNumberExpression().config("specifics.maxLevelExpression"),
                         "Maximum enchantment level that counts.")
                 .taskDescription((objective, questPlayer, activeObjective) -> taskDescription(main, objective, questPlayer, activeObjective))
-                .on(EnchantItemEvent.class, (event, objective) -> {
+                // EnchantItemEvent names its player getEnchanter(), not getPlayer(), so the default
+                // reflective resolver cannot find one and the objective never progresses.
+                .on(EnchantItemEvent.class, EnchantItemEvent::getEnchanter, (event, objective) -> {
                     final ItemStack item = event.getItem();
                     final ItemStackSelection selection = objective.itemSelection("materials");
                     if (selection == null || !selection.checkIfIsIncluded(item)) {
