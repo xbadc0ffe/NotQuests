@@ -205,10 +205,26 @@ public final class ObjectiveType {
     }
 
     private <E extends Event> EventExecutor globalEventExecutor(final GlobalEventBinding<E> binding) {
-        return (listener, event) -> binding.handler().accept(binding.eventType().cast(event));
+        return (listener, event) -> {
+            if (!binding.eventType().isInstance(event)) {
+                return;
+            }
+            binding.handler().accept(binding.eventType().cast(event));
+        };
     }
 
     private <E extends Event> void handleEvent(final EventBinding<E> binding, final Event event) {
+        // Bukkit resolves the class we registered for to a HandlerList by walking up the superclass
+        // chain until it finds one that declares getHandlerList(), then delivers *every* event on
+        // that list to us. Registering for a subclass therefore also hands us its parent and its
+        // siblings: PlayerDeathEvent shares EntityDeathEvent's list, and CraftItemEvent /
+        // SmithItemEvent share InventoryClickEvent's with InventoryCreativeEvent. Bukkit's own
+        // executor for @EventHandler methods filters these out with an isInstance check before
+        // invoking the handler; because we supply a hand-written EventExecutor we have to do the
+        // same, or the cast below throws on every mismatch. Drop silently, exactly as Bukkit does.
+        if (!binding.eventType().isInstance(event)) {
+            return;
+        }
         final E typedEvent = binding.eventType().cast(event);
         final Player player = binding.playerResolver().apply(typedEvent);
         if (player == null) {
@@ -221,7 +237,7 @@ public final class ObjectiveType {
         questPlayer.queueObjectiveCheck(activeObjective -> {
             if (activeObjective.getObjective() instanceof final DefinedObjective objective
                     && objective.definition() == this) {
-                binding.handler().accept(binding.eventType().cast(event), new ObjectiveEventContext(objective, activeObjective));
+                binding.handler().accept(typedEvent, new ObjectiveEventContext(objective, activeObjective));
             }
         });
         questPlayer.checkQueuedObjectives();
