@@ -22,7 +22,7 @@ group = "com.notquests"
 // The first two fields track the supported Minecraft version; the third is a globally
 // monotonic build counter that never resets and never decrements, so it keeps climbing
 // across Minecraft versions (26.2.8 -> 26.3.9, not 26.3.1).
-version = "26.2.1"
+version = "26.2.2"
 
 
 repositories {

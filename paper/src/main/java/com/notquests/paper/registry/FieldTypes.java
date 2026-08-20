@@ -428,10 +428,29 @@ public final class FieldTypes {
     public static FieldType<ItemStackSelection> itemSelection() {
         return new FieldType<>(
                 (main, name) -> itemStackSelectionArgument(main),
-                (main, configuration, path, fallback) -> {
-                    final ItemStackSelection selection = new ItemStackSelection(main);
-                    selection.loadFromFileConfiguration(configuration, path);
-                    return selection;
+                new FieldType.ConfigCodec<>() {
+                    @Override
+                    public ItemStackSelection load(
+                            final com.notquests.paper.NotQuests main,
+                            final org.bukkit.configuration.file.FileConfiguration configuration,
+                            final String path,
+                            final ItemStackSelection fallback) {
+                        final ItemStackSelection selection = new ItemStackSelection(main);
+                        selection.loadFromFileConfiguration(configuration, path);
+                        return selection;
+                    }
+
+                    @Override
+                    public void save(
+                            final com.notquests.paper.NotQuests main,
+                            final org.bukkit.configuration.file.FileConfiguration configuration,
+                            final String path,
+                            final Object value) {
+                        configuration.set(path, null);
+                        if (value instanceof ItemStackSelection selection) {
+                            selection.saveToFileConfiguration(configuration, path);
+                        }
+                    }
                 },
                 "item selection",
                 null);
