@@ -107,6 +107,14 @@ CRASH = re.compile(
     r"[A-Za-z]*(?:Exception|Error)\b(?!s\b)|"
     r"Caused by:|Unhandled exception")
 
+# NQCommandManager warns and CONTINUES when a command fails to register or an export fails
+# (commands/framework/NQCommandManager.java:197, :202, :207). Nothing else notices: the
+# commands that did register behave normally, metadata.json is still written, and the schema
+# gate still passes — so the sweep could go green on a half-registered command tree. Verified
+# against the known-good logs from CI run 32313184030: 17 WARN lines, none matching (they are
+# all JVM sun.misc.Unsafe / restricted-method / offline-mode notices).
+REGISTRATION_WARNING = re.compile(r"Failed to register native command|Failed to export")
+
 
 def runtime_types(metadata):
     """Types actually registered by the running plugin, from its own metadata export.
@@ -271,6 +279,8 @@ def main():
             # echo-less crash / custom parser error: never expected, can't be attributed -> fail
             real_fails.append(("<crash / unattributed>", line.strip()))
 
+    registration_failures = [l.strip() for l in log if REGISTRATION_WARNING.search(l)]
+
     # ---------- report ----------
     print("=" * 72)
     print("NotQuests E2E sweep analysis")
@@ -360,6 +370,13 @@ def main():
             print(f"   - {error}")
         print()
 
+    if registration_failures:
+        print(f"COMMAND REGISTRATION — {len(registration_failures)} command(s) or export(s) "
+              f"failed to register; the command tree is incomplete:")
+        for line in registration_failures:
+            print(f"   - {line}")
+        print()
+
     if len(tolerated) > TOLERATED_CEILING:
         print(f"TOLERATED CEILING EXCEEDED — {len(tolerated)} tolerated edge errors, "
               f"ceiling is {TOLERATED_CEILING}. A new command started failing and was absorbed "
@@ -367,7 +384,7 @@ def main():
         print()
 
     ok = (ready and not coverage and not real_fails and not schema_errors
-          and len(tolerated) <= TOLERATED_CEILING)
+          and not registration_failures and len(tolerated) <= TOLERATED_CEILING)
     print("RESULT:", "PASS" if ok else "FAIL")
     sys.exit(0 if ok else 1)
 
