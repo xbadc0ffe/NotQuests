@@ -93,7 +93,24 @@ public final class ConfigurationMigrations {
     if (configuration == null) {
       return "0.0.0";
     }
-    return cleanVersion(configuration.getString(DATA_VERSION, "0.0.0"));
+    return translateLegacyForkVersion(cleanVersion(configuration.getString(DATA_VERSION, "0.0.0")));
+  }
+
+  // FORK DIVERGENCE: fork builds 26.2.1 and 26.2.2 stored their own version here, but
+  // they wrote pre-v7 data shapes. Because 26.x parses above every upstream migration
+  // target, Version630Migration (target 7.0.0) would be skipped with no log line and
+  // the v7 readers would not understand their item and location data. Map exactly those
+  // two known legacy fork builds into the pre-7.0.0 space (above 6.3.0, so the released
+  // 6.3 layout work is still correctly treated as done). The v7 conversion is idempotent
+  // and shape-sniffing, so this is safe even for data it has already seen. Once any
+  // migration pass completes, the stored version advances to the current 26.x build and
+  // never matches this list again. Never add future 26.x builds here - they write
+  // canonical v7 data.
+  private static String translateLegacyForkVersion(final String version) {
+    return switch (version) {
+      case "26.2.1", "26.2.2" -> "6.9.9";
+      default -> version;
+    };
   }
 
   public static void saveDataVersion(final YamlConfig configuration, final String version) {
