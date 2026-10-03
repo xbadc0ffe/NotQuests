@@ -61,7 +61,24 @@ HERE = re.compile(r"<--\[HERE\]\s*$")
 TS = re.compile(r"^\[\d\d:\d\d:\d\d INFO\]:\s*")
 # echo-less hard errors (crashes / custom parser failures) — never expected, always fail.
 # Stack-frame lines ("at com.example...") are skipped separately; flagging the headline is enough.
-CRASH = re.compile(r"Cannot parse|NullPointerException|Cannot invoke|\bException\b")
+#
+# `\bException\b` used to carry this and caught almost nothing. \b needs a word/non-word
+# transition, and in "ClassCastException" the character before "Exception" is "t" — a word
+# character — so no boundary exists there. Every qualified exception name passed straight
+# through: ClassCastException, IllegalArgumentException, IllegalStateException,
+# NoClassDefFoundError. Only a bare "Exception" or the explicitly listed NullPointerException
+# was ever flagged.
+#
+# `[A-Za-z]*(?:Exception|Error)\b` matches the whole qualified name instead, and the trailing
+# \b plus the (?!s\b) lookahead keep plurals like "Suppressed 4 Exceptions" out. Paper prints
+# "Could not pass event ... to NotQuests" as the headline for a throw inside an event handler,
+# with the exception type on the following line and "Caused by:" for the chain, so those are
+# matched too — an event-handler crash otherwise shows nothing else this pattern would see.
+# Case is deliberate: lowercase "error" occurs in ordinary Paper output and is not matched.
+CRASH = re.compile(
+    r"Cannot parse|Cannot invoke|Could not pass event|"
+    r"[A-Za-z]*(?:Exception|Error)\b(?!s\b)|"
+    r"Caused by:|Unhandled exception")
 RESPONSE_ERROR = re.compile(
     r"Incorrect argument|Unknown or incomplete|Unknown command|"
     r"Cannot |Could not |No .+ found|does not exist|"
