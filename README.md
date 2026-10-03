@@ -6,6 +6,13 @@
 
 # NotQuests - Best Quest Plugin
 
+> **This is the xbadc0ffe fork**, tracking upstream
+> [AlessioGr/NotQuests](https://github.com/AlessioGr/NotQuests) and aimed at upstream
+> PRs. It versions as `<mc major>.<mc minor>.<fork build counter>` (e.g. `26.3.3` =
+> Minecraft 26.3, fork build 3) - the numbers deliberately do not correspond to
+> upstream's `7.x` releases. The fork targets Paper only and does not report to
+> bStats; the deployable jar is `build/final-jars/notquests-<version>.jar`.
+
 Download: https://modrinth.com/plugin/notquests/versions
 
 NotQuests allows you to create powerful quests for pretty much any type of server.
