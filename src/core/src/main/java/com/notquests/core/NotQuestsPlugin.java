@@ -6892,16 +6892,12 @@ public final class NotQuestsPlugin {
             warn(warningSink, "Cannot give quest: unknown quest " + questName + ".");
             return false;
         }
-        if (!giveOptions.forceGive() && !quest.isTakeEnabled()) {
-            final String message = translate(questPlayer,
-                    "chat.take-disabled",
-                    questReplacements(quest),
-                    "<error>Accepting or previewing the quest <highlight>"
-                            + quest.getIdentifier() + "</highlight> is disabled.");
-            questPlayer.sendMessage(message);
-            warn(warningSink, message);
-            return false;
-        }
+        // FORK DIVERGENCE: takeEnabled gates only the typed take/preview commands (checked in
+        // PlayerQuestCommands before this call), never the give itself. takeEnabled=false is
+        // the long-standing way to make a quest NPC/GUI-only: the shipped quest-preview GUI's
+        // accept button and admin-configured GiveQuest actions must still work for it, and the
+        // NPC GUI deliberately lists such quests. Accept rules below still apply to all
+        // non-forced gives.
         if (!giveOptions.forceGive()) {
             final Quest.AcceptCheck check = Quest.acceptCheck(
                     quest,

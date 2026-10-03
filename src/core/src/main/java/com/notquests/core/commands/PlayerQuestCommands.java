@@ -27,6 +27,12 @@ final class PlayerQuestCommands {
         if (plugin.questManager().getQuest(questName) == null) {
             return List.of(missingQuest(questName));
         }
+        // takeEnabled gates the typed command only; GUI accepts and GiveQuest actions go
+        // straight to giveQuest, which no longer re-checks it (see NotQuestsPlugin.giveQuest).
+        final CommandMessage disabled = takeDisabledMessage(plugin, questName);
+        if (disabled != null) {
+            return List.of(disabled);
+        }
         plugin.giveQuest(target, questName, false, ignored -> {});
         return List.of();
     }
