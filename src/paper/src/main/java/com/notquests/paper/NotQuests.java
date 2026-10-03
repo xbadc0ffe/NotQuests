@@ -41,7 +41,6 @@ import com.notquests.paper.events.QuestEvents;
 import com.notquests.paper.events.notquests.NotQuestsFullyLoadedEvent;
 import com.notquests.paper.gui.PaperGuiRenderer;
 import com.notquests.paper.integrations.PaperIntegrations;
-import com.notquests.paper.metrics.Metrics;
 import com.notquests.paper.npc.PaperArmorStands;
 
 import java.nio.file.Path;
@@ -68,9 +67,6 @@ public class NotQuests implements NotQuestsPlatform {
     // Renderers and platform services
     private PaperGuiRenderer guiRenderer;
     private PaperIntegrations integrations;
-
-    //Metrics
-    private Metrics metrics;
 
     public final JavaPlugin getMain(){
         return main;
@@ -296,13 +292,9 @@ public class NotQuests implements NotQuestsPlatform {
 
     @Override
     public Optional<MetricsBridge> metricsBridge() {
-        return Optional.of(values -> {
-            metrics = new Metrics(main, values.pluginId());
-            values.singleLineCharts().forEach((name, value) ->
-                    metrics.addCustomChart(new Metrics.SingleLineChart(name, value::get)));
-            values.advancedPieCharts().forEach((name, value) ->
-                    metrics.addCustomChart(new Metrics.AdvancedPie(name, value::get)));
-        });
+        // FORK DIVERGENCE: this fork does not report metrics to bStats (12824 is
+        // upstream's plugin id). Core treats an empty bridge as metrics-disabled.
+        return Optional.empty();
     }
 
     @Override
@@ -319,7 +311,7 @@ public class NotQuests implements NotQuestsPlatform {
 
     @Override
     public void closePlatform() {
-        metrics = null;
+        // Nothing to release: the fork keeps no bStats reporter (see metricsBridge()).
     }
 
     public ItemStack journalItem() {
