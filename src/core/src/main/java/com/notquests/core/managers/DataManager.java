@@ -1147,6 +1147,37 @@ public class DataManager {
         }
     }
 
+    /**
+     * npcSelector fields hold a canonical "type:id" string at runtime, but configuration data
+     * migrated from released 6.x stores the typed map ({type, integerID|uuidID|stringID, name})
+     * that the v7 migration itself writes for recipientNPC and npcToTalkTo. The objective
+     * handlers compare the field text against the interact event's selector, so a map-shaped
+     * value silently matches nothing - deliveries and NPC talks from migrated quests never
+     * progress. Collapse maps to the selector here; strings pass through untouched, and an
+     * incomplete map is kept as-is rather than guessed.
+     */
+    static Object npcSelectorValue(final Object decoded) {
+        if (!(decoded instanceof Map<?, ?> npc)) {
+            return decoded;
+        }
+        final Object type = npc.get("type");
+        Object id = npc.get("stringID");
+        if (id == null) {
+            id = npc.get("integerID");
+        }
+        if (id == null) {
+            id = npc.get("uuidID");
+        }
+        if (id == null) {
+            id = npc.get("id");
+        }
+        if (type == null || String.valueOf(type).isBlank()
+                || id == null || String.valueOf(id).isBlank()) {
+            return decoded;
+        }
+        return String.valueOf(type).toLowerCase(Locale.ROOT) + ":" + id;
+    }
+
     private Object configuredFieldValue(
             final Map<String, Object> entry,
             final RegistryField.Definition field) {
@@ -1162,6 +1193,7 @@ public class DataManager {
         final Object decoded = decodeValue(configured);
         return switch (field.valueType()) {
             case "itemSelection", "itemStack" -> itemSelection(decoded);
+            case "npcSelector" -> npcSelectorValue(decoded);
             case "location" -> decoded instanceof NQLocation location ? location : null;
             case "duration" -> {
                 if (decoded instanceof Duration duration) {
