@@ -144,7 +144,9 @@ dependencies {
  * Configure NotQuests for shading
  */
 val shadowPath = "com.notquests.paper.shadow"
-val minecraftTargetVersion = "26.3"
+// FORK DIVERGENCE: derived from the root fork version (<mc major>.<mc minor>.<build counter>);
+// never edit by hand - bump the root version and this follows.
+val minecraftTargetVersion = rootProject.extra["minecraftTargetVersion"] as String
 
 
 tasks {
@@ -214,7 +216,9 @@ tasks {
 
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-        archiveFileName.set("notquests-${project.version}-$minecraftTargetVersion-paper.jar")
+        // FORK DIVERGENCE: the fork version already names the Minecraft version, so the
+        // deployable jar is plain notquests-<version>.jar.
+        archiveFileName.set("notquests-${project.version}.jar")
         archiveClassifier.set("")
 
     }
@@ -262,7 +266,7 @@ bukkit {
     name = "NotQuests"
     version = rootProject.version.toString()
     main = "com.notquests.Main"
-    apiVersion = "26.3"
+    apiVersion = minecraftTargetVersion
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
     website = "https://www.notquests.com"
@@ -320,7 +324,7 @@ paper {
     name = "NotQuests"
     version = rootProject.version.toString()
     main = "com.notquests.Main"
-    apiVersion = "26.3"
+    apiVersion = minecraftTargetVersion
     authors = listOf("AlessioGr")
     description = "Flexible, open, GUI Quest Plugin for Minecraft"
     website = "https://www.notquests.com"

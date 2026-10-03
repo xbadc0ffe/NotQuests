@@ -30,9 +30,22 @@ subprojects {
 }
 
 group = "com.notquests"
-version = "7.0.0"
+// FORK DIVERGENCE: the fork versions as <mc major>.<mc minor>.<fork build counter>.
+// The first two fields track the supported Minecraft version; the third is a globally
+// monotonic build counter that never resets and never decrements, so it keeps climbing
+// across Minecraft versions (26.2.8 -> 26.3.9, not 26.3.1). Upstream's 7.x line does
+// not correspond to these numbers.
+version = "26.3.3"
 
-val minecraftTargetVersion = "26.3"
+// Derived from the version above - never edit this by hand. The guard fails the build
+// at configuration time if the version stops matching the fork scheme.
+val minecraftTargetVersion = project.version.toString().split(".").let { fields ->
+    require(fields.size >= 3) {
+        "Fork version must be <mc major>.<mc minor>.<build counter>, got: ${project.version}"
+    }
+    "${fields[0]}.${fields[1]}"
+}
+extra["minecraftTargetVersion"] = minecraftTargetVersion
 
 repositories {
 }
@@ -65,11 +78,15 @@ tasks {
 
         into(layout.buildDirectory.dir("final-jars"))
 
+        // FORK DIVERGENCE: the fork version already carries the Minecraft version in its
+        // first two fields, so the deployable Paper jar is plain notquests-<version>.jar
+        // (the name admins deploy). The NeoForge jar keeps a -neoforge suffix to stay
+        // unambiguous next to it.
         from(project(":paper").tasks.named("shadowJar").map { it.outputs.files.singleFile }) {
-            rename { "notquests-${project.version}-$minecraftTargetVersion-paper.jar" }
+            rename { "notquests-${project.version}.jar" }
         }
         from(project(":neoforge").tasks.named("jar").map { it.outputs.files.singleFile }) {
-            rename { "notquests-${project.version}-$minecraftTargetVersion-neoforge.jar" }
+            rename { "notquests-${project.version}-neoforge.jar" }
         }
     }
 
