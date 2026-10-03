@@ -26,6 +26,20 @@ if [ ! -f "$BETONQUEST_JAR" ]; then
   exit 1
 fi
 
+# Exit code reserved for "the harness itself broke", as distinct from 1 = "an assertion about
+# NotQuests failed". Keeping those apart is the whole point of the assertion block below: the
+# original rg-based form made a 127 (tool missing) indistinguishable from a 1 (pattern not
+# found), and GitHub-hosted runners do not ship ripgrep.
+HARNESS_ERROR=2
+
+# Every assertion in this file is a grep scan. Check the binary exists BEFORE the ~8 minute
+# server boot: a missing tool should cost a second, not a CI slot - and it must never reach
+# the assertion block, where a 127 would read as a failing assertion.
+if ! command -v grep >/dev/null 2>&1; then
+  echo "::error:: harness error: grep is not available; no assertion in this sweep can be evaluated."
+  exit "$HARNESS_ERROR"
+fi
+
 rm -f "$LOG" "$STRIPPED_LOG" "$FIFO"
 mkfifo "$FIFO"
 mkdir -p "$RUN/plugins/BetonQuest/QuestPackages/nqtest"
@@ -118,12 +132,22 @@ done
 
 perl -pe 's/\e\[[0-9;]*m//g' "$LOG" > "$STRIPPED_LOG"
 
+# Three states, three answers: 0 = found (assertion holds), 1 = not found (assertion fails),
+# anything else = the scan itself broke and no verdict exists. The original `if ! rg -q` form
+# collapsed the last two into one, which is how a missing binary spent a year reading as
+# "NotQuests did not enable BetonQuest support".
 assert_log() {
   local pattern="$1"
   local message="$2"
-  if ! rg -q "$pattern" "$STRIPPED_LOG"; then
+  local status=0
+  grep -qE "$pattern" "$STRIPPED_LOG" || status=$?
+  if [ "$status" -gt 1 ]; then
+    echo "::error:: harness error: grep exited $status scanning $STRIPPED_LOG; this is not an assertion verdict."
+    exit "$HARNESS_ERROR"
+  fi
+  if [ "$status" -eq 1 ]; then
     echo "::error:: $message"
-    rg -n 'BetonQuest|BQQuest|Incorrect argument|Unknown or incomplete|Exception|ERROR' "$STRIPPED_LOG" || true
+    grep -nE 'BetonQuest|BQQuest|Incorrect argument|Unknown or incomplete|Exception|ERROR' "$STRIPPED_LOG" || true
     exit 1
   fi
 }
@@ -138,9 +162,18 @@ assert_log 'BetonQuestFireInlineEvent Reward successfully added to Quest BQQuest
 assert_log 'BetonQuestObjectiveStateChange Objective successfully added to Quest BQQuest!' 'BetonQuest objective command failed.'
 assert_log 'BetonQuestCondition variable \(boolean\) result for player .*: false' 'BetonQuestCondition variable check command failed.'
 
-if rg -n 'Incorrect argument|Unknown or incomplete|Exception|ERROR|Could not pass event|NoClassDefFoundError|zip file closed' "$STRIPPED_LOG"; then
+# Same three-state discipline as assert_log, inverted sense: here 0 (found) is the failure.
+# The original `if rg -n` form read ANY non-zero - including 127 - as "clean", so a missing
+# binary produced a false PASS at the final gate.
+error_scan_status=0
+grep -nE 'Incorrect argument|Unknown or incomplete|Exception|ERROR|Could not pass event|NoClassDefFoundError|zip file closed' "$STRIPPED_LOG" || error_scan_status=$?
+if [ "$error_scan_status" -eq 0 ]; then
   echo "::error:: BetonQuest E2E sweep produced parser/runtime errors."
   exit 1
+fi
+if [ "$error_scan_status" -gt 1 ]; then
+  echo "::error:: harness error: grep exited $error_scan_status scanning $STRIPPED_LOG; this is not a clean verdict."
+  exit "$HARNESS_ERROR"
 fi
 
 echo "RESULT: PASS"
