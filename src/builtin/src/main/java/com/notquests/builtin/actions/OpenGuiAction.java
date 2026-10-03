@@ -11,6 +11,12 @@ import java.util.List;
 public final class OpenGuiAction {
     private static final String GUI_NAME = "guiName";
     private static final String PLAYER = "player";
+    // Compatibility alias for PLAYER in single-line parsing: every shipped GUI YAML writes
+    // --targetplayer, and admin-authored actions follow their example. Deliberately NOT
+    // registered via .flag(...) - it is one field with two spellings, not two fields; the
+    // value persists under specifics.player either way. (The GUI click path accepts both
+    // spellings independently in GuiService; this covers actions.yml single-line parsing.)
+    private static final String TARGET_PLAYER_ALIAS = "targetplayer";
     private static final String QUEST = "quest";
     private static final String NPC = "npc";
     private static final String CATEGORY = "category";
@@ -39,13 +45,15 @@ public final class OpenGuiAction {
                             String.join(" ", arguments),
                             List.of(
                                     new ActionFlag(PLAYER),
+                                    new ActionFlag(TARGET_PLAYER_ALIAS),
                                     new ActionFlag(QUEST),
                                     new ActionFlag(NPC),
                                     new ActionFlag(CATEGORY)),
                             ActionFlag::name,
                             ignored -> false,
                             (flag, raw) -> raw);
-                    action.setValue(PLAYER, String.valueOf(flags.values().getOrDefault(PLAYER, "")));
+                    action.setValue(PLAYER, String.valueOf(flags.values().getOrDefault(
+                            PLAYER, flags.values().getOrDefault(TARGET_PLAYER_ALIAS, ""))));
                     action.setValue(QUEST, String.valueOf(flags.values().getOrDefault(QUEST, "")));
                     action.setValue(NPC, parseNpcId(String.valueOf(flags.values().getOrDefault(NPC, "-1"))));
                     action.setValue(CATEGORY, String.valueOf(flags.values().getOrDefault(CATEGORY, "")));

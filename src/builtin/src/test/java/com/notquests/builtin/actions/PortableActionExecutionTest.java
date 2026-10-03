@@ -105,6 +105,27 @@ class PortableActionExecutionTest {
   }
 
   @Test
+  void openGuiSingleLineParserAcceptsTargetplayerAliasForPlayer() {
+    final NotQuestsRegistry registry = new NotQuestsRegistry();
+    BuiltInPack.register(registry.createAdapter(new NotQuestsRegistry.PlatformHooks(null, null, null)));
+    final Actions.Type openGui = action(registry, "OpenGui");
+
+    // The spelling every shipped GUI YAML writes.
+    final Action aliased = new Action(0, "OpenGui", null);
+    openGui.singleLineParser().parse(
+        aliased::setValue,
+        List.of("quests", "--targetplayer", "Steve"));
+    assertEquals("Steve", aliased.text("player"));
+
+    // An explicit --player wins over the alias.
+    final Action both = new Action(0, "OpenGui", null);
+    openGui.singleLineParser().parse(
+        both::setValue,
+        List.of("quests", "--player", "primary", "--targetplayer", "secondary"));
+    assertEquals("primary", both.text("player"));
+  }
+
+  @Test
   void openGuiSingleLineParserReportsMissingGuiNameCleanly() {
     final NotQuestsRegistry registry = new NotQuestsRegistry();
     BuiltInPack.register(registry.createAdapter(new NotQuestsRegistry.PlatformHooks(null, null, null)));
