@@ -1433,14 +1433,60 @@ public class DataManager {
         return null;
     }
 
-    private static NQLocation storedLocation(final Map<?, ?> map) {
+    private NQLocation storedLocation(final Map<?, ?> map) {
         return NQLocation.at(
-                String.valueOf(map.get("world") == null ? "world" : map.get("world")),
+                resolvedWorldName(map.get("world") == null ? null : String.valueOf(map.get("world"))),
                 number(map.get("x"), 0),
                 number(map.get("y"), 0),
                 number(map.get("z"), 0),
                 (float) number(map.get("yaw"), 0),
                 (float) number(map.get("pitch"), 0));
+    }
+
+    /**
+     * Stored world identifiers can be a world name or, for data migrated from released Bukkit
+     * Location serialization, a dimension's namespaced key such as minecraft:overworld (the
+     * migration runs before worlds exist and preserves the raw key). Quest loading runs after
+     * worlds are available, so key-shaped identifiers are resolved against the live world list
+     * here: the vanilla dimension keys map onto Bukkit's main/suffixed world-folder convention,
+     * and any other key falls back to a case-insensitive match on its path part. An identifier
+     * that cannot be resolved is kept verbatim rather than guessed.
+     */
+    private String resolvedWorldName(final String storedWorld) {
+        return resolvedWorldName(storedWorld, adapter == null ? List.of() : adapter.worldNames());
+    }
+
+    static String resolvedWorldName(final String storedWorld, final List<String> worldNames) {
+        if (storedWorld == null) {
+            return "world";
+        }
+        if (storedWorld.indexOf(':') < 0) {
+            return storedWorld;
+        }
+        if (worldNames == null || worldNames.isEmpty()) {
+            return storedWorld;
+        }
+        final String mainWorld = worldNames.get(0);
+        switch (storedWorld) {
+            case "minecraft:overworld":
+                return mainWorld;
+            case "minecraft:the_nether":
+                return worldNames.stream()
+                        .filter(name -> name.endsWith("_nether"))
+                        .findFirst()
+                        .orElse(storedWorld);
+            case "minecraft:the_end":
+                return worldNames.stream()
+                        .filter(name -> name.endsWith("_the_end"))
+                        .findFirst()
+                        .orElse(storedWorld);
+            default:
+                final String plainName = storedWorld.substring(storedWorld.indexOf(':') + 1);
+                return worldNames.stream()
+                        .filter(name -> name.equalsIgnoreCase(plainName))
+                        .findFirst()
+                        .orElse(storedWorld);
+        }
     }
 
     private Actions.Type actionType(final String typeId) {

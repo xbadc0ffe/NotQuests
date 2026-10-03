@@ -680,7 +680,15 @@ public final class Version630Migration implements Migration<Context> {
   private static Map<String, Object> portableLocation(final Map<?, ?> source) {
     final Map<String, Object> location = new LinkedHashMap<>();
     location.put("$type", "location");
-    copy(source, location, "world");
+    // Released Bukkit Location serialization carries the world as either "world" (the
+    // world name) or, on newer Paper, only "world_key" (the dimension's namespaced key,
+    // e.g. minecraft:overworld). Dropping the fallback silently nulled the world for
+    // every key-form location, which no reader can ever match again. The raw key is
+    // preserved verbatim here; the runtime location reader resolves key-shaped world
+    // identifiers against the loaded worlds, which do not exist yet while this
+    // migration runs.
+    final Object world = source.get("world") == null ? source.get("world_key") : source.get("world");
+    location.put("world", world);
     copy(source, location, "x");
     copy(source, location, "y");
     copy(source, location, "z");
