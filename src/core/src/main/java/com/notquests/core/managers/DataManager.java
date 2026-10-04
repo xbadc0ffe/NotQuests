@@ -446,7 +446,30 @@ public class DataManager {
         return map;
     }
 
-    private static void saveYaml(final Path path, final Map<String, Object> map) throws IOException {
+    /**
+     * Hand-written comments live only in the on-disk file - the in-memory domain objects
+     * know nothing about them - so re-serializing through a fresh YamlConfig erased every
+     * admin comment on each save. YamlConfig keys loaded comments by path and re-attaches
+     * them on render (replaceContents retains them by design; the config migration relies
+     * on the same mechanism), so loading the existing file first keeps every comment whose
+     * key survives the rewrite. A comment attached to a deleted entry disappears with it.
+     * If the existing file cannot be read, the data still gets written - losing comments
+     * beats losing quests.
+     */
+    static void saveYaml(final Path path, final Map<String, Object> map) throws IOException {
+        if (Files.exists(path)) {
+            YamlConfig existing = null;
+            try {
+                existing = YamlConfig.load(path);
+            } catch (final IOException | RuntimeException ignored) {
+                // unreadable or corrupt - fall through to the comment-less write
+            }
+            if (existing != null) {
+                existing.replaceContents(map);
+                YamlConfig.save(existing, path);
+                return;
+            }
+        }
         YamlConfig.save(YamlConfig.fromMap(map), path);
     }
 
