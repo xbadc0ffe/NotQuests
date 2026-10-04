@@ -497,10 +497,13 @@ public final class GuiService {
             final GuiButton button,
             final PlatformPlayer player,
             final GuiContext context) {
-        final List<Quest> quests = questPlayer(player).getActiveQuestIdentifiers().stream()
-                .map(plugin::quest)
+        // FORK DIVERGENCE: active quests list in the order the player accepted them,
+        // matching pre-7.0.0 behavior - no alphabetical re-sort. getActiveQuests() is the
+        // acceptance-ordered list; getActiveQuestIdentifiers() is a hash Set and must not
+        // drive presentation order.
+        final List<Quest> quests = questPlayer(player).getActiveQuests().stream()
+                .map(active -> plugin.quest(active.getQuestIdentifier()))
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(Quest::getIdentifier, String.CASE_INSENSITIVE_ORDER))
                 .toList();
         return questSlots(layout, button, quests, player, context);
     }
@@ -512,9 +515,12 @@ public final class GuiService {
             final PlatformPlayer player,
             final GuiContext context) {
         final List<GuiSlot> slots = new ArrayList<>();
-        for (final Quest quest : quests.stream()
-                .sorted(Comparator.comparing(Quest::getIdentifier, String.CASE_INSENSITIVE_ORDER))
-                .toList()) {
+        // FORK DIVERGENCE: no re-sort - the incoming list already carries the meaningful
+        // order (definition order from QuestManager for NPC/available lists, acceptance
+        // order for active quests). Administrators order quests.yml deliberately and the
+        // GUIs must present that order; sorting here alphabetized every quest GUI even
+        // after the repository preserved definition order.
+        for (final Quest quest : quests) {
             final Map<String, String> placeholders = placeholders(
                     player,
                     quest.getIdentifier(),

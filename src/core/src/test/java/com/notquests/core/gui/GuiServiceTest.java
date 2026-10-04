@@ -344,6 +344,35 @@ class GuiServiceTest {
     }
 
     @Test
+    void npcShownQuestsListInDefinitionOrderNotAlphabetically() {
+        // FORK DIVERGENCE: administrators order quests.yml deliberately; every quest GUI
+        // must present that order. Ids chosen so alphabetical order differs from
+        // definition order (the production symptom: Andesite listed before Wheat).
+        final NotQuestsPlugin plugin = NotQuestsPlugin.create();
+        plugin.languageManager().configuration().set("gui.npc-available-quests.title", "NPC quests");
+        plugin.languageManager()
+                .configuration()
+                .set("gui.npc-available-quests.button.quest.name", "NPC quest %QUESTID%");
+        final NQNPCID npc = NQNPCID.fromInteger(0);
+        plugin.getOrCreateQuest("Wheat").addNpcAttachment("citizens", npc, "Trader", true);
+        plugin.getOrCreateQuest("Carrots").addNpcAttachment("citizens", npc, "Trader", true);
+        plugin.getOrCreateQuest("Andesite").addNpcAttachment("citizens", npc, "Trader", true);
+        final GuiService guiService = new GuiService(plugin);
+
+        final ResolvedGui view = guiService.build(
+                "npc-available-quests",
+                new Player("alessio"),
+                new GuiContext("", "", "citizens", npc));
+
+        assertEquals(
+                List.of("NPC quest Wheat", "NPC quest Carrots", "NPC quest Andesite"),
+                view.slots().stream()
+                        .map(GuiSlot::displayName)
+                        .filter(name -> name.startsWith("NPC quest "))
+                        .toList());
+    }
+
+    @Test
     void npcShownQuestContentOnlyIncludesShownAttachmentsForCurrentNpc() {
         final NotQuestsPlugin plugin = NotQuestsPlugin.create();
         plugin.languageManager().configuration().set("gui.npc-available-quests.title", "NPC quests");
