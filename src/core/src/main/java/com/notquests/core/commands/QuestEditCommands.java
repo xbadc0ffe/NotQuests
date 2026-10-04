@@ -169,6 +169,19 @@ final class QuestEditCommands {
                         context.argument("quest"),
                         bool(context.argument("take-enabled")))))
                 .registration());
+        // FORK DIVERGENCE: command surface for the autoComplete flag (objective-less
+        // quests that complete on accept); mirrors takeEnabled.
+        commands.add(editQuest.literal("autoComplete", NQDescription.of("Controls whether this objective-less quest completes the moment it is accepted."))
+                .required(
+                        "auto-complete",
+                        NQArgumentType.bool("auto complete"),
+                        NQDescription.of("Whether this quest completes immediately on accept (requires the quest to have no objectives)."))
+                .commandDescription(NQDescription.of("Sets whether this objective-less quest completes immediately on accept."))
+                .handler(context -> List.of(setQuestAutoComplete(
+                        plugin,
+                        context.argument("quest"),
+                        bool(context.argument("auto-complete")))))
+                .registration());
         commands.add(editQuest.literal("abortEnabled", NQDescription.of("Controls whether players may abort this quest."))
                 .required(
                         "abort-enabled",
@@ -375,6 +388,25 @@ final class QuestEditCommands {
         return CommandMessage.success("<success>Quest taking (/notquests take) for the Quest "
                 + highlight(quest.getIdentifier()) + " has been set to "
                 + highlight2(takeEnabled ? "enabled" : "disabled") + "!");
+    }
+
+    static CommandMessage setQuestAutoComplete(
+            final NotQuestsPlugin plugin,
+            final String questName,
+            final boolean autoComplete) {
+        final Quest quest = plugin.questManager().getQuest(questName);
+        if (quest == null) {
+            return missingQuest(questName);
+        }
+        quest.setAutoComplete(autoComplete);
+        plugin.saveConfiguredData();
+        final String state = autoComplete ? "enabled" : "disabled";
+        final String warning = autoComplete && !quest.getObjectives().isEmpty()
+                ? " <warn>Note: this quest has objectives, so it will NOT auto-complete until they are removed."
+                : "";
+        return CommandMessage.success("<success>Auto-complete on accept for the Quest "
+                + highlight(quest.getIdentifier()) + " has been set to "
+                + highlight2(state) + "!" + warning);
     }
 
     static CommandMessage setQuestAbortEnabled(
