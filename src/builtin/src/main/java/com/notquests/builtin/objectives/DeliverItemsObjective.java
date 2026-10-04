@@ -75,11 +75,20 @@ public final class DeliverItemsObjective {
                     if (delivered <= 0) {
                         return;
                     }
+                    // Send before addProgress so the delivery note precedes the
+                    // objective/quest completion messages the progress may trigger.
+                    // The text is admin-configurable; a blanked key sends nothing.
+                    final String deliveredMessage = adapter.objectiveTaskText(
+                            "chat.objectives.deliver-items-delivered",
+                            questPlayer,
+                            null,
+                            Map.of(
+                                    "%AMOUNT%", String.valueOf(delivered),
+                                    "%NPCNAME%", event.npcName()));
+                    if (!deliveredMessage.isBlank()) {
+                        questPlayer.sendMessage(deliveredMessage);
+                    }
                     objective.addProgress(delivered);
-                    questPlayer.sendMessage("<GREEN>You have delivered <highlight>"
-                            + delivered
-                            + "</highlight> items to <highlight>"
-                            + event.npcName());
                 })
                 .register();
     }

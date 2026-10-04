@@ -105,6 +105,7 @@ chat:
     successfully-completed-rewards-prefix: '    <highlight>Hadiah:'
     successfully-completed-rewards-rewardformat: '    <highlight> - <unimportant>%reward%'
     successfully-completed-rewards-suffix: <EMPTY>
+    deliver-items-delivered: <positive>You have delivered <highlight>%AMOUNT%</highlight> items to <highlight>%NPCNAME%</highlight>.
     taskDescription:
       global:
         prefix: '    <veryUnimportant>└─ <unimportant>'

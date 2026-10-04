@@ -9397,7 +9397,7 @@ public final class NotQuestsPlugin {
         }
         if (!suppressEffects) {
             triggerObjectiveEvent(questPlayer, "COMPLETE", objective.getQuestIdentifier(), objective.getObjectiveID());
-            final String rewardBlock = giveObjectiveRewards(questPlayer, objective, warning -> {});
+            final List<String> objectiveRewards = giveObjectiveRewards(questPlayer, objective, warning -> {});
             if (!silent) {
                 questPlayer.playSound(
                         "minecraft:block.anvil.land",
@@ -9416,10 +9416,12 @@ public final class NotQuestsPlugin {
                         "\n<CENTER><success>[Objective Completed]\n<CENTER><highlight><bold>"
                                 + (type == null ? objective.getObjectiveTypeID() : objectiveDisplayName(objective.getObjective(), type))
                                 + "</bold> <!i><main>(" + questDisplayName(objective.getQuestIdentifier(), quest) + ")\n<EMPTY>");
-                if (!rewardBlock.isBlank()) {
-                    completionMessage += "<RESET>" + rewardBlock;
-                }
-                questPlayer.sendMessage(completionMessage);
+                completionMessage = withRewards(
+                        questPlayer,
+                        completionMessage,
+                        objectiveRewards,
+                        "chat.objectives.successfully-completed-rewards");
+                sendUnlessBlank(questPlayer, completionMessage);
             }
         }
         removeObjectiveMarker(questPlayer, activeObjectiveBeamName(objective));
@@ -9429,7 +9431,7 @@ public final class NotQuestsPlugin {
         }
     }
 
-    private String giveObjectiveRewards(
+    private List<String> giveObjectiveRewards(
             final PlatformPlayer questPlayer,
             final ActiveObjective objective,
             final Consumer<String> warningSink) {
@@ -9442,24 +9444,76 @@ public final class NotQuestsPlugin {
                 displayedRewards.add(reward.getDisplayName());
             }
         }
+        return displayedRewards;
+    }
+
+    // FORK DIVERGENCE: an admin who blanks a language key means "do not send this line";
+    // sending the empty string painted a blank chat line instead.
+    private static void sendUnlessBlank(final PlatformPlayer questPlayer, final String message) {
+        if (message != null && !message.isBlank()) {
+            questPlayer.sendMessage(message);
+        }
+    }
+
+    /**
+     * FORK DIVERGENCE: %REWARDS% in the configured completion string collapses the reward
+     * display into the same line - it becomes chat.rewards-inline with %REWARDLIST% joined
+     * by chat.rewards-inline-joiner, or the empty string when nothing is displayed. Without
+     * the placeholder the classic multi-line block is appended, now skipping any part whose
+     * configured string is blank.
+     */
+    private String withRewards(
+            final PlatformPlayer questPlayer,
+            final String message,
+            final List<String> displayedRewards,
+            final String blockKeyPrefix) {
+        if (message.contains("%REWARDS%")) {
+            return message.replace("%REWARDS%", rewardsInline(questPlayer, displayedRewards));
+        }
+        final String rewardBlock = rewardsBlock(questPlayer, displayedRewards, blockKeyPrefix);
+        return rewardBlock.isBlank() ? message : message + "<RESET>" + rewardBlock;
+    }
+
+    private String rewardsInline(final PlatformPlayer questPlayer, final List<String> displayedRewards) {
+        if (displayedRewards.isEmpty()) {
+            return "";
+        }
+        final String joiner = translate(questPlayer,
+                "chat.rewards-inline-joiner",
+                Map.of(),
+                "<unimportant> & </unimportant>");
+        final String joined = String.join(joiner, displayedRewards);
+        return translate(questPlayer,
+                "chat.rewards-inline",
+                Map.of("%REWARDLIST%", joined),
+                " <unimportant>- Rewards:</unimportant> <highlight>" + joined);
+    }
+
+    private String rewardsBlock(
+            final PlatformPlayer questPlayer,
+            final List<String> displayedRewards,
+            final String keyPrefix) {
         if (displayedRewards.isEmpty()) {
             return "";
         }
         final StringBuilder rewardBlock = new StringBuilder();
-        rewardBlock.append("\n").append(translate(questPlayer,
-                    "chat.objectives.successfully-completed-rewards-prefix",
-                    Map.of(),
-                    "    <highlight>Rewards:"));
-        for (final String rewardName : displayedRewards) {
-            rewardBlock.append("\n").append(translate(questPlayer,
-                        "chat.objectives.successfully-completed-rewards-rewardformat",
-                        Map.of("%reward%", rewardName),
-                        "    <highlight> - <unimportant>" + rewardName));
+        final String prefix = translate(questPlayer, keyPrefix + "-prefix", Map.of(), "    <highlight>Rewards:");
+        if (!prefix.isBlank()) {
+            rewardBlock.append("\n").append(prefix);
         }
-        rewardBlock.append("\n").append(translate(questPlayer,
-                    "chat.objectives.successfully-completed-rewards-suffix",
-                    Map.of(),
-                    "<EMPTY>"));
+        for (final String rewardName : displayedRewards) {
+            final String line = translate(questPlayer,
+                    keyPrefix + "-rewardformat",
+                    Map.of("%reward%", rewardName),
+                    "    <highlight> - <unimportant>" + rewardName);
+            if (!line.isBlank()) {
+                rewardBlock.append("\n").append(line);
+            }
+        }
+        final String suffix = translate(questPlayer, keyPrefix + "-suffix", Map.of(), "<EMPTY>");
+        if (!suffix.isBlank()) {
+            rewardBlock.append("\n").append(suffix);
+        }
         return rewardBlock.toString();
     }
 
@@ -9471,12 +9525,12 @@ public final class NotQuestsPlugin {
                 .filter(objective -> objective.progress() != null && objective.progress().isUnlocked())
                 .toList();
         if (!unlockedObjectives.isEmpty()) {
-            questPlayer.sendMessage(translate(questPlayer,
+            sendUnlessBlank(questPlayer, translate(questPlayer,
                     "chat.objectives-label-after-quest-accepting",
                     Map.of(),
                     "<highlight>Objectives:"));
             for (final ObjectiveActivation objective : unlockedObjectives) {
-                questPlayer.sendMessage(translate(questPlayer,
+                sendUnlessBlank(questPlayer, translate(questPlayer,
                         "chat.objectives.counter",
                         Map.of(
                                 "%OBJECTIVEIDWITHSUBID%", String.valueOf(objective.objective().id()),
@@ -9485,7 +9539,7 @@ public final class NotQuestsPlugin {
                                 + objectiveDisplayName(objective.objective(), objective.type()) + ":"));
                 final String description = objective.objective().getDescription();
                 if (description != null && !description.isBlank()) {
-                    questPlayer.sendMessage(translate(questPlayer,
+                    sendUnlessBlank(questPlayer, translate(questPlayer,
                             "chat.objectives.description",
                             Map.of("%OBJECTIVEDESCRIPTION%", description),
                             "    <veryUnimportant>└─ <unimportant>Description: <main>" + description));
@@ -9494,7 +9548,7 @@ public final class NotQuestsPlugin {
                 if (taskDescription != null && !taskDescription.isBlank()) {
                     questPlayer.sendMessage(taskDescription);
                 }
-                questPlayer.sendMessage(translate(questPlayer,
+                sendUnlessBlank(questPlayer, translate(questPlayer,
                         "chat.objectives.progress",
                         Map.of(
                                 "%ACTIVEOBJECTIVEPROGRESS%", formatProgress(objective.progress().getCurrentProgress()),
@@ -9527,17 +9581,17 @@ public final class NotQuestsPlugin {
                 2.0,
                 "master");
         if (quest.getDescription() == null || quest.getDescription().isBlank()) {
-            questPlayer.sendMessage(translate(questPlayer,
+            sendUnlessBlank(questPlayer, translate(questPlayer,
                     "chat.missing-quest-description",
                     questReplacements(quest),
                     "<unimportant>This quest has no quest description."));
         } else {
-            questPlayer.sendMessage(translate(questPlayer,
+            sendUnlessBlank(questPlayer, translate(questPlayer,
                     "chat.quest-description",
                     questReplacements(quest),
                     "<main>Quest description: <unimportant>" + quest.getDescription()));
         }
-        questPlayer.sendMessage(translate(questPlayer,
+        sendUnlessBlank(questPlayer, translate(questPlayer,
                 "chat.quest-successfully-accepted",
                 questReplacements(quest),
                 "\n<CENTER><main>[Quest Accepted]\n<CENTER><highlight><BOLD>" + questDisplayName(quest) + "\n<EMPTY>"));
@@ -9820,7 +9874,7 @@ public final class NotQuestsPlugin {
             final String questName,
             final Quest quest,
             final ConfigurationManager configuration,
-            final String rewardBlock) {
+            final List<String> displayedRewards) {
         if (configuration.questCompletedTitleEnabled()) {
             questPlayer.showTitle(
                     translate(questPlayer,
@@ -9847,10 +9901,8 @@ public final class NotQuestsPlugin {
                 questReplacements(questName, quest),
                 "\n<CENTER><positive>[Quest Completed]\n<CENTER><highlight><BOLD>"
                         + questDisplayName(questName, quest) + "\n<EMPTY>");
-        if (rewardBlock != null && !rewardBlock.isBlank()) {
-            message += "<RESET>" + rewardBlock;
-        }
-        questPlayer.sendMessage(message);
+        message = withRewards(questPlayer, message, displayedRewards, "chat.quest-completed-rewards");
+        sendUnlessBlank(questPlayer, message);
     }
 
     private void sendQuestFailedDisplay(
@@ -9933,8 +9985,8 @@ public final class NotQuestsPlugin {
         if (playerData.completeQuest(questName, System.currentTimeMillis())) {
             removeActiveTriggers(questPlayer.playerIdentifier(), questName);
             final Quest quest = quest(questName);
-            final String rewardBlock = giveQuestRewards(questPlayer, quest, warningSink);
-            sendQuestCompletedDisplay(questPlayer, questName, quest, configuration, rewardBlock);
+            final List<String> questRewards = giveQuestRewards(questPlayer, quest, warningSink);
+            sendQuestCompletedDisplay(questPlayer, questName, quest, configuration, questRewards);
             return true;
         } else {
             questPlayer.sendMessage("<error>Cannot complete quest <highlight>" + questName
@@ -9943,12 +9995,12 @@ public final class NotQuestsPlugin {
         }
     }
 
-    private String giveQuestRewards(
+    private List<String> giveQuestRewards(
             final PlatformPlayer questPlayer,
             final Quest quest,
             final Consumer<String> warningSink) {
         if (quest == null) {
-            return "";
+            return List.of();
         }
         final ArrayList<String> displayedRewards = new ArrayList<>();
         for (final Action reward : quest.getRewards()) {
@@ -9960,25 +10012,7 @@ public final class NotQuestsPlugin {
                 displayedRewards.add(displayName);
             }
         }
-        if (displayedRewards.isEmpty()) {
-            return "";
-        }
-        final StringBuilder rewardBlock = new StringBuilder();
-        rewardBlock.append("\n").append(translate(questPlayer,
-                    "chat.quest-completed-rewards-prefix",
-                    Map.of(),
-                    "    <highlight>Rewards:"));
-        for (final String rewardName : displayedRewards) {
-            rewardBlock.append("\n").append(translate(questPlayer,
-                        "chat.quest-completed-rewards-rewardformat",
-                        Map.of("%reward%", rewardName),
-                        "    <highlight> - <unimportant>" + rewardName));
-        }
-        rewardBlock.append("\n").append(translate(questPlayer,
-                    "chat.quest-completed-rewards-suffix",
-                    Map.of(),
-                    "<EMPTY>"));
-        return rewardBlock.toString();
+        return displayedRewards;
     }
 
     private boolean executeConfiguredAction(
