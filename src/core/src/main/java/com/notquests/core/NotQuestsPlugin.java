@@ -6915,11 +6915,14 @@ public final class NotQuestsPlugin {
             }
             final List<String> unmetRequirements = unmetRequirements(questPlayer, quest, warningSink);
             if (!unmetRequirements.isEmpty()) {
+                // FORK DIVERGENCE: chat-noise cleanup - the unmet requirements collapse onto one
+                // "&"-joined line under a single-sentence header, and a requirement's configured
+                // description replaces the generated checker text (see unmetRequirements).
                 final String message = translate(questPlayer,
                         "chat.quest-not-all-requirements-fulfilled",
                         Map.of(),
-                        "<negative>You do not fulfill all the requirements this quest needs! Requirement still needed:")
-                        + "\n" + String.join("\n", unmetRequirements);
+                        "<negative>You do not fulfill all the requirements this quest needs!")
+                        + "\n" + String.join(" & ", unmetRequirements);
                 questPlayer.sendMessage(message);
                 warn(warningSink, message);
                 return false;
@@ -6972,7 +6975,8 @@ public final class NotQuestsPlugin {
             try {
                 final String result = ConditionCheck.check(conditionType, requirement.data(), questPlayer);
                 if (result != null && !result.isBlank()) {
-                    messages.add(result);
+                    final String description = requirement.getDescription();
+                    messages.add(description.isBlank() ? result : "<YELLOW>" + description);
                 }
             } catch (final RuntimeException exception) {
                 warn(warningSink, "Quest requirement check failed: " + exception.getMessage());
