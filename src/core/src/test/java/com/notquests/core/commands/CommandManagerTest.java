@@ -257,7 +257,8 @@ class CommandManagerTest {
         assertEquals(0, saves.get());
         assertFalse(QuestLifecycleCommands.cloneQuest(plugin, "tutorial", "New").success());
         assertEquals(1, saves.get());
-        assertEquals(List.of("Other", "Tutorial"), plugin.questNames());
+        // Definition order (creation order here), not alphabetical - see QuestManagerDefinitionOrderTest.
+        assertEquals(List.of("Tutorial", "Other"), plugin.questNames());
         assertEquals("Original", plugin.quest("Tutorial").getDescription());
         assertEquals("Do not overwrite", plugin.quest("Other").getDescription());
     }

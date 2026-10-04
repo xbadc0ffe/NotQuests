@@ -3,14 +3,25 @@ package com.notquests.core.managers;
 import com.notquests.core.structs.Category;
 import com.notquests.core.structs.Quest;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** Owns the authoritative configured quest and category repositories. */
 public final class QuestManager {
-    private final ConcurrentHashMap<String, Quest> quests = new ConcurrentHashMap<>();
+    // FORK DIVERGENCE: quests keep their DEFINITION order - the order they appear in
+    // quests.yml, with newly created quests appended. Administrators order that file on
+    // purpose, and every listing (NPC GUIs, take lists, suggestions) plus every config
+    // re-save flows through getAllQuests(), so sorting here alphabetized the GUIs AND
+    // rewrote the admin's hand-ordered file on the first save. Pre-7.0.0 releases kept
+    // an insertion-ordered list for the same reason. The synchronized LinkedHashMap
+    // keeps computeIfAbsent/putIfAbsent atomic (SynchronizedMap overrides them);
+    // iteration happens only inside getAllQuests' synchronized copy.
+    private final Map<String, Quest> quests = Collections.synchronizedMap(new LinkedHashMap<>());
     private final ConcurrentHashMap<String, Category> categories = new ConcurrentHashMap<>();
 
     public QuestManager() {
@@ -18,9 +29,9 @@ public final class QuestManager {
     }
 
     public List<Quest> getAllQuests() {
-        return quests.values().stream()
-                .sorted(Comparator.comparing(Quest::getIdentifier, String.CASE_INSENSITIVE_ORDER))
-                .toList();
+        synchronized (quests) {
+            return List.copyOf(quests.values());
+        }
     }
 
     public List<String> getQuestNames() {
