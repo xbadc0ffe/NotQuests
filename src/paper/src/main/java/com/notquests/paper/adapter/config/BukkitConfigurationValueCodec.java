@@ -84,7 +84,21 @@ public final class BukkitConfigurationValueCodec {
         if (!(decoded instanceof Map<?, ?> serialized)) {
             throw new IllegalArgumentException("ItemStack YAML value is missing serialized data.");
         }
-        return ItemStack.deserialize(stringMap(serialized));
+        // Name the item in the failure: Bukkit's own message ("Material cannot be null")
+        // says neither which item nor why - typically a hand-authored serialized map that
+        // is missing schema_version or encodes components as nested maps instead of the
+        // SNBT strings ItemStack.serialize() emits.
+        final Map<String, Object> serializedMap = stringMap(serialized);
+        try {
+            return ItemStack.deserialize(serializedMap);
+        } catch (final RuntimeException exception) {
+            throw new IllegalArgumentException(
+                    "Could not read serialized item '" + serializedMap.get("id")
+                            + "': " + exception.getMessage()
+                            + " (expected the exact shape ItemStack.serialize() emits,"
+                            + " including schema_version and SNBT-string components)",
+                    exception);
+        }
     }
 
     private static Object serializedValue(final Object value) {
