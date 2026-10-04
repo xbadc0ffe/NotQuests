@@ -84,6 +84,7 @@ public final class DeliverItemsObjective {
                             null,
                             Map.of(
                                     "%AMOUNT%", String.valueOf(delivered),
+                                    "%ITEMS%", prettyItemNames(selection),
                                     "%NPCNAME%", event.npcName()));
                     if (!deliveredMessage.isBlank()) {
                         questPlayer.sendMessage(deliveredMessage);
@@ -95,6 +96,41 @@ public final class DeliverItemsObjective {
 
     private static boolean sameNpc(final String expected, final String actual) {
         return expected != null && actual != null && expected.equalsIgnoreCase(actual);
+    }
+
+    /**
+     * Human-readable names for the delivered selection: material ids and saved-item names
+     * title-cased with underscores as spaces (WHEAT -> Wheat, OAK_LOG -> Oak Log), joined
+     * by commas; "items" for an any-item selection. Display only - never used to match.
+     */
+    static String prettyItemNames(final ItemSelection selection) {
+        if (selection == null || selection.any()) {
+            return "items";
+        }
+        final String listed = selection.listedMaterials("main");
+        if (listed == null || listed.isBlank()) {
+            return "items";
+        }
+        final StringBuilder result = new StringBuilder();
+        for (final String id : listed.split(",")) {
+            if (id.isBlank()) {
+                continue;
+            }
+            if (!result.isEmpty()) {
+                result.append(", ");
+            }
+            for (final String word : id.trim().toLowerCase(java.util.Locale.ROOT).split("_")) {
+                if (word.isEmpty()) {
+                    continue;
+                }
+                if (result.length() > 0 && result.charAt(result.length() - 1) != ' '
+                        && result.charAt(result.length() - 1) != ',') {
+                    result.append(' ');
+                }
+                result.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+            }
+        }
+        return result.isEmpty() ? "items" : result.toString();
     }
 
     private static String listedMaterials(final ItemSelection selection) {
