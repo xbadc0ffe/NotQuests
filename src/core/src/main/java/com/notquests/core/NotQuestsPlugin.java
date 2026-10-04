@@ -6942,6 +6942,16 @@ public final class NotQuestsPlugin {
             if (giveOptions.sendQuestInfo()) {
                 sendQuestAcceptedDisplay(questPlayer, quest, activatedObjectives);
             }
+            // FORK DIVERGENCE: autoComplete: true marks an objective-less shop/service
+            // quest that completes the moment it is accepted - requirements gate the
+            // accept, rewards fire on the immediate completion - replacing the dummy
+            // ReachLocation objective that forced the player to move before the quest
+            // registered as complete. Deliberately opt-in and gated on having no
+            // objectives: an unflagged objective-less quest keeps its classic
+            // stay-active behavior.
+            if (quest.isAutoComplete() && quest.getObjectives().isEmpty()) {
+                completeQuest(questPlayer, quest.getIdentifier(), false, warningSink);
+            }
             return true;
         }
         return false;

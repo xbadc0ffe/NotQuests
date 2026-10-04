@@ -548,6 +548,9 @@ public class DataManager {
         if (!quest.isTakeEnabled()) {
             map.put("takeEnabled", false);
         }
+        if (quest.isAutoComplete()) {
+            map.put("autoComplete", true);
+        }
         if (!quest.isAbortEnabled()) {
             map.put("abortEnabled", false);
         }
@@ -573,6 +576,7 @@ public class DataManager {
         quest.setMaxFails(integerAtPath(map, "limits.fails", -1));
         quest.setAcceptCooldownComplete(longAtPath(map, "acceptCooldown.complete", -1));
         quest.setTakeEnabled(bool(map, "takeEnabled", true));
+        quest.setAutoComplete(bool(map, "autoComplete", false));
         quest.setAbortEnabled(bool(map, "abortEnabled", true));
         quest.setObjectiveProgressOrder(progressOrderString(map.get("predefinedProgressOrder")));
         for (final Map<String, Object> entry : namedMaps(map.get("objectives"), "id")) {

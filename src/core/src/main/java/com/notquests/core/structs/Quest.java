@@ -35,6 +35,8 @@ public final class Quest {
   private int maxFails = -1;
   private long acceptCooldownComplete = -1;
   private boolean takeEnabled = true;
+  // FORK DIVERGENCE: completes the moment it is accepted (objective-less shop/service quests).
+  private boolean autoComplete = false;
   private boolean abortEnabled = true;
   private String displayName = "";
   private String description = "";
@@ -58,6 +60,7 @@ public final class Quest {
     copy.maxFails = maxFails;
     copy.acceptCooldownComplete = acceptCooldownComplete;
     copy.takeEnabled = takeEnabled;
+    copy.autoComplete = autoComplete;
     copy.abortEnabled = abortEnabled;
     copy.displayName = displayName;
     copy.description = description;
@@ -169,6 +172,14 @@ public final class Quest {
 
   public void setAcceptCooldownComplete(final long acceptCooldownComplete) {
     this.acceptCooldownComplete = acceptCooldownComplete;
+  }
+
+  public boolean isAutoComplete() {
+    return autoComplete;
+  }
+
+  public void setAutoComplete(final boolean autoComplete) {
+    this.autoComplete = autoComplete;
   }
 
   public boolean isTakeEnabled() {

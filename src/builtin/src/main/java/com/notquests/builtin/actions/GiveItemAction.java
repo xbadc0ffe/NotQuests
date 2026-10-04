@@ -34,7 +34,10 @@ public final class GiveItemAction {
                             || selection == null
                             || !questPlayer.giveItems(plugin.resolveItems(
                                     selection.withAmount(Math.max(1, action.integer(AMOUNT, 1)))))) {
-                        adapter.warn("Tried to execute GiveItem action with invalid target player or item selection.");
+                        adapter.warn("Tried to execute GiveItem action with invalid target player or unresolvable"
+                                + " item selection: "
+                                + (selection == null ? "null" : selection.listedMaterials("main"))
+                                + " (check that every referenced material or saved item exists)");
                     }
                 })
                 .actionDescription((action, questPlayer, objects) -> {
