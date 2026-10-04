@@ -225,6 +225,11 @@ placeholders:
     days: '%DAYS% 日'
     no-cooldown: ''
 gui:
+  objectives-progress:
+    completed: '<!i><positive>✔ <unimportant>%OBJECTIVENAME%'
+    active: '<!i><main>%OBJECTIVENAME%: <highlight>%ACTIVEOBJECTIVEPROGRESS%</highlight><unimportant> / <main>%OBJECTIVEPROGRESSNEEDED%'
+    locked: '<!i><unimportant>???'
+    inactive: '<!i><main>%OBJECTIVENAME%'
   abort-quest-confirm:
     title: <!i><red>クエストを中止 <dark_gray>- <dark_red>よろしいですか？
     button:

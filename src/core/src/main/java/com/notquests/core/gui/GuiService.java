@@ -657,6 +657,19 @@ public final class GuiService {
                 }
                 continue;
             }
+            if (line.contains("%QUESTOBJECTIVESPROGRESS%")) {
+                // FORK DIVERGENCE: expands to one line per top-level objective with live
+                // progress (see NotQuestsPlugin.questObjectivesProgressList). A line that
+                // held only the token contributes no prefix line.
+                if (quest != null && player != null) {
+                    final String remainder = line.replace("%QUESTOBJECTIVESPROGRESS%", "");
+                    if (!remainder.isBlank()) {
+                        lore.add(remainder);
+                    }
+                    lore.addAll(plugin.questObjectivesProgressList(player, quest.getIdentifier()));
+                }
+                continue;
+            }
             if (line.contains("%WRAPPEDQUESTDESCRIPTION%")) {
                 if (quest != null) {
                     lore.add(line.replace("%WRAPPEDQUESTDESCRIPTION%", ""));
@@ -874,6 +887,14 @@ public final class GuiService {
         placeholders.put("%NPCTYPE%", clean(npcType));
         placeholders.put("%NPCID%", npcId == null ? "" : npcId.getEitherAsString());
         placeholders.put("%QUESTPOINTS%", String.valueOf(questPlayer(player).getQuestPoints()));
+        // FORK DIVERGENCE: live objective progress for GUI items. Blank when no quest is
+        // in context; counts are top-level objectives of the context quest.
+        placeholders.put("%ALLOBJECTIVESCOUNT%", quest == null
+                ? ""
+                : String.valueOf(quest.getObjectives().size()));
+        placeholders.put("%COMPLETEDOBJECTIVESCOUNT%", quest == null
+                ? ""
+                : String.valueOf(plugin.questObjectivesCompletedCount(player, quest.getIdentifier())));
         placeholders.put("%player_name%", player == null
                 ? ""
                 : (!player.playerName().isBlank() ? player.playerName() : player.playerIdentifier()));

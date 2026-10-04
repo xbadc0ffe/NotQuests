@@ -231,6 +231,11 @@ placeholders:
     days: '%DAYS% дана'
     no-cooldown: ''
 gui:
+  objectives-progress:
+    completed: '<!i><positive>✔ <unimportant>%OBJECTIVENAME%'
+    active: '<!i><main>%OBJECTIVENAME%: <highlight>%ACTIVEOBJECTIVEPROGRESS%</highlight><unimportant> / <main>%OBJECTIVEPROGRESSNEEDED%'
+    locked: '<!i><unimportant>???'
+    inactive: '<!i><main>%OBJECTIVENAME%'
   abort-quest-confirm:
     title: <!i><red>Прекини истрагу <dark_gray>- <dark_red>Јеси ли сигуран?
     button:

@@ -64,6 +64,7 @@ import com.notquests.core.registry.NotQuestsRegistry.Triggers;
 import com.notquests.core.registry.NotQuestsRegistry;
 import com.notquests.core.registry.fields.RegistryField;
 import com.notquests.core.structs.ActiveObjective;
+import com.notquests.core.structs.ActiveQuest;
 import com.notquests.core.structs.ActiveObjectives;
 import com.notquests.core.structs.Category;
 import com.notquests.core.structs.PredefinedProgressOrder;
@@ -7097,6 +7098,99 @@ public final class NotQuestsPlugin {
             counter++;
         }
         return List.copyOf(lines);
+    }
+
+    /**
+     * FORK DIVERGENCE: per-objective progress lines for GUI lore. The
+     * %QUESTOBJECTIVESPROGRESS% lore token expands to one line per top-level objective -
+     * completed, locked, active with live current/needed numbers, or the plain name when
+     * the quest is not active - each styled by its gui.objectives-progress.* language key
+     * so admins can restyle or blank individual states.
+     */
+    public List<String> questObjectivesProgressList(
+            final PlatformPlayer questPlayer,
+            final String questName) {
+        final Quest quest = quest(questName);
+        if (quest == null) {
+            return List.of();
+        }
+        final ActiveQuest activeQuest = activeQuestOf(questPlayer, quest);
+        final ArrayList<String> lines = new ArrayList<>();
+        for (final Objective objective : quest.getObjectives()) {
+            final String objectiveName = objectiveDisplayName(objective, objectiveType(objective.typeId()));
+            final String line;
+            if (activeQuest == null) {
+                line = translate(questPlayer,
+                        "gui.objectives-progress.inactive",
+                        Map.of("%OBJECTIVENAME%", objectiveName),
+                        "<!i><main>" + objectiveName);
+            } else {
+                final ActiveObjective active = topLevelActiveObjective(activeQuest, objective.id());
+                if (active == null) {
+                    line = translate(questPlayer,
+                            "gui.objectives-progress.completed",
+                            Map.of("%OBJECTIVENAME%", objectiveName),
+                            "<!i><positive>✔ <unimportant>" + objectiveName);
+                } else if (!active.isUnlocked()) {
+                    line = translate(questPlayer,
+                            "gui.objectives-progress.locked",
+                            Map.of("%OBJECTIVENAME%", objectiveName),
+                            "<!i><unimportant>???");
+                } else {
+                    line = translate(questPlayer,
+                            "gui.objectives-progress.active",
+                            Map.of(
+                                    "%OBJECTIVENAME%", objectiveName,
+                                    "%ACTIVEOBJECTIVEPROGRESS%", formatProgress(active.getCurrentProgress()),
+                                    "%OBJECTIVEPROGRESSNEEDED%", formatProgress(active.progressNeeded())),
+                            "<!i><main>" + objectiveName + ": <highlight>"
+                                    + formatProgress(active.getCurrentProgress())
+                                    + "</highlight><unimportant> / <main>" + formatProgress(active.progressNeeded()));
+                }
+            }
+            if (!line.isBlank()) {
+                lines.add(line);
+            }
+        }
+        return List.copyOf(lines);
+    }
+
+    /** Completed top-level objectives of the player's active quest; 0 when not active. */
+    public int questObjectivesCompletedCount(final PlatformPlayer questPlayer, final String questName) {
+        final Quest quest = quest(questName);
+        if (quest == null) {
+            return 0;
+        }
+        final ActiveQuest activeQuest = activeQuestOf(questPlayer, quest);
+        if (activeQuest == null) {
+            return 0;
+        }
+        int completed = 0;
+        for (final Objective objective : quest.getObjectives()) {
+            if (topLevelActiveObjective(activeQuest, objective.id()) == null) {
+                completed++;
+            }
+        }
+        return completed;
+    }
+
+    private ActiveQuest activeQuestOf(final PlatformPlayer questPlayer, final Quest quest) {
+        final QuestPlayer playerData = questPlayer(questPlayer);
+        if (playerData == null) {
+            return null;
+        }
+        return playerData.getActiveQuests().stream()
+                .filter(active -> active.getQuestIdentifier().equalsIgnoreCase(quest.getIdentifier()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static ActiveObjective topLevelActiveObjective(final ActiveQuest activeQuest, final int objectiveId) {
+        return activeQuest.getActiveObjectives().stream()
+                .filter(active -> active.getObjectivePath().length == 1
+                        && active.getObjectiveID() == objectiveId)
+                .findFirst()
+                .orElse(null);
     }
 
     private static final String QUEST_PREVIEW_SEPARATOR = "<GRAY>-----------------------------------";

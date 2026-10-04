@@ -261,6 +261,11 @@ placeholders:
     days: '%DAYS% nap'
     no-cooldown: ''
 gui:
+  objectives-progress:
+    completed: '<!i><positive>✔ <unimportant>%OBJECTIVENAME%'
+    active: '<!i><main>%OBJECTIVENAME%: <highlight>%ACTIVEOBJECTIVEPROGRESS%</highlight><unimportant> / <main>%OBJECTIVEPROGRESSNEEDED%'
+    locked: '<!i><unimportant>???'
+    inactive: '<!i><main>%OBJECTIVENAME%'
   abort-quest-confirm:
     title: <!i><red>Küldetés Megszakítása <dark_gray>- <dark_red>Biztos vagy benne?
     button:
