@@ -33,6 +33,23 @@ Please note: updates and bug fixes are not guaranteed, and support should not be
 - Minecraft 26.3 with Paper 26.3 or NeoForge 26.3 (only the latest Minecraft version is actively developed. Older Minecraft versions only work with older NotQuests versions)
 - Java 25
 
+## Building this fork
+
+```bash
+git clone https://github.com/xbadc0ffe/NotQuests.git   # upstream: AlessioGr/NotQuests
+cd NotQuests
+./gradlew clean build   # Java 25 (Temurin); Gradle wrapper is committed
+```
+
+The deployable Paper jar lands in `build/final-jars/notquests-<version>.jar`
+(and `src/paper/build/libs/`). Only the Paper jar is deployed; the NeoForge
+jar (`-neoforge` suffix) is built for upstream parity. The root
+`build.gradle.kts` `version` is the single source of truth - the Minecraft
+target, both plugin descriptors' `api-version`, and the jar name derive from
+it. MockBukkit has no 26.3 line, so in-JVM tests deliberately run against the
+26.2 test API while production compiles against 26.3; run the real-server
+sweeps in [e2e/](e2e/README.md) to exercise 26.3 itself.
+
 ## Helpful links
 - [Wiki](https://www.notquests.com/)
 - [Getting started guide](https://www.notquests.com/docs/tutorials/getting-started/)
