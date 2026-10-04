@@ -35,7 +35,7 @@ group = "com.notquests"
 // monotonic build counter that never resets and never decrements, so it keeps climbing
 // across Minecraft versions (26.2.8 -> 26.3.9, not 26.3.1). Upstream's 7.x line does
 // not correspond to these numbers.
-version = "26.3.6"
+version = "26.3.7"
 
 // Derived from the version above - never edit this by hand. The guard fails the build
 // at configuration time if the version stops matching the fork scheme.
