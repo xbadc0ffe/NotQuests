@@ -1205,6 +1205,21 @@ public class DataManager {
         return String.valueOf(type).toLowerCase(Locale.ROOT) + ":" + id;
     }
 
+    /**
+     * stringList fields hold a comma-separated string at runtime (the single-line command
+     * parser writes one), but category YAML stores the list shape released 6.x wrote and the
+     * v7 migration preserves (specifics.actions: [Name]). A raw list stringifies to "[Name]"
+     * downstream, so an Action chain loaded from configuration silently resolves no saved
+     * action - rewards referencing saved actions never execute. Join lists here; strings and
+     * everything else pass through untouched.
+     */
+    static Object stringListValue(final Object decoded) {
+        if (!(decoded instanceof List<?> list)) {
+            return decoded;
+        }
+        return list.stream().map(String::valueOf).collect(Collectors.joining(","));
+    }
+
     private Object configuredFieldValue(
             final Map<String, Object> entry,
             final RegistryField.Definition field) {
@@ -1221,6 +1236,7 @@ public class DataManager {
         return switch (field.valueType()) {
             case "itemSelection", "itemStack" -> itemSelection(decoded);
             case "npcSelector" -> npcSelectorValue(decoded);
+            case "stringList" -> stringListValue(decoded);
             case "location" -> decoded instanceof NQLocation location ? location : null;
             case "duration" -> {
                 if (decoded instanceof Duration duration) {
