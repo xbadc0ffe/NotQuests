@@ -67,6 +67,13 @@ chat:
     hours: <red>Откат в задании! Вы должны подождать <highlight>%HOURS% часов</highlight>, пока вы не сможете выполнить это снова.
     day: <red>Откат в выполнении этого задания! Вам нужно подождать <highlight>1 час</highlight> до тех пор, пока вы не сможете взять его снова.
     days: <red>Откат в задании! Вы должны подождать <highlight>%DAYS% дней</highlight>, пока вы не сможете взять его снова.
+  quest-shared-cooldown:
+    minute: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>1 минуту</highlight>, прежде чем вы сможете взять новое.'
+    minutes: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>%MINUTES% минут</highlight>, прежде чем вы сможете взять новое.'
+    hour: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>1 час</highlight>, прежде чем вы сможете взять новое.'
+    hours: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>%HOURS% часов</highlight>, прежде чем вы сможете взять новое.'
+    day: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>1 день</highlight>, прежде чем вы сможете взять новое.'
+    days: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>%DAYS% дней</highlight>, прежде чем вы сможете взять новое.'
   profiles:
     list-current: '<highlight>Текущий профиль: <main>%PROFILENAME% (%QUESTPOINTS% очков)'
     list-other-heading: '<highlight>Прочие профили:'

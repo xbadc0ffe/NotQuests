@@ -4811,13 +4811,66 @@ public final class NotQuestsPlugin {
             final ItemSelection guiItem,
             final boolean guiItemGlow,
             final int conversationDelayMillis) {
+        return loadCategory(
+                categoryName,
+                displayName,
+                progressOrder,
+                guiItem,
+                guiItemGlow,
+                conversationDelayMillis,
+                -1);
+    }
+
+    public Category loadCategory(
+            final String categoryName,
+            final String displayName,
+            final String progressOrder,
+            final ItemSelection guiItem,
+            final boolean guiItemGlow,
+            final int conversationDelayMillis,
+            final long sharedAcceptCooldownCompleteMinutes) {
         final Category category = getOrCreateCategory(categoryName);
         category.setDisplayName(displayName);
         category.setProgressOrder(progressOrder);
         category.setGuiItem(guiItem);
         category.setGuiItemGlow(guiItemGlow);
         category.setConversationDelayInMS(conversationDelayMillis);
+        category.setSharedAcceptCooldownComplete(sharedAcceptCooldownCompleteMinutes);
         return category;
+    }
+
+    public boolean setCategorySharedAcceptCooldownComplete(
+            final String categoryName,
+            final long sharedAcceptCooldownCompleteMinutes) {
+        final Category category = category(categoryName);
+        if (category == null) {
+            return false;
+        }
+        category.setSharedAcceptCooldownComplete(sharedAcceptCooldownCompleteMinutes);
+        dataManager.saveCategory(category);
+        return true;
+    }
+
+    /**
+     * FORK DIVERGENCE: resolves the shared (category-wide) accept cooldown for a quest. Returns
+     * null when the quest's category has no shared cooldown configured, so accept checks skip the
+     * shared computation entirely.
+     */
+    public Quest.SharedCooldown sharedAcceptCooldown(final Quest quest) {
+        if (quest == null) {
+            return null;
+        }
+        final Category category = category(quest.getCategory());
+        if (category == null || category.getSharedAcceptCooldownComplete() <= 0) {
+            return null;
+        }
+        final Set<String> questIdentifiers = new HashSet<>();
+        for (final Quest categoryQuest : questManager.getAllQuests()) {
+            if (Category.same(categoryQuest.getCategory(), quest.getCategory())) {
+                questIdentifiers.add(categoryQuest.getIdentifier());
+            }
+        }
+        return new Quest.SharedCooldown(category.getSharedAcceptCooldownComplete(), questIdentifiers);
     }
 
     public boolean setCategoryConversationDelayMillis(final String categoryName, final int conversationDelayMillis) {
@@ -5920,6 +5973,7 @@ public final class NotQuestsPlugin {
                 playerData.getActiveQuestIdentifiers(),
                 playerData.getCompletedQuests(),
                 playerData.getFailedQuests(),
+                sharedAcceptCooldown(quest),
                 System.currentTimeMillis());
     }
 
@@ -5972,6 +6026,7 @@ public final class NotQuestsPlugin {
                 playerData.getActiveQuestIdentifiers(),
                 playerData.getCompletedQuests(),
                 playerData.getFailedQuests(),
+                sharedAcceptCooldown(quest),
                 nowMillis);
         return check.timeToWaitInMinutes() > 0
                 ? new Quest.AcceptCheck(
@@ -6302,7 +6357,8 @@ public final class NotQuestsPlugin {
                 questPlayer(questPlayer),
                 configuration,
                 nowMillis,
-                quest -> questRequirementsFulfilled(questPlayer, quest, warningSink));
+                quest -> questRequirementsFulfilled(questPlayer, quest, warningSink),
+                this::sharedAcceptCooldown);
     }
 
     public boolean showAttachedNpcQuestPreview(
@@ -6906,6 +6962,7 @@ public final class NotQuestsPlugin {
                     playerData.getActiveQuestIdentifiers(),
                     playerData.getCompletedQuests(),
                     playerData.getFailedQuests(),
+                    sharedAcceptCooldown(quest),
                     System.currentTimeMillis());
             if (check.status() != Quest.AcceptCheck.Status.ACCEPTABLE) {
                 final String message = questAcceptFailureMessage(questPlayer, quest, check);
@@ -7512,6 +7569,19 @@ public final class NotQuestsPlugin {
             return;
         }
         triggerEvent(questPlayer, Event.player("DEATH", worldName(questPlayer)));
+    }
+
+    // FORK DIVERGENCE: fires the STARTFLYING trigger when the player actually starts flying
+    // (creative-style flight such as /fly). Fed by the platform's toggle-flight event.
+    public void playerStartedFlying(final PlatformPlayer questPlayer) {
+        if (questPlayer == null || !questPlayer.hasPlayer()) {
+            return;
+        }
+        final QuestPlayer playerData = questPlayer(questPlayer);
+        if (playerData.getActiveQuestIdentifiers().isEmpty()) {
+            return;
+        }
+        triggerEvent(questPlayer, Event.player("STARTFLYING", worldName(questPlayer)));
     }
 
     public void npcDied(
@@ -9932,6 +10002,7 @@ public final class NotQuestsPlugin {
                             + "<highlight>" + quest.getMaxFails() + "</highlight> times, but you have already failed it "
                             + "<highlight>" + check.failedAmount() + "</highlight> times.");
             case COOLDOWN -> questCooldownMessage(questPlayer, check);
+            case SHARED_COOLDOWN -> questSharedCooldownMessage(questPlayer, quest, check);
             case MAX_ACTIVE_QUESTS_PER_PLAYER -> translate(questPlayer,
                     "chat.reached-max-active-quests-per-player-limit",
                     Map.of("%MAXACTIVEQUESTSPERPLAYER%", String.valueOf(configuration.maxActiveQuestsPerPlayer())),
@@ -9975,6 +10046,62 @@ public final class NotQuestsPlugin {
                         Map.of("%DAYS%", String.valueOf(check.timeToWaitInDays())),
                         "<red>This quest is on a cooldown! You have to wait another <highlight>" + check.timeToWaitInDays()
                                 + " days</highlight> until you can take it again.");
+    }
+
+    // FORK DIVERGENCE: shown when the shared (category-wide) accept cooldown blocks a quest.
+    private String questSharedCooldownMessage(
+            final PlatformPlayer questPlayer,
+            final Quest quest,
+            final Quest.AcceptCheck check) {
+        final String categoryDisplayName = categoryDisplayNameOrIdentifier(quest.getCategory());
+        final Map<String, String> replacements = new HashMap<>();
+        replacements.put("%CATEGORYDISPLAYNAME%", categoryDisplayName);
+        if (check.timeToWaitInMinutes() < 60) {
+            if (check.timeToWaitInMinutes() == 1) {
+                return translate(questPlayer,
+                        "chat.quest-shared-cooldown.minute",
+                        replacements,
+                        "<red>Quests from <highlight>" + categoryDisplayName
+                                + "</highlight> are on a shared cooldown! You have to wait another <highlight>1 minute</highlight> until you can take one again.");
+            }
+            replacements.put("%MINUTES%", String.valueOf(check.timeToWaitInMinutes()));
+            return translate(questPlayer,
+                    "chat.quest-shared-cooldown.minutes",
+                    replacements,
+                    "<red>Quests from <highlight>" + categoryDisplayName
+                            + "</highlight> are on a shared cooldown! You have to wait another <highlight>" + check.timeToWaitInMinutes()
+                            + " minutes</highlight> until you can take one again.");
+        }
+        if (check.timeToWaitInHours() < 24) {
+            if (check.timeToWaitInHours() == 1.0) {
+                return translate(questPlayer,
+                        "chat.quest-shared-cooldown.hour",
+                        replacements,
+                        "<red>Quests from <highlight>" + categoryDisplayName
+                                + "</highlight> are on a shared cooldown! You have to wait another <highlight>1 hour</highlight> until you can take one again.");
+            }
+            replacements.put("%HOURS%", String.valueOf(check.timeToWaitInHours()));
+            return translate(questPlayer,
+                    "chat.quest-shared-cooldown.hours",
+                    replacements,
+                    "<red>Quests from <highlight>" + categoryDisplayName
+                            + "</highlight> are on a shared cooldown! You have to wait another <highlight>" + check.timeToWaitInHours()
+                            + " hours</highlight> until you can take one again.");
+        }
+        if (check.timeToWaitInDays() == 1.0) {
+            return translate(questPlayer,
+                    "chat.quest-shared-cooldown.day",
+                    replacements,
+                    "<red>Quests from <highlight>" + categoryDisplayName
+                            + "</highlight> are on a shared cooldown! You have to wait another <highlight>1 day</highlight> until you can take one again.");
+        }
+        replacements.put("%DAYS%", String.valueOf(check.timeToWaitInDays()));
+        return translate(questPlayer,
+                "chat.quest-shared-cooldown.days",
+                replacements,
+                "<red>Quests from <highlight>" + categoryDisplayName
+                        + "</highlight> are on a shared cooldown! You have to wait another <highlight>" + check.timeToWaitInDays()
+                        + " days</highlight> until you can take one again.");
     }
 
     private void sendQuestCompletedDisplay(

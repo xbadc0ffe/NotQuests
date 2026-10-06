@@ -67,6 +67,13 @@ chat:
     hours: <red>Tämä tehtävä on jäähdytysajalla! Sinun on odotettava vielä <highlight>%HOURS% tuntia</highlight> ennen kuin voit ottaa sen uudelleen.
     day: <red>Tämä tehtävä on jäähdytysajalla! Sinun on odotettava vielä <highlight>1 päivä</highlight> ennen kuin voit ottaa sen uudelleen.
     days: <red>Tämä tehtävä on jäähdytysajalla! Sinun on odotettava vielä <highlight>%DAYS% päivää</highlight> ennen kuin voit ottaa sen uudelleen.
+  quest-shared-cooldown:
+    minute: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>1 minuutti</highlight> ennen kuin voit ottaa uuden.'
+    minutes: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>%MINUTES% minuuttia</highlight> ennen kuin voit ottaa uuden.'
+    hour: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>1 tunti</highlight> ennen kuin voit ottaa uuden.'
+    hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>%HOURS% tuntia</highlight> ennen kuin voit ottaa uuden.'
+    day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>1 päivä</highlight> ennen kuin voit ottaa uuden.'
+    days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>%DAYS% päivää</highlight> ennen kuin voit ottaa uuden.'
   profiles:
     list-current: '<highlight>Nykyinen profiili: <main>%PROFILENAME% (%QUESTPOINTS% tehtäväpistettä)'
     list-other-heading: '<highlight>Muut profiilit:'

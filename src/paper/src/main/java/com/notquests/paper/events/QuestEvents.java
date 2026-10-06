@@ -110,6 +110,21 @@ public class QuestEvents implements Listener {
                 player.getWorld().getName());
     }
 
+    // FORK DIVERGENCE: feeds the STARTFLYING trigger. Fires only on an actual flight start the
+    // server permitted (creative-style flight such as /fly) — elytra gliding never raises this
+    // event, and a merely granted-but-unused flight permission stays invisible to it.
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void playerToggleFlightEvent(PlayerToggleFlightEvent e) {
+        if (!e.isFlying() || !e.getPlayer().getAllowFlight()) {
+            return;
+        }
+        final PaperPlayer questPlayer = main.getRegistryAdapter().activePaperPlayer(e.getPlayer().getUniqueId());
+        if (questPlayer == null) {
+            return;
+        }
+        main.getCorePlugin().playerStartedFlying(questPlayer);
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onBlockBreak(BlockBreakEvent e) {
         final Block block = e.getBlock();

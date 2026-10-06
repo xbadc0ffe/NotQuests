@@ -67,6 +67,13 @@ chat:
     hours: <red>Esta missão está em uma espera! Você precisa esperar mais <highlight>%HOURS% horas</highlight> até você poder tentar novamente.
     day: <red>Esta missão está em uma espera! Você precisa esperar mais <highlight>1 dia</highlight> até você poder tentar novamente.
     days: <red>Esta missão está em uma espera! Você precisa esperar mais <highlight>%DAYS% dias</highlight> até você poder tentar novamente.
+  quest-shared-cooldown:
+    minute: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em uma espera compartilhada! Você precisa esperar mais <highlight>1 minuto</highlight> até poder pegar outra.'
+    minutes: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em uma espera compartilhada! Você precisa esperar mais <highlight>%MINUTES% minutos</highlight> até poder pegar outra.'
+    hour: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em uma espera compartilhada! Você precisa esperar mais <highlight>1 hora</highlight> até poder pegar outra.'
+    hours: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em uma espera compartilhada! Você precisa esperar mais <highlight>%HOURS% horas</highlight> até poder pegar outra.'
+    day: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em uma espera compartilhada! Você precisa esperar mais <highlight>1 dia</highlight> até poder pegar outra.'
+    days: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em uma espera compartilhada! Você precisa esperar mais <highlight>%DAYS% dias</highlight> até poder pegar outra.'
   profiles:
     list-current: '<highlight>Perfil atual: <main>%PROFILENAME% (%QUESTPOINTS% pontos de missão)'
     list-other-heading: '<highlight>Outros perfis:'

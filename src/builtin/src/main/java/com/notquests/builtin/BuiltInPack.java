@@ -71,6 +71,7 @@ import com.notquests.builtin.triggers.DeathTrigger;
 import com.notquests.builtin.triggers.DisconnectTrigger;
 import com.notquests.builtin.triggers.FailTrigger;
 import com.notquests.builtin.triggers.NPCDeathTrigger;
+import com.notquests.builtin.triggers.StartFlyingTrigger;
 import com.notquests.builtin.triggers.WorldEnterTrigger;
 import com.notquests.builtin.triggers.WorldLeaveTrigger;
 import com.notquests.builtin.variables.ActiveQuestsVariable;
@@ -354,6 +355,7 @@ public final class BuiltInPack {
         DisconnectTrigger.register(platform);
         FailTrigger.register(platform);
         NPCDeathTrigger.register(platform);
+        StartFlyingTrigger.register(platform);
         WorldEnterTrigger.register(platform);
         WorldLeaveTrigger.register(platform);
     }

@@ -67,6 +67,13 @@ chat:
     hours: <red>Завдання ще відновлюється! Вам потрібно почекати ще <highlight>%HOURS% годин</highlight> доки ви знову зможете його прийняти.
     day: <red>Завдання ще відновлюється! Вам потрібно почекати ще <highlight>1 день</highlight> доки ви знову зможете його прийняти.
     days: <red>Завдання ще відновлюється! Вам потрібно почекати ще <highlight>%DAYS% днів</highlight> доки ви знову зможете його прийняти.
+  quest-shared-cooldown:
+    minute: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>1 хвилину</highlight>, доки ви зможете прийняти інше.'
+    minutes: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>%MINUTES% хвилин</highlight>, доки ви зможете прийняти інше.'
+    hour: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>1 годину</highlight>, доки ви зможете прийняти інше.'
+    hours: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>%HOURS% годин</highlight>, доки ви зможете прийняти інше.'
+    day: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>1 день</highlight>, доки ви зможете прийняти інше.'
+    days: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>%DAYS% днів</highlight>, доки ви зможете прийняти інше.'
   profiles:
     list-current: '<highlight>Поточний профіль: <main>%PROFILENAME% (%QUESTPOINTS% балів завдань)'
     list-other-heading: '<highlight>Інші профілі:'

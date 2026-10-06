@@ -14,6 +14,9 @@ qa tags create DOUBLE testdouble
 # ---- categories ----
 qa categories create TestCategory
 qa categories edit TestCategory displayName set Test Category With Spaces
+qa categories edit TestCategory sharedAcceptCooldown complete set 1d
+qa categories edit TestCategory sharedAcceptCooldown complete show
+qa categories edit TestCategory sharedAcceptCooldown complete disable
 
 # ---- actions (literal-typed) ----
 qa actions add ActMsg SendMessage Hello there adventurer
@@ -136,6 +139,7 @@ qa edit TestQuest triggers add ActMsg BEGIN
 qa edit TestQuest triggers add ActMsg COMPLETE
 qa edit TestQuest triggers add ActMsg FAIL
 qa edit TestQuest triggers add ActMsg DEATH 1
+qa edit TestQuest triggers add ActMsg STARTFLYING 1
 qa edit TestQuest triggers add ActMsg DISCONNECT 1
 qa edit TestQuest triggers add ActMsg WORLDENTER world 1
 qa edit TestQuest triggers add ActMsg WORLDLEAVE world 1                 # UNSURE

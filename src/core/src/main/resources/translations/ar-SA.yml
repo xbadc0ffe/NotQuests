@@ -67,6 +67,13 @@ chat:
     hours: <red>هذه المهمة في فترة انتظار! عليك الانتظار <highlight>%HOURS% ساعة</highlight> أخرى حتى تتمكن من أخذها مرة أخرى.
     day: <red>هذه المهمة في فترة انتظار! عليك الانتظار <highlight>يومًا واحدًا</highlight> آخر حتى تتمكن من أخذها مرة أخرى.
     days: <red>هذه المهمة في فترة انتظار! عليك الانتظار <highlight>%DAYS% يوم</highlight> أخرى حتى تتمكن من أخذها مرة أخرى.
+  quest-shared-cooldown:
+    minute: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>دقيقة واحدة</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
+    minutes: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>%MINUTES% دقيقة</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
+    hour: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>ساعة واحدة</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
+    hours: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>%HOURS% ساعة</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
+    day: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>يوم واحد</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
+    days: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>%DAYS% يوم</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
   profiles:
     list-current: '<highlight>الملف الشخصي الحالي: <main>%PROFILENAME% (%QUESTPOINTS% نقطة مهمة)'
     list-other-heading: '<highlight>الملفات الشخصية الأخرى:'

@@ -67,6 +67,13 @@ chat:
     hours: <red>Dette oppdraget har nedkjøling! Du må vente <highlight>%HOURS% timer</highlight> til før du kan ta det igjen.
     day: <red>Dette oppdraget har nedkjøling! Du må vente <highlight>1 dag</highlight> til før du kan ta det igjen.
     days: <red>Dette oppdraget har nedkjøling! Du må vente <highlight>%DAYS% dager</highlight> til før du kan ta det igjen.
+  quest-shared-cooldown:
+    minute: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>1 minutt</highlight> til før du kan ta et nytt.'
+    minutes: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>%MINUTES% minutter</highlight> til før du kan ta et nytt.'
+    hour: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>1 time</highlight> til før du kan ta et nytt.'
+    hours: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>%HOURS% timer</highlight> til før du kan ta et nytt.'
+    day: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>1 dag</highlight> til før du kan ta et nytt.'
+    days: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>%DAYS% dager</highlight> til før du kan ta et nytt.'
   profiles:
     list-current: '<highlight>Nåværende profil: <main>%PROFILENAME% (%QUESTPOINTS% oppdragspoeng)'
     list-other-heading: '<highlight>Andre profiler:'

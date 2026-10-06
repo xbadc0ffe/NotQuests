@@ -67,6 +67,13 @@ chat:
     hours: <red>Hierdie soektog is op 'n afkoeltyd! Jy moet nog <highlight>%HOURS% ure</highlight> wag voordat jy dit weer kan neem.
     day: <red>Hierdie soektog is op 'n afkoeltyd! Jy moet nog <highlight>1 dag</highlight> wag voordat jy dit weer kan neem.
     days: <red>Hierdie soektog is op 'n afkoeltyd! Jy moet nog <highlight>%DAYS% dae</highlight> wag voordat jy dit weer kan neem.
+  quest-shared-cooldown:
+    minute: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>1 minuut</highlight> wag voordat jy weer een kan neem.'
+    minutes: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>%MINUTES% minute</highlight> wag voordat jy weer een kan neem.'
+    hour: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>1 uur</highlight> wag voordat jy weer een kan neem.'
+    hours: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>%HOURS% ure</highlight> wag voordat jy weer een kan neem.'
+    day: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>1 dag</highlight> wag voordat jy weer een kan neem.'
+    days: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>%DAYS% dae</highlight> wag voordat jy weer een kan neem.'
   profiles:
     list-current: '<highlight>Huidige profiel: <main>%PROFILENAME% (%QUESTPOINTS% soektogpunte)'
     list-other-heading: '<highlight>Ander profiele:'

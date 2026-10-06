@@ -79,6 +79,13 @@ chat:
     hours: <red>Ez a küldetés újratöltődik! Várnod kell <highlight>%HOURS% órát</highlight> mielőtt újra elvállalnád a küldetést.
     day: <red>Ez a küldetés újratöltődik! Várnod kell <highlight>1 napot</highlight> mielőtt újra elvállalnád a küldetést.
     days: <red>Ez a küldetés újratöltődik! Várnod kell <highlight>%DAYS% napot</highlight> mielőtt újra elvállalnád a küldetést.
+  quest-shared-cooldown:
+    minute: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>1 percet</highlight>, mielőtt újra elvállalhatnál egyet.'
+    minutes: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>%MINUTES% percet</highlight>, mielőtt újra elvállalhatnál egyet.'
+    hour: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>1 órát</highlight>, mielőtt újra elvállalhatnál egyet.'
+    hours: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>%HOURS% órát</highlight>, mielőtt újra elvállalhatnál egyet.'
+    day: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>1 napot</highlight>, mielőtt újra elvállalhatnál egyet.'
+    days: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>%DAYS% napot</highlight>, mielőtt újra elvállalhatnál egyet.'
   profiles:
     list-current: '<highlight>Jelenlegi profilod: <main>%PROFILENAME% (%QUESTPOINTS% küldetés pont)'
     list-other-heading: '<highlight>Más profilok:'

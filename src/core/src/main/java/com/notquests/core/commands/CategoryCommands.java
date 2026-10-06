@@ -8,6 +8,7 @@ import com.notquests.core.platform.NotQuestsAdapter;
 import com.notquests.core.platform.PlatformPlayer;
 import com.notquests.core.structs.Category;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -160,6 +161,48 @@ final class CategoryCommands {
                         plugin,
                         context.argument("category"),
                         context.argument("display-name"))))
+                .registration());
+        final NQCommandBuilder<
+                        NQArgumentType,
+                        NQFlag<NQArgumentType, NQSuggestionProvider<NQCommandContext>>,
+                        NQSuggestionProvider<NQCommandContext>,
+                        NQCommandHandler>
+                sharedAcceptCooldownComplete = categoryEdit
+                        .literal(
+                                "sharedAcceptCooldown",
+                                NQDescription.of("Configures the shared accept cooldown that spans every quest in this category."))
+                        .literal(
+                                "complete",
+                                NQDescription.of("Applies the shared cooldown after any quest of this category is completed."));
+        commands.add(sharedAcceptCooldownComplete.literal(
+                        "set",
+                        NQDescription.of("Sets the shared cooldown blocking every quest of this category after one of them is completed."))
+                .required(
+                        "duration",
+                        NQArgumentType.duration(),
+                        NQDescription.of("New shared cooldown duration, such as 30s, 10m, 2h, or 1d."))
+                .commandDescription(NQDescription.of("Sets the wait time before players can accept any quest of this category again after completing one of them."))
+                .handler(context -> List.of(setCategorySharedAcceptCooldownComplete(
+                        plugin,
+                        context.argument("category"),
+                        QuestEditCommands.duration(context.rawArgument("duration")))))
+                .registration());
+        commands.add(sharedAcceptCooldownComplete.literal(
+                        "disable",
+                        NQDescription.of("Disables this category's shared accept cooldown."))
+                .commandDescription(NQDescription.of("Disables the shared accept cooldown of this category."))
+                .handler(context -> List.of(setCategorySharedAcceptCooldownComplete(
+                        plugin,
+                        context.argument("category"),
+                        null)))
+                .registration());
+        commands.add(sharedAcceptCooldownComplete.literal(
+                        "show",
+                        NQDescription.of("Shows this category's current shared accept cooldown."))
+                .commandDescription(NQDescription.of("Shows the shared accept cooldown of this category."))
+                .handler(context -> List.of(categorySharedAcceptCooldownComplete(
+                        plugin,
+                        context.argument("category"))))
                 .registration());
         commands.add(categoryEdit.literal("guiItem", NQDescription.of("Shows or changes the item displayed for this category in GUIs."))
                 .required(
@@ -334,6 +377,37 @@ final class CategoryCommands {
         plugin.saveConfiguredData();
         return CommandMessage.success("<success>GUI Item for Category " + CommandSupport.highlight(categoryName)
                 + " has been set to " + CommandSupport.highlight2(firstListedMaterial(itemSelection)) + "!");
+    }
+
+    static CommandMessage setCategorySharedAcceptCooldownComplete(
+            final NotQuestsPlugin plugin,
+            final String categoryName,
+            final Duration cooldown) {
+        final Category category = plugin.questManager().getCategory(categoryName);
+        if (category == null) {
+            return missingCategory(categoryName);
+        }
+        final long minutes = cooldown == null ? -1L : cooldown.toMinutes();
+        plugin.setCategorySharedAcceptCooldownComplete(categoryName, minutes);
+        plugin.saveConfiguredData();
+        return CommandMessage.success("<success>Shared complete acceptCooldown for Category "
+                + CommandSupport.highlight(category.getIdentifier()) + " has been set to "
+                + CommandSupport.highlight2(minutes < 0
+                        ? "disabled"
+                        : QuestEditCommands.formatOldCooldownDuration(cooldown)) + "!");
+    }
+
+    static CommandMessage categorySharedAcceptCooldownComplete(
+            final NotQuestsPlugin plugin,
+            final String categoryName) {
+        final Category category = plugin.questManager().getCategory(categoryName);
+        if (category == null) {
+            return missingCategory(categoryName);
+        }
+        final long minutes = category.getSharedAcceptCooldownComplete();
+        return CommandMessage.success("<main>Current shared complete acceptCooldown of Category "
+                + CommandSupport.highlight(category.getIdentifier()) + ": "
+                + CommandSupport.highlight2(minutes <= 0 ? "disabled" : minutes + " minutes"));
     }
 
     private static CommandMessage missingCategory(final String categoryName) {

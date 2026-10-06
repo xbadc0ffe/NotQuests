@@ -497,7 +497,7 @@ final class QuestEditCommands {
         return first.isBlank() ? "BOOK" : first.toUpperCase(Locale.ROOT);
     }
 
-    private static Duration duration(final Object value) {
+    static Duration duration(final Object value) {
         if (value instanceof final Duration duration) {
             return duration;
         }
@@ -527,7 +527,7 @@ final class QuestEditCommands {
         }
     }
 
-    private static String formatOldCooldownDuration(final Duration duration) {
+    static String formatOldCooldownDuration(final Duration duration) {
         if (duration == null) {
             return "disabled";
         }

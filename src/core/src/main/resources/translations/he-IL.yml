@@ -67,6 +67,13 @@ chat:
     hours: <red>המשימה הזו בזמן המתנה! עליך להמתין עוד <highlight>%HOURS% שעות</highlight> עד שתוכל לקחת אותה שוב.
     day: <red>המשימה הזו בזמן המתנה! עליך להמתין עוד <highlight>יום אחד</highlight> עד שתוכל לקחת אותה שוב.
     days: <red>המשימה הזו בזמן המתנה! עליך להמתין עוד <highlight>%DAYS% ימים</highlight> עד שתוכל לקחת אותה שוב.
+  quest-shared-cooldown:
+    minute: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>דקה אחת</highlight> עד שתוכל לקחת אחת שוב.'
+    minutes: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>%MINUTES% דקות</highlight> עד שתוכל לקחת אחת שוב.'
+    hour: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>שעה אחת</highlight> עד שתוכל לקחת אחת שוב.'
+    hours: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>%HOURS% שעות</highlight> עד שתוכל לקחת אחת שוב.'
+    day: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>יום אחד</highlight> עד שתוכל לקחת אחת שוב.'
+    days: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>%DAYS% ימים</highlight> עד שתוכל לקחת אחת שוב.'
   profiles:
     list-current: '<highlight>פרופיל נוכחי: <main>%PROFILENAME% (%QUESTPOINTS% נקודות משימה)'
     list-other-heading: '<highlight>פרופילים אחרים:'

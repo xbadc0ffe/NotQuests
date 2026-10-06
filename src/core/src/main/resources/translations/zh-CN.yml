@@ -67,6 +67,13 @@ chat:
     hours: <red>任务冷却中! 您还需要等待 <highlight>%HOURS% 小时</highlight> 才能接受该任务.
     day: <red>任务冷却中! 您还需要等待 <highlight>1 天</highlight> 才能接受该任务.
     days: <red>任务冷却中! 您还需要等待 <highlight>%DAYS% 天</highlight> 才能接受该任务.
+  quest-shared-cooldown:
+    minute: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任务处于共享冷却中! 您还需要等待 <highlight>1 分钟</highlight> 才能再次接受其中的任务.'
+    minutes: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任务处于共享冷却中! 您还需要等待 <highlight>%MINUTES% 分钟</highlight> 才能再次接受其中的任务.'
+    hour: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任务处于共享冷却中! 您还需要等待 <highlight>1 小时</highlight> 才能再次接受其中的任务.'
+    hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任务处于共享冷却中! 您还需要等待 <highlight>%HOURS% 小时</highlight> 才能再次接受其中的任务.'
+    day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任务处于共享冷却中! 您还需要等待 <highlight>1 天</highlight> 才能再次接受其中的任务.'
+    days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任务处于共享冷却中! 您还需要等待 <highlight>%DAYS% 天</highlight> 才能再次接受其中的任务.'
   profiles:
     list-current: '<highlight>当前个人资料: <main>%PROFILENAME% (%QUESTPOINTS% 任务点数)'
     list-other-heading: '<highlight>其它个人资料:'

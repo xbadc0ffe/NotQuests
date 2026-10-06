@@ -53,6 +53,13 @@ chat:
     hours: <red>Αυτή η αποστολή είναι σε αναμονή! Πρέπει να περιμένεις άλλες <highlight>%HOURS% ώρες</highlight> μέχρι να μπορέσεις να την πάρεις ξανά.
     day: <red>Αυτή η αποστολή είναι σε αναμονή! Πρέπει να περιμένεις άλλη <highlight>1 ημέρα</highlight> μέχρι να μπορέσεις να την πάρεις ξανά.
     days: <red>Αυτή η αποστολή είναι σε αναμονή! Πρέπει να περιμένεις άλλες <highlight>%DAYS% ημέρες</highlight> μέχρι να μπορέσεις να την πάρεις ξανά.
+  quest-shared-cooldown:
+    minute: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>1 λεπτό</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
+    minutes: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>%MINUTES% λεπτά</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
+    hour: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>1 ώρα</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
+    hours: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>%HOURS% ώρες</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
+    day: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>1 ημέρα</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
+    days: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>%DAYS% ημέρες</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
   profiles:
     list-current: '<highlight>Τρέχον προφίλ: <main>%PROFILENAME% (%QUESTPOINTS% πόντοι αποστολής)'
     list-other-heading: '<highlight>Άλλα προφίλ:'

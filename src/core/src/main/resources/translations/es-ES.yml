@@ -67,6 +67,13 @@ chat:
     hours: <red>¡Esta misión esta esta con tiempo de espera! Tienes que esperar <highlight>%HOURS%</highlight> antes de hacer otra vez la mision.
     day: <red>¡Esta misión esta esta con tiempo de espera! Tienes que esperar <highlight>1 día</highlight> antes de hacer otra vez la mision.
     days: <red>¡Esta misión esta esta con tiempo de espera! Tienes que esperar <highlight>%DAYS%</highlight> antes de hacer otra vez la mision.
+  quest-shared-cooldown:
+    minute: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>1 minuto</highlight> más antes de poder aceptar otra.'
+    minutes: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>%MINUTES% minutos</highlight> más antes de poder aceptar otra.'
+    hour: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>1 hora</highlight> más antes de poder aceptar otra.'
+    hours: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>%HOURS% horas</highlight> más antes de poder aceptar otra.'
+    day: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>1 día</highlight> más antes de poder aceptar otra.'
+    days: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>%DAYS% días</highlight> más antes de poder aceptar otra.'
   profiles:
     list-current: '<highlight>Perfil actual: <main>%PROFILENAME% (%QUESTPOINTS% puntos)'
     list-other-heading: '<highlight>Otros perfiles:'

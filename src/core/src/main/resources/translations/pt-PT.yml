@@ -67,6 +67,13 @@ chat:
     hours: <red>Esta missão está recarga! Você tem que esperar mais <highlight>%HOURS% horas</highlight> até que possa aceitá-la novamente.
     day: <red>esta missão está em recarga! Você tem que esperar mais <highlight>1 dia</highlight> até que possa aceitá-la novamente.
     days: <red>Esta missão está em recarga! Você tem que esperar mais <highlight>%DAYS% dias</highlight> até que possa aceitá-la novamente.
+  quest-shared-cooldown:
+    minute: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>1 minuto</highlight> até poderes aceitar outra.'
+    minutes: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>%MINUTES% minutos</highlight> até poderes aceitar outra.'
+    hour: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>1 hora</highlight> até poderes aceitar outra.'
+    hours: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>%HOURS% horas</highlight> até poderes aceitar outra.'
+    day: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>1 dia</highlight> até poderes aceitar outra.'
+    days: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>%DAYS% dias</highlight> até poderes aceitar outra.'
   profiles:
     list-current: '<highlight>Perfil atual: <main>%PROFILENAME% (%QUESTPOINTS% pontos de missão)'
     list-other-heading: '<highlight>Outros perfis:'

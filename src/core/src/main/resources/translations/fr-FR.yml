@@ -67,6 +67,13 @@ chat:
     hours: <red>Cette quête est en attente ! Vous devez patienter encore <highlight>%HOURS% heures</highlight> avant de pouvoir l'accepter à nouveau.
     day: <red>Cette quête est en attente ! Vous devez patienter encore <highlight>1 jour</highlight> avant de pouvoir l'accepter à nouveau.
     days: <red>Cette quête est en attente ! Vous devez patienter encore <highlight>%DAYS% jours</highlight> avant de pouvoir l'accepter à nouveau.
+  quest-shared-cooldown:
+    minute: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>1 minute</highlight> avant de pouvoir en accepter une à nouveau.'
+    minutes: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>%MINUTES% minutes</highlight> avant de pouvoir en accepter une à nouveau.'
+    hour: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>1 heure</highlight> avant de pouvoir en accepter une à nouveau.'
+    hours: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>%HOURS% heures</highlight> avant de pouvoir en accepter une à nouveau.'
+    day: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>1 jour</highlight> avant de pouvoir en accepter une à nouveau.'
+    days: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>%DAYS% jours</highlight> avant de pouvoir en accepter une à nouveau.'
   profiles:
     list-current: '<highlight>Profil actuel: <main>%PROFILENAME% (%QUESTPOINTS% points de quête)'
     list-other-heading: '<highlight>Autres profils:'

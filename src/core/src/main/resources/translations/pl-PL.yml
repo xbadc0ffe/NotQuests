@@ -67,6 +67,13 @@ chat:
     hours: <red>To zadanie ma odnowienie! Musisz poczekać następne <highlight>%HOURS% godzin</highlight> aby odebrać je ponownie.
     day: <red>To zadanie jest odnawiane! Musisz poczekać następny <highlight>1 dzień</highlight> aby odebrać je ponownie.
     days: <red>To zadanie ma odnowienie! Musisz poczekać kolejne <highlight>%DAYS% dni</highlight> aby odebrać je ponownie.
+  quest-shared-cooldown:
+    minute: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>1 minutę</highlight>, aby odebrać kolejne.'
+    minutes: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>%MINUTES% minut</highlight>, aby odebrać kolejne.'
+    hour: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>1 godzinę</highlight>, aby odebrać kolejne.'
+    hours: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>%HOURS% godzin</highlight>, aby odebrać kolejne.'
+    day: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>1 dzień</highlight>, aby odebrać kolejne.'
+    days: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>%DAYS% dni</highlight>, aby odebrać kolejne.'
   profiles:
     list-current: '<highlight>Bieżący profil: <main>%PROFILENAME% (%QUESTPOINTS% punktów misji)'
     list-other-heading: '<highlight>Inne profile:'

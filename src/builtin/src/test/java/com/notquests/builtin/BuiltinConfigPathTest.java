@@ -123,6 +123,7 @@ class BuiltinConfigPathTest {
                 "DEATH", Set.of("amountNeeded"),
                 "DISCONNECT", Set.of("amountNeeded"),
                 "NPCDEATH", Set.of("specifics.npcToDie", "amountNeeded"),
+                "STARTFLYING", Set.of("amountNeeded"),
                 "WORLDENTER", Set.of("specifics.worldToEnter", "amountNeeded"),
                 "WORLDLEAVE", Set.of("specifics.worldToLeave", "amountNeeded"));
 

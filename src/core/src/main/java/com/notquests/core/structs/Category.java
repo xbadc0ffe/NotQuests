@@ -14,6 +14,9 @@ public final class Category {
     private ItemSelection guiItemSelection;
     private boolean guiItemGlow;
     private int conversationDelayMillis;
+    // FORK DIVERGENCE: shared accept cooldown (minutes) across every quest in this category;
+    // -1 or 0 = disabled. Completing any category quest starts the shared window.
+    private long sharedAcceptCooldownComplete = -1;
 
     public Category(final String identifier) {
         if (identifier == null || identifier.isBlank()) {
@@ -76,6 +79,15 @@ public final class Category {
 
     public void setConversationDelayInMS(final int conversationDelayMillis) {
         this.conversationDelayMillis = Math.max(conversationDelayMillis, 0);
+    }
+
+    public long getSharedAcceptCooldownComplete() {
+        return sharedAcceptCooldownComplete;
+    }
+
+    public void setSharedAcceptCooldownComplete(final long sharedAcceptCooldownCompleteMinutes) {
+        this.sharedAcceptCooldownComplete =
+                sharedAcceptCooldownCompleteMinutes <= 0 ? -1 : sharedAcceptCooldownCompleteMinutes;
     }
 
     public static String canonical(final String categoryName) {

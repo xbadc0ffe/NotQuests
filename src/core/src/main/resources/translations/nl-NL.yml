@@ -67,6 +67,13 @@ chat:
     hours: <red>Deze opdracht heeft een wachttijd! Je moet nog <highlight>%HOURS% uur</highlight> wachten voordat je hem opnieuw kunt aannemen.
     day: <red>Deze opdracht heeft een wachttijd! Je moet nog <highlight>1 dag</highlight> wachten voordat je hem opnieuw kunt aannemen.
     days: <red>Deze opdracht heeft een wachttijd! Je moet nog <highlight>%DAYS% dagen</highlight> wachten voordat je hem opnieuw kunt aannemen.
+  quest-shared-cooldown:
+    minute: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>1 minuut</highlight> wachten voordat je er weer een kunt aannemen.'
+    minutes: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>%MINUTES% minuten</highlight> wachten voordat je er weer een kunt aannemen.'
+    hour: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>1 uur</highlight> wachten voordat je er weer een kunt aannemen.'
+    hours: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>%HOURS% uur</highlight> wachten voordat je er weer een kunt aannemen.'
+    day: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>1 dag</highlight> wachten voordat je er weer een kunt aannemen.'
+    days: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>%DAYS% dagen</highlight> wachten voordat je er weer een kunt aannemen.'
   profiles:
     list-current: '<highlight>Huidig profiel: <main>%PROFILENAME% (%QUESTPOINTS% opdrachtpunten)'
     list-other-heading: '<highlight>Andere profielen:'

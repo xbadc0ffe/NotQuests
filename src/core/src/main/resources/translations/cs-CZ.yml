@@ -61,6 +61,13 @@ chat:
     hours: <red>Tento úkol se restartuje! Musíš počkat dalších <highlight>%HOURS% hodin</highlight>, než jej budeš moci vzít znovu.
     day: <red>Tento úkol se restartuje! Musíš počkat další <highlight>1 den</highlight>, než jej budeš moci vzít znovu.
     days: <red>Tento úkol se restartuje! Musíš počkat dalších<highlight>%DAYS% dnů</highlight>, než jej budeš moci vzít znovu.
+  quest-shared-cooldown:
+    minute: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>1 minutu</highlight>, než budeš moci vzít další.'
+    minutes: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>%MINUTES% minut</highlight>, než budeš moci vzít další.'
+    hour: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>1 hodinu</highlight>, než budeš moci vzít další.'
+    hours: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>%HOURS% hodin</highlight>, než budeš moci vzít další.'
+    day: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>1 den</highlight>, než budeš moci vzít další.'
+    days: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>%DAYS% dnů</highlight>, než budeš moci vzít další.'
   profiles:
     list-current: '<highlight>Aktuální profil: <main>%PROFILENAME% (%QUESTPOINTS% quest bodů)'
     list-other-heading: '<highlight>Jiné profily:'

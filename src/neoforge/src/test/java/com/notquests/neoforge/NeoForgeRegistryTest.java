@@ -24,7 +24,7 @@ class NeoForgeRegistryTest {
                 .collect(Collectors.toCollection(java.util.TreeSet::new)));
         assertEquals(26, registry.actions().size());
         assertEquals(8, registry.conditions().size());
-        assertEquals(8, registry.triggers().size());
+        assertEquals(9, registry.triggers().size());
         assertEquals(expectedPortableVariables(), registry.variables().stream()
                 .map(Variables.Type::id)
                 .collect(Collectors.toCollection(java.util.TreeSet::new)));
@@ -40,7 +40,7 @@ class NeoForgeRegistryTest {
                         "- Objectives: " + expectedPortableObjectives().size(),
                         "- Actions: 26",
                         "- Conditions: 8",
-                        "- Triggers: 8",
+                        "- Triggers: 9",
                         "- Variables: " + expectedPortableVariables().size()),
                 NotQuestsRegistry.summary(registry));
     }
@@ -107,7 +107,7 @@ class NeoForgeRegistryTest {
                 oldList("All variable types", expectedPortableVariables().stream().sorted().toList()),
                 NotQuestsRegistry.variableList(registry));
         assertEquals(
-                oldList("All trigger types", List.of("BEGIN", "COMPLETE", "DEATH", "DISCONNECT", "FAIL", "NPCDEATH", "WORLDENTER", "WORLDLEAVE")),
+                oldList("All trigger types", List.of("BEGIN", "COMPLETE", "DEATH", "DISCONNECT", "FAIL", "NPCDEATH", "STARTFLYING", "WORLDENTER", "WORLDLEAVE")),
                 NotQuestsRegistry.triggerList(registry));
     }
 

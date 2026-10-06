@@ -67,6 +67,13 @@ chat:
     hours: <red>Diese Quest ist auf Abklingzeit! Du musst noch <highlight>%HOURS% Stunden</highlight> warten, bis du sie annehmen kannst.
     day: <red>Diese Quest ist auf Abklingzeit! Du musst noch <highlight>1 Tag</highlight> warten, bis du sie annehmen kannst.
     days: <red>Diese Quest ist auf Abklingzeit! Du musst noch <highlight>%DAYS% Tage</highlight> warten, bis du sie annehmen kannst.
+  quest-shared-cooldown:
+    minute: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>1 Minute</highlight> warten, bis du wieder eine annehmen kannst.'
+    minutes: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>%MINUTES% Minuten</highlight> warten, bis du wieder eine annehmen kannst.'
+    hour: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>1 Stunde</highlight> warten, bis du wieder eine annehmen kannst.'
+    hours: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>%HOURS% Stunden</highlight> warten, bis du wieder eine annehmen kannst.'
+    day: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>1 Tag</highlight> warten, bis du wieder eine annehmen kannst.'
+    days: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>%DAYS% Tage</highlight> warten, bis du wieder eine annehmen kannst.'
   profiles:
     list-current: '<highlight>Aktuelles Profil: <main>%PROFILENAME% (%QUESTPOINTS% Questpunkte)'
     list-other-heading: '<highlight>Weitere Profile:'

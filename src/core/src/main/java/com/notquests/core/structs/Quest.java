@@ -17,11 +17,14 @@ import com.notquests.core.triggers.Trigger;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class Quest {
@@ -506,9 +509,28 @@ public final class Quest {
       final Collection<QuestPlayer.CompletedQuest> completedQuests,
       final Collection<QuestPlayer.FailedQuest> failedQuests,
       final long nowMillis) {
+    return acceptCheck(
+        quest,
+        maxActiveQuestsPerPlayer,
+        activeQuestIdentifiers,
+        completedQuests,
+        failedQuests,
+        null,
+        nowMillis);
+  }
+
+  public static AcceptCheck acceptCheck(
+      final Quest quest,
+      final int maxActiveQuestsPerPlayer,
+      final Collection<String> activeQuestIdentifiers,
+      final Collection<QuestPlayer.CompletedQuest> completedQuests,
+      final Collection<QuestPlayer.FailedQuest> failedQuests,
+      final SharedCooldown sharedCooldown,
+      final long nowMillis) {
     final String questIdentifier = normalizeQuestIdentifier(quest.getIdentifier());
     int completedAmount = 0;
     long mostRecentCompleteTime = 0;
+    long mostRecentSharedCompleteTime = 0;
     int failedAmount = 0;
     int acceptedAmount = 0;
     boolean alreadyActive = false;
@@ -518,6 +540,10 @@ public final class Quest {
         completedAmount += 1;
         acceptedAmount += 1;
         mostRecentCompleteTime = Math.max(mostRecentCompleteTime, completedQuest.timeCompleted());
+      }
+      if (sharedCooldown != null && sharedCooldown.includes(completedQuest.questIdentifier())) {
+        mostRecentSharedCompleteTime =
+            Math.max(mostRecentSharedCompleteTime, completedQuest.timeCompleted());
       }
     }
     for (final QuestPlayer.FailedQuest failedQuest : failedQuests) {
@@ -535,9 +561,22 @@ public final class Quest {
 
     final long completeTimeDifferenceMinutes =
         TimeUnit.MILLISECONDS.toMinutes(Math.max(0, nowMillis - mostRecentCompleteTime));
-    final long timeToWaitInMinutes = Math.max(
+    final long questTimeToWaitInMinutes = Math.max(
         0,
         quest.getAcceptCooldownComplete() - completeTimeDifferenceMinutes);
+    // FORK DIVERGENCE: quests can share one accept cooldown (per category) — any completion in
+    // the shared group blocks every quest of the group until the shared window has passed.
+    final long sharedTimeToWaitInMinutes;
+    if (sharedCooldown == null || mostRecentSharedCompleteTime <= 0) {
+      sharedTimeToWaitInMinutes = 0;
+    } else {
+      final long sharedCompleteTimeDifferenceMinutes =
+          TimeUnit.MILLISECONDS.toMinutes(Math.max(0, nowMillis - mostRecentSharedCompleteTime));
+      sharedTimeToWaitInMinutes = Math.max(
+          0,
+          sharedCooldown.cooldownMinutes() - sharedCompleteTimeDifferenceMinutes);
+    }
+    final long timeToWaitInMinutes = Math.max(questTimeToWaitInMinutes, sharedTimeToWaitInMinutes);
 
     if (maxActiveQuestsPerPlayer != -1
         && activeQuestIdentifiers.size() >= maxActiveQuestsPerPlayer) {
@@ -583,7 +622,9 @@ public final class Quest {
     }
     if (timeToWaitInMinutes > 0) {
       return acceptCheckResult(
-          AcceptCheck.Status.COOLDOWN,
+          sharedTimeToWaitInMinutes > questTimeToWaitInMinutes
+              ? AcceptCheck.Status.SHARED_COOLDOWN
+              : AcceptCheck.Status.COOLDOWN,
           completedAmount,
           failedAmount,
           acceptedAmount,
@@ -598,9 +639,19 @@ public final class Quest {
       final ConfigurationManager configuration,
       final long nowMillis,
       final Predicate<Quest> requirementsFulfilled) {
+    return visibleQuestIdentifiers(quests, player, configuration, nowMillis, requirementsFulfilled, null);
+  }
+
+  public static List<String> visibleQuestIdentifiers(
+      final Collection<Quest> quests,
+      final QuestPlayer player,
+      final ConfigurationManager configuration,
+      final long nowMillis,
+      final Predicate<Quest> requirementsFulfilled,
+      final Function<Quest, SharedCooldown> sharedCooldownResolver) {
     final ConfigurationManager effectiveSettings = configuration == null ? new ConfigurationManager() : configuration;
     return (quests == null ? List.<Quest>of() : quests).stream()
-        .filter(quest -> visible(quest, player, effectiveSettings, nowMillis, requirementsFulfilled))
+        .filter(quest -> visible(quest, player, effectiveSettings, nowMillis, requirementsFulfilled, sharedCooldownResolver))
         .map(Quest::getIdentifier)
         .toList();
   }
@@ -610,7 +661,8 @@ public final class Quest {
       final QuestPlayer player,
       final ConfigurationManager configuration,
       final long nowMillis,
-      final Predicate<Quest> requirementsFulfilled) {
+      final Predicate<Quest> requirementsFulfilled,
+      final Function<Quest, SharedCooldown> sharedCooldownResolver) {
     if (quest == null) {
       return false;
     }
@@ -628,6 +680,7 @@ public final class Quest {
           player.getActiveQuestIdentifiers(),
           player.getCompletedQuests(),
           player.getFailedQuests(),
+          sharedCooldownResolver == null ? null : sharedCooldownResolver.apply(quest),
           nowMillis);
       if (configuration.questVisibilityEvaluationLimits()) {
         if (quest.getMaxCompletions() > -1 && acceptCheck.completedAmount() >= quest.getMaxCompletions()) {
@@ -641,7 +694,8 @@ public final class Quest {
         }
       }
       if (configuration.questVisibilityEvaluationAcceptCooldown()
-          && acceptCheck.status() == Quest.AcceptCheck.Status.COOLDOWN) {
+          && (acceptCheck.status() == Quest.AcceptCheck.Status.COOLDOWN
+              || acceptCheck.status() == Quest.AcceptCheck.Status.SHARED_COOLDOWN)) {
         return false;
       }
     }
@@ -663,6 +717,25 @@ public final class Quest {
     return value == null ? "" : value.toLowerCase(Locale.ROOT);
   }
 
+  /**
+   * FORK DIVERGENCE: a shared accept cooldown spanning a group of quests (one quest category).
+   * Completing any quest in {@code questIdentifiers} blocks accepting every quest of the group
+   * for {@code cooldownMinutes} minutes. Identifiers are matched case-insensitively.
+   */
+  public record SharedCooldown(long cooldownMinutes, Set<String> questIdentifiers) {
+    public SharedCooldown {
+      final Set<String> normalized = new HashSet<>();
+      for (final String identifier : questIdentifiers == null ? Set.<String>of() : questIdentifiers) {
+        normalized.add(normalizeQuestIdentifier(identifier));
+      }
+      questIdentifiers = Set.copyOf(normalized);
+    }
+
+    public boolean includes(final String questIdentifier) {
+      return questIdentifiers.contains(normalizeQuestIdentifier(questIdentifier));
+    }
+  }
+
   public record AcceptCheck(
       Status status,
       int completedAmount,
@@ -676,7 +749,9 @@ public final class Quest {
       MAX_COMPLETIONS,
       MAX_ACCEPTS,
       MAX_FAILS,
-      COOLDOWN
+      COOLDOWN,
+      // FORK DIVERGENCE: blocked by the shared (category-wide) accept cooldown, not this quest's own.
+      SHARED_COOLDOWN
     }
 
     public double timeToWaitInHours() {
@@ -695,7 +770,9 @@ public final class Quest {
     }
 
     public static CooldownDisplay from(final AcceptCheck acceptCheck) {
-      if (acceptCheck == null || acceptCheck.status() != AcceptCheck.Status.COOLDOWN) {
+      if (acceptCheck == null
+          || (acceptCheck.status() != AcceptCheck.Status.COOLDOWN
+              && acceptCheck.status() != AcceptCheck.Status.SHARED_COOLDOWN)) {
         return new CooldownDisplay(Bucket.NO_COOLDOWN, "");
       }
       final long minutes = acceptCheck.timeToWaitInMinutes();

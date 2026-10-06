@@ -67,6 +67,13 @@ chat:
     hours: <red>Aquesta missió està en temps d'espera! Has d'esperar <highlight>%HOURS% hores</highlight> més fins que la puguis tornar a agafar.
     day: <red>Aquesta missió està en temps d'espera! Has d'esperar <highlight>1 dia</highlight> més fins que la puguis tornar a agafar.
     days: <red>Aquesta missió està en temps d'espera! Has d'esperar <highlight>%DAYS% dies</highlight> més fins que la puguis tornar a agafar.
+  quest-shared-cooldown:
+    minute: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>1 minut</highlight> més fins que en puguis tornar a agafar una.'
+    minutes: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>%MINUTES% minuts</highlight> més fins que en puguis tornar a agafar una.'
+    hour: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>1 hora</highlight> més fins que en puguis tornar a agafar una.'
+    hours: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>%HOURS% hores</highlight> més fins que en puguis tornar a agafar una.'
+    day: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>1 dia</highlight> més fins que en puguis tornar a agafar una.'
+    days: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>%DAYS% dies</highlight> més fins que en puguis tornar a agafar una.'
   profiles:
     list-current: '<highlight>Perfil actual: <main>%PROFILENAME% (%QUESTPOINTS% punts de missió)'
     list-other-heading: '<highlight>Altres perfils:'

@@ -67,6 +67,13 @@ chat:
     hours: <red>Denne quest er på nedkøling! Du skal vente endnu <highlight>%HOURS% timer</highlight>, før du kan tage den igen.
     day: <red>Denne quest er på nedkøling! Du skal vente endnu <highlight>1 dag</highlight>, før du kan tage den igen.
     days: <red>Denne quest er på nedkøling! Du skal vente endnu <highlight>%DAYS% dage</highlight>, før du kan tage den igen.
+  quest-shared-cooldown:
+    minute: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>1 minut</highlight>, før du kan tage en igen.'
+    minutes: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>%MINUTES% minutter</highlight>, før du kan tage en igen.'
+    hour: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>1 time</highlight>, før du kan tage en igen.'
+    hours: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>%HOURS% timer</highlight>, før du kan tage en igen.'
+    day: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>1 dag</highlight>, før du kan tage en igen.'
+    days: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>%DAYS% dage</highlight>, før du kan tage en igen.'
   profiles:
     list-current: '<highlight>Nuværende profil: <main>%PROFILENAME% (%QUESTPOINTS% quest-point)'
     list-other-heading: '<highlight>Andre profiler:'

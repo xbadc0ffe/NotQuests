@@ -67,6 +67,13 @@ chat:
     hours: <red>Questa missione è in fase di ricarica! Devi aspettare <highlight>%HOURS% ore</highlight> fino a quando non potrai prenderla di nuovo.
     day: <red>Questa missione è in fase di ricarica! Devi aspettare un altro <highlight>giorno</highlight> fino a quando non potrai riprenderla.
     days: <red>Questa missione è in fase di raffreddamento! Devi aspettare<highlight>%DAYS% giorni</highlight> fino a quando non potrai riprenderla.
+  quest-shared-cooldown:
+    minute: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>1 minuto</highlight> prima di poterne prendere un''altra.'
+    minutes: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>%MINUTES% minuti</highlight> prima di poterne prendere un''altra.'
+    hour: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>1 ora</highlight> prima di poterne prendere un''altra.'
+    hours: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>%HOURS% ore</highlight> prima di poterne prendere un''altra.'
+    day: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>1 giorno</highlight> prima di poterne prendere un''altra.'
+    days: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>%DAYS% giorni</highlight> prima di poterne prendere un''altra.'
   profiles:
     list-current: '<highlight>Profilo attuale: <main>%PROFILENAME% (%QUESTPOINTS% punti missione)'
     list-other-heading: '<highlight>Altri profili:'

@@ -55,6 +55,13 @@ chat:
     hours: <red>Nhiệm vụ này đang trong thời gian chờ! Bạn phải đợi khoảng <highlight>%HOURS% tiếng</highlight> cho đến khi bạn có thể làm nhiệm vụ đó.
     day: <red>Nhiệm vụ này đang trong thời gian chờ! Bạn phải đợi khoảng <highlight>1 ngày</highlight> cho đến khi bạn có thể làm nhiệm vụ đó.
     days: <red>Nhiệm vụ này đang trong thời gian chờ! Bạn phải đợi khoảng <highlight>%DAYS% ngày</highlight> cho đến khi bạn có thể làm nhiệm vụ đó.
+  quest-shared-cooldown:
+    minute: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>1 phút</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
+    minutes: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>%MINUTES% phút</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
+    hour: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>1 tiếng</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
+    hours: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>%HOURS% tiếng</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
+    day: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>1 ngày</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
+    days: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>%DAYS% ngày</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
   profiles:
     list-current: '<highlight>Hồ sơ hiện tại: <main>%PROFILENAME% (%QUESTPOINTS% điểm nhiệm vụ)'
     list-other-heading: '<highlight>Hồ sơ khác:'

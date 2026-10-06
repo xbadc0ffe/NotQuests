@@ -67,6 +67,13 @@ chat:
     hours: <red>Quest ini sedang dalam masa tunggu! Kamu harus menunggu <highlight>%HOURS% jam</highlight> lagi sampai kamu bisa mengambilnya lagi.
     day: <red>Quest ini sedang dalam masa tunggu! Kamu harus menunggu <highlight>1 hari</highlight> lagi sampai kamu bisa mengambilnya lagi.
     days: <red>Quest ini sedang dalam masa tunggu! Kamu harus menunggu <highlight>%DAYS% hari</highlight> lagi sampai kamu bisa mengambilnya lagi.
+  quest-shared-cooldown:
+    minute: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>1 menit</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
+    minutes: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>%MINUTES% menit</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
+    hour: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>1 jam</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
+    hours: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>%HOURS% jam</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
+    day: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>1 hari</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
+    days: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>%DAYS% hari</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
   profiles:
     list-current: '<highlight>Profil saat ini: <main>%PROFILENAME% (%QUESTPOINTS% poin quest)'
     list-other-heading: '<highlight>Profil lainnya:'

@@ -67,6 +67,13 @@ chat:
     hours: <red>Ova istraga je na hlađenju! Trebaš čekati još <highlight>%HOURS% sati</highlight> dok je ne možeš ponovno uzeti.
     day: <red>Ova istraga je na hlađenju. Moraš čekati još <highlight>1 dan</highlight> dok je ne možeš ponovno uzeti.
     days: <red>Ova istraga je na hlađenju. Moraš čekati još <highlight>%DAYS% dana</highlight> dok je ne možeš ponovno uzeti.
+  quest-shared-cooldown:
+    minute: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>1 minutu</highlight> dok ne možeš ponovno uzeti neki.'
+    minutes: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>%MINUTES% minuta</highlight> dok ne možeš ponovno uzeti neki.'
+    hour: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>1 sat</highlight> dok ne možeš ponovno uzeti neki.'
+    hours: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>%HOURS% sati</highlight> dok ne možeš ponovno uzeti neki.'
+    day: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>1 dan</highlight> dok ne možeš ponovno uzeti neki.'
+    days: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>%DAYS% dana</highlight> dok ne možeš ponovno uzeti neki.'
   profiles:
     list-current: '<highlight>Trenutni profil: <main>%PROFILENAME% (%QUESTPOINTS% istražnih poena)'
     list-other-heading: '<highlight>Ostali profili:'

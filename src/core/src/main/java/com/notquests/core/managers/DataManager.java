@@ -290,7 +290,8 @@ public class DataManager {
                 progressOrderString(map.get("predefinedProgressOrder")),
                 itemSelection(map, "guiItem"),
                 bool(map, "guiItemGlow", false),
-                integerAtPath(map, "conversations.delay", 0));
+                integerAtPath(map, "conversations.delay", 0),
+                integerAtPath(map, "sharedAcceptCooldown.complete", -1));
     }
 
     private void saveRuntimeData() throws IOException {
@@ -504,6 +505,9 @@ public class DataManager {
         map.put("displayName", category.getDisplayName());
         map.put("conversations", Map.of("delay", category.getConversationDelayInMS()));
         putProgressOrder(map, "predefinedProgressOrder", category.getProgressOrder());
+        if (category.getSharedAcceptCooldownComplete() > 0) {
+            map.put("sharedAcceptCooldown", Map.of("complete", category.getSharedAcceptCooldownComplete()));
+        }
         final Object guiItem = itemSelectionToYaml(category.getGuiItemSelection());
         if (guiItem != null) {
             map.put("guiItem", guiItem);

@@ -67,6 +67,13 @@ chat:
     hours: <red>Detta uppdrag har en nedkylningstid! Du måste vänta ytterligare <highlight>%HOURS% timmar</highlight> innan du kan ta det igen.
     day: <red>Detta uppdrag har en nedkylningstid! Du måste vänta ytterligare <highlight>1 dag</highlight> innan du kan ta det igen.
     days: <red>Detta uppdrag har en nedkylningstid! Du måste vänta ytterligare <highlight>%DAYS% dagar</highlight> innan du kan ta det igen.
+  quest-shared-cooldown:
+    minute: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>1 minut</highlight> innan du kan ta ett nytt.'
+    minutes: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>%MINUTES% minuter</highlight> innan du kan ta ett nytt.'
+    hour: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>1 timme</highlight> innan du kan ta ett nytt.'
+    hours: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>%HOURS% timmar</highlight> innan du kan ta ett nytt.'
+    day: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>1 dag</highlight> innan du kan ta ett nytt.'
+    days: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>%DAYS% dagar</highlight> innan du kan ta ett nytt.'
   profiles:
     list-current: '<highlight>Nuvarande profil: <main>%PROFILENAME% (%QUESTPOINTS% uppdragspoäng)'
     list-other-heading: '<highlight>Andra profiler:'

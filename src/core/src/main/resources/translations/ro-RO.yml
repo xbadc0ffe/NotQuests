@@ -67,6 +67,13 @@ chat:
     hours: <red>Această misiune este în așteptare! Trebuie să mai aștepți <highlight>%HOURS% ore</highlight> până o poți lua din nou.
     day: <red>Această misiune este în așteptare! Trebuie să mai aștepți <highlight>1 zi</highlight> până o poți lua din nou.
     days: <red>Această misiune este în așteptare! Trebuie să mai aștepți <highlight>%DAYS% zile</highlight> până o poți lua din nou.
+  quest-shared-cooldown:
+    minute: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>1 minut</highlight> până poți lua alta.'
+    minutes: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>%MINUTES% minute</highlight> până poți lua alta.'
+    hour: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>1 oră</highlight> până poți lua alta.'
+    hours: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>%HOURS% ore</highlight> până poți lua alta.'
+    day: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>1 zi</highlight> până poți lua alta.'
+    days: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>%DAYS% zile</highlight> până poți lua alta.'
   profiles:
     list-current: '<highlight>Profil curent: <main>%PROFILENAME% (%QUESTPOINTS% puncte de misiune)'
     list-other-heading: '<highlight>Alte profiluri:'
