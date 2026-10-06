@@ -74,6 +74,7 @@ chat:
     hours: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>%HOURS% timer</highlight>, før du kan tage en igen.'
     day: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>1 dag</highlight>, før du kan tage en igen.'
     days: '<red>Quests fra <highlight>%CATEGORYDISPLAYNAME%</highlight> er på en fælles nedkøling! Du skal vente endnu <highlight>%DAYS% dage</highlight>, før du kan tage en igen.'
+  quest-category-max-active: '<red>Du har allerede en aktiv opgave fra <highlight>%CATEGORYDISPLAYNAME%</highlight>! Gør den færdig, før du tager en ny.'
   profiles:
     list-current: '<highlight>Nuværende profil: <main>%PROFILENAME% (%QUESTPOINTS% quest-point)'
     list-other-heading: '<highlight>Andre profiler:'

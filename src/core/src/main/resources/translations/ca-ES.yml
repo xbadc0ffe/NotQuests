@@ -74,6 +74,7 @@ chat:
     hours: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>%HOURS% hores</highlight> més fins que en puguis tornar a agafar una.'
     day: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>1 dia</highlight> més fins que en puguis tornar a agafar una.'
     days: '<red>Les missions de <highlight>%CATEGORYDISPLAYNAME%</highlight> estan en un temps d''espera compartit! Has d''esperar <highlight>%DAYS% dies</highlight> més fins que en puguis tornar a agafar una.'
+  quest-category-max-active: '<red>Ja tens una tasca activa de <highlight>%CATEGORYDISPLAYNAME%</highlight>! Acaba-la abans d''agafar-ne una altra.'
   profiles:
     list-current: '<highlight>Perfil actual: <main>%PROFILENAME% (%QUESTPOINTS% punts de missió)'
     list-other-heading: '<highlight>Altres perfils:'

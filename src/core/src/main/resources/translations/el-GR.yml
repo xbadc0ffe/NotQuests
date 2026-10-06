@@ -60,6 +60,7 @@ chat:
     hours: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>%HOURS% ώρες</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
     day: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>1 ημέρα</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
     days: '<red>Οι αποστολές από <highlight>%CATEGORYDISPLAYNAME%</highlight> είναι σε κοινή αναμονή! Πρέπει να περιμένεις ακόμα <highlight>%DAYS% ημέρες</highlight> μέχρι να μπορέσεις να πάρεις ξανά μία.'
+  quest-category-max-active: '<red>Έχεις ήδη μια ενεργή αποστολή από <highlight>%CATEGORYDISPLAYNAME%</highlight>! Ολοκλήρωσέ την πριν πάρεις άλλη.'
   profiles:
     list-current: '<highlight>Τρέχον προφίλ: <main>%PROFILENAME% (%QUESTPOINTS% πόντοι αποστολής)'
     list-other-heading: '<highlight>Άλλα προφίλ:'

@@ -74,6 +74,7 @@ chat:
     hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>의 퀘스트들이 공유 재사용 대기 중입니다! 다시 받으려면 <highlight>%HOURS%시간</highlight> 더 기다려야 합니다.'
     day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>의 퀘스트들이 공유 재사용 대기 중입니다! 다시 받으려면 <highlight>1일</highlight> 더 기다려야 합니다.'
     days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>의 퀘스트들이 공유 재사용 대기 중입니다! 다시 받으려면 <highlight>%DAYS%일</highlight> 더 기다려야 합니다.'
+  quest-category-max-active: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>의 진행 중인 임무가 이미 있습니다! 다른 임무를 받기 전에 먼저 완료하세요.'
   profiles:
     list-current: '<highlight>현재 프로필: <main>%PROFILENAME% (%QUESTPOINTS% 퀘스트 포인트)'
     list-other-heading: '<highlight>다른 프로필:'

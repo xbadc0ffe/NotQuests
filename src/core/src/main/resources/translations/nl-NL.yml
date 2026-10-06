@@ -74,6 +74,7 @@ chat:
     hours: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>%HOURS% uur</highlight> wachten voordat je er weer een kunt aannemen.'
     day: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>1 dag</highlight> wachten voordat je er weer een kunt aannemen.'
     days: '<red>De opdrachten van <highlight>%CATEGORYDISPLAYNAME%</highlight> hebben een gedeelde wachttijd! Je moet nog <highlight>%DAYS% dagen</highlight> wachten voordat je er weer een kunt aannemen.'
+  quest-category-max-active: '<red>Je hebt al een actieve taak van <highlight>%CATEGORYDISPLAYNAME%</highlight>! Rond die af voordat je een nieuwe aanneemt.'
   profiles:
     list-current: '<highlight>Huidig profiel: <main>%PROFILENAME% (%QUESTPOINTS% opdrachtpunten)'
     list-other-heading: '<highlight>Andere profielen:'

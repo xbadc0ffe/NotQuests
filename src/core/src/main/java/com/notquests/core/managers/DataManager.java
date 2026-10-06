@@ -291,7 +291,8 @@ public class DataManager {
                 itemSelection(map, "guiItem"),
                 bool(map, "guiItemGlow", false),
                 integerAtPath(map, "conversations.delay", 0),
-                integerAtPath(map, "sharedAcceptCooldown.complete", -1));
+                integerAtPath(map, "sharedAcceptCooldown.complete", -1),
+                integer(map, "maxActiveQuests", -1));
     }
 
     private void saveRuntimeData() throws IOException {
@@ -507,6 +508,9 @@ public class DataManager {
         putProgressOrder(map, "predefinedProgressOrder", category.getProgressOrder());
         if (category.getSharedAcceptCooldownComplete() > 0) {
             map.put("sharedAcceptCooldown", Map.of("complete", category.getSharedAcceptCooldownComplete()));
+        }
+        if (category.getMaxActiveQuests() > 0) {
+            map.put("maxActiveQuests", category.getMaxActiveQuests());
         }
         final Object guiItem = itemSelectionToYaml(category.getGuiItemSelection());
         if (guiItem != null) {

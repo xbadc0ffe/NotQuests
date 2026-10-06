@@ -525,7 +525,7 @@ public final class Quest {
       final Collection<String> activeQuestIdentifiers,
       final Collection<QuestPlayer.CompletedQuest> completedQuests,
       final Collection<QuestPlayer.FailedQuest> failedQuests,
-      final SharedCooldown sharedCooldown,
+      final CategoryRules categoryRules,
       final long nowMillis) {
     final String questIdentifier = normalizeQuestIdentifier(quest.getIdentifier());
     int completedAmount = 0;
@@ -533,6 +533,7 @@ public final class Quest {
     long mostRecentSharedCompleteTime = 0;
     int failedAmount = 0;
     int acceptedAmount = 0;
+    int activeInCategory = 0;
     boolean alreadyActive = false;
 
     for (final QuestPlayer.CompletedQuest completedQuest : completedQuests) {
@@ -541,7 +542,7 @@ public final class Quest {
         acceptedAmount += 1;
         mostRecentCompleteTime = Math.max(mostRecentCompleteTime, completedQuest.timeCompleted());
       }
-      if (sharedCooldown != null && sharedCooldown.includes(completedQuest.questIdentifier())) {
+      if (categoryRules != null && categoryRules.includes(completedQuest.questIdentifier())) {
         mostRecentSharedCompleteTime =
             Math.max(mostRecentSharedCompleteTime, completedQuest.timeCompleted());
       }
@@ -557,6 +558,9 @@ public final class Quest {
         alreadyActive = true;
         acceptedAmount += 1;
       }
+      if (categoryRules != null && categoryRules.includes(activeQuestIdentifier)) {
+        activeInCategory += 1;
+      }
     }
 
     final long completeTimeDifferenceMinutes =
@@ -567,14 +571,16 @@ public final class Quest {
     // FORK DIVERGENCE: quests can share one accept cooldown (per category) — any completion in
     // the shared group blocks every quest of the group until the shared window has passed.
     final long sharedTimeToWaitInMinutes;
-    if (sharedCooldown == null || mostRecentSharedCompleteTime <= 0) {
+    if (categoryRules == null
+        || categoryRules.sharedCooldownMinutes() <= 0
+        || mostRecentSharedCompleteTime <= 0) {
       sharedTimeToWaitInMinutes = 0;
     } else {
       final long sharedCompleteTimeDifferenceMinutes =
           TimeUnit.MILLISECONDS.toMinutes(Math.max(0, nowMillis - mostRecentSharedCompleteTime));
       sharedTimeToWaitInMinutes = Math.max(
           0,
-          sharedCooldown.cooldownMinutes() - sharedCompleteTimeDifferenceMinutes);
+          categoryRules.sharedCooldownMinutes() - sharedCompleteTimeDifferenceMinutes);
     }
     final long timeToWaitInMinutes = Math.max(questTimeToWaitInMinutes, sharedTimeToWaitInMinutes);
 
@@ -591,6 +597,17 @@ public final class Quest {
     if (alreadyActive) {
       return acceptCheckResult(
           AcceptCheck.Status.ALREADY_ACCEPTED,
+          completedAmount,
+          failedAmount,
+          acceptedAmount,
+          timeToWaitInMinutes);
+    }
+    // FORK DIVERGENCE: at most maxActiveQuests of the category group can be active at once.
+    if (categoryRules != null
+        && categoryRules.maxActiveQuests() > 0
+        && activeInCategory >= categoryRules.maxActiveQuests()) {
+      return acceptCheckResult(
+          AcceptCheck.Status.MAX_ACTIVE_QUESTS_PER_CATEGORY,
           completedAmount,
           failedAmount,
           acceptedAmount,
@@ -648,10 +665,10 @@ public final class Quest {
       final ConfigurationManager configuration,
       final long nowMillis,
       final Predicate<Quest> requirementsFulfilled,
-      final Function<Quest, SharedCooldown> sharedCooldownResolver) {
+      final Function<Quest, CategoryRules> categoryRulesResolver) {
     final ConfigurationManager effectiveSettings = configuration == null ? new ConfigurationManager() : configuration;
     return (quests == null ? List.<Quest>of() : quests).stream()
-        .filter(quest -> visible(quest, player, effectiveSettings, nowMillis, requirementsFulfilled, sharedCooldownResolver))
+        .filter(quest -> visible(quest, player, effectiveSettings, nowMillis, requirementsFulfilled, categoryRulesResolver))
         .map(Quest::getIdentifier)
         .toList();
   }
@@ -662,7 +679,7 @@ public final class Quest {
       final ConfigurationManager configuration,
       final long nowMillis,
       final Predicate<Quest> requirementsFulfilled,
-      final Function<Quest, SharedCooldown> sharedCooldownResolver) {
+      final Function<Quest, CategoryRules> categoryRulesResolver) {
     if (quest == null) {
       return false;
     }
@@ -680,7 +697,7 @@ public final class Quest {
           player.getActiveQuestIdentifiers(),
           player.getCompletedQuests(),
           player.getFailedQuests(),
-          sharedCooldownResolver == null ? null : sharedCooldownResolver.apply(quest),
+          categoryRulesResolver == null ? null : categoryRulesResolver.apply(quest),
           nowMillis);
       if (configuration.questVisibilityEvaluationLimits()) {
         if (quest.getMaxCompletions() > -1 && acceptCheck.completedAmount() >= quest.getMaxCompletions()) {
@@ -718,17 +735,23 @@ public final class Quest {
   }
 
   /**
-   * FORK DIVERGENCE: a shared accept cooldown spanning a group of quests (one quest category).
+   * FORK DIVERGENCE: category-wide accept rules spanning a group of quests (one quest category).
    * Completing any quest in {@code questIdentifiers} blocks accepting every quest of the group
-   * for {@code cooldownMinutes} minutes. Identifiers are matched case-insensitively.
+   * for {@code sharedCooldownMinutes} minutes, and at most {@code maxActiveQuests} quests of the
+   * group can be active at the same time. Zero or negative values disable the respective rule.
+   * Identifiers are matched case-insensitively.
    */
-  public record SharedCooldown(long cooldownMinutes, Set<String> questIdentifiers) {
-    public SharedCooldown {
+  public record CategoryRules(long sharedCooldownMinutes, int maxActiveQuests, Set<String> questIdentifiers) {
+    public CategoryRules {
       final Set<String> normalized = new HashSet<>();
       for (final String identifier : questIdentifiers == null ? Set.<String>of() : questIdentifiers) {
         normalized.add(normalizeQuestIdentifier(identifier));
       }
       questIdentifiers = Set.copyOf(normalized);
+    }
+
+    public CategoryRules(final long sharedCooldownMinutes, final Set<String> questIdentifiers) {
+      this(sharedCooldownMinutes, -1, questIdentifiers);
     }
 
     public boolean includes(final String questIdentifier) {
@@ -751,7 +774,9 @@ public final class Quest {
       MAX_FAILS,
       COOLDOWN,
       // FORK DIVERGENCE: blocked by the shared (category-wide) accept cooldown, not this quest's own.
-      SHARED_COOLDOWN
+      SHARED_COOLDOWN,
+      // FORK DIVERGENCE: blocked because the category's active-quest cap is already reached.
+      MAX_ACTIVE_QUESTS_PER_CATEGORY
     }
 
     public double timeToWaitInHours() {

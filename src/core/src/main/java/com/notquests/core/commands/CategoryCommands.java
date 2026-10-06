@@ -204,6 +204,44 @@ final class CategoryCommands {
                         plugin,
                         context.argument("category"))))
                 .registration());
+        final NQCommandBuilder<
+                        NQArgumentType,
+                        NQFlag<NQArgumentType, NQSuggestionProvider<NQCommandContext>>,
+                        NQSuggestionProvider<NQCommandContext>,
+                        NQCommandHandler>
+                maxActiveQuests = categoryEdit.literal(
+                        "maxActiveQuests",
+                        NQDescription.of("Configures how many quests of this category can be active at the same time."));
+        commands.add(maxActiveQuests.literal(
+                        "set",
+                        NQDescription.of("Sets the cap on simultaneously active quests from this category."))
+                .required(
+                        "amount",
+                        NQArgumentType.integer("maximum active quests"),
+                        NQDescription.of("Maximum number of quests from this category a player can hold at once."))
+                .commandDescription(NQDescription.of("Sets how many quests of this category can be active at the same time."))
+                .handler(context -> List.of(setCategoryMaxActiveQuests(
+                        plugin,
+                        context.argument("category"),
+                        integer(context.argument("amount")))))
+                .registration());
+        commands.add(maxActiveQuests.literal(
+                        "disable",
+                        NQDescription.of("Removes this category's active-quest cap."))
+                .commandDescription(NQDescription.of("Disables the active-quest cap of this category."))
+                .handler(context -> List.of(setCategoryMaxActiveQuests(
+                        plugin,
+                        context.argument("category"),
+                        -1)))
+                .registration());
+        commands.add(maxActiveQuests.literal(
+                        "show",
+                        NQDescription.of("Shows this category's current active-quest cap."))
+                .commandDescription(NQDescription.of("Shows the active-quest cap of this category."))
+                .handler(context -> List.of(categoryMaxActiveQuests(
+                        plugin,
+                        context.argument("category"))))
+                .registration());
         commands.add(categoryEdit.literal("guiItem", NQDescription.of("Shows or changes the item displayed for this category in GUIs."))
                 .required(
                         "material",
@@ -410,8 +448,44 @@ final class CategoryCommands {
                 + CommandSupport.highlight2(minutes <= 0 ? "disabled" : minutes + " minutes"));
     }
 
+    static CommandMessage setCategoryMaxActiveQuests(
+            final NotQuestsPlugin plugin,
+            final String categoryName,
+            final int maxActiveQuests) {
+        final Category category = plugin.questManager().getCategory(categoryName);
+        if (category == null) {
+            return missingCategory(categoryName);
+        }
+        plugin.setCategoryMaxActiveQuests(categoryName, maxActiveQuests);
+        plugin.saveConfiguredData();
+        return CommandMessage.success("<success>Active-quest cap for Category "
+                + CommandSupport.highlight(category.getIdentifier()) + " has been set to "
+                + CommandSupport.highlight2(maxActiveQuests <= 0 ? "disabled" : String.valueOf(maxActiveQuests)) + "!");
+    }
+
+    static CommandMessage categoryMaxActiveQuests(
+            final NotQuestsPlugin plugin,
+            final String categoryName) {
+        final Category category = plugin.questManager().getCategory(categoryName);
+        if (category == null) {
+            return missingCategory(categoryName);
+        }
+        final int maxActiveQuests = category.getMaxActiveQuests();
+        return CommandMessage.success("<main>Current active-quest cap of Category "
+                + CommandSupport.highlight(category.getIdentifier()) + ": "
+                + CommandSupport.highlight2(maxActiveQuests <= 0 ? "disabled" : String.valueOf(maxActiveQuests)));
+    }
+
     private static CommandMessage missingCategory(final String categoryName) {
         return CommandMessage.error("<error>No Category found: " + categoryName);
+    }
+
+    private static int integer(final String input) {
+        try {
+            return Integer.parseInt(input);
+        } catch (final NumberFormatException exception) {
+            return -1;
+        }
     }
 
     private static String firstListedMaterial(final ItemSelection itemSelection) {

@@ -74,6 +74,7 @@ chat:
     hours: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>%HOURS% ore</highlight> prima di poterne prendere un''altra.'
     day: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>1 giorno</highlight> prima di poterne prendere un''altra.'
     days: '<red>Le missioni di <highlight>%CATEGORYDISPLAYNAME%</highlight> sono in una ricarica condivisa! Devi aspettare ancora <highlight>%DAYS% giorni</highlight> prima di poterne prendere un''altra.'
+  quest-category-max-active: '<red>Hai già un incarico attivo da <highlight>%CATEGORYDISPLAYNAME%</highlight>! Completalo prima di prenderne un altro.'
   profiles:
     list-current: '<highlight>Profilo attuale: <main>%PROFILENAME% (%QUESTPOINTS% punti missione)'
     list-other-heading: '<highlight>Altri profili:'

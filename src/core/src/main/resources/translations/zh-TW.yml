@@ -74,6 +74,7 @@ chat:
     hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任務處於共享冷卻中! 你需要再等待 <highlight>%HOURS% 小時</highlight> 才能再次接受其中的任務.'
     day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任務處於共享冷卻中! 你需要再等待 <highlight>1 天</highlight> 才能再次接受其中的任務.'
     days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> 的任務處於共享冷卻中! 你需要再等待 <highlight>%DAYS% 天</highlight> 才能再次接受其中的任務.'
+  quest-category-max-active: '<red>你已經有一個來自 <highlight>%CATEGORYDISPLAYNAME%</highlight> 的進行中任務! 請先完成它再接受其他任務.'
   profiles:
     list-current: <highlight>個人資料:<main>%PROFILENAME% (%QUESTPOINTS% 任務點數)
     list-other-heading: '<highlight>其他個人資料:'

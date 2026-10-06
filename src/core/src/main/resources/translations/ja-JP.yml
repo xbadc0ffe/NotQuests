@@ -74,6 +74,7 @@ chat:
     hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> のクエストは共有クールダウン中です！ また受けられるまであと <highlight>%HOURS% 時間</highlight> 待つ必要があります。'
     day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> のクエストは共有クールダウン中です！ また受けられるまであと <highlight>1 日</highlight> 待つ必要があります。'
     days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> のクエストは共有クールダウン中です！ また受けられるまであと <highlight>%DAYS% 日</highlight> 待つ必要があります。'
+  quest-category-max-active: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> のタスクをすでに進行中です！別のタスクを受ける前に完了させてください。'
   profiles:
     list-current: '<highlight>現在のプロファイル: <main>%PROFILENAME% (%QUESTPOINTS% クエストポイント)'
     list-other-heading: '<highlight>その他のプロファイル:'

@@ -62,6 +62,7 @@ chat:
     hours: '<red>Quests from <highlight>%CATEGORYDISPLAYNAME%</highlight> are on a shared cooldown! You have to wait another <highlight>%HOURS% hours</highlight> until you can take one again.'
     day: '<red>Quests from <highlight>%CATEGORYDISPLAYNAME%</highlight> are on a shared cooldown! You have to wait another <highlight>1 day</highlight> until you can take one again.'
     days: '<red>Quests from <highlight>%CATEGORYDISPLAYNAME%</highlight> are on a shared cooldown! You have to wait another <highlight>%DAYS% days</highlight> until you can take one again.'
+  quest-category-max-active: '<red>You already have an active task from <highlight>%CATEGORYDISPLAYNAME%</highlight>! Finish it before taking another one.'
   profiles:
     list-current: '<highlight>Current profile: <main>%PROFILENAME% (%QUESTPOINTS% quest points)'
     list-other-heading: '<highlight>Other profiles:'

@@ -74,6 +74,7 @@ chat:
     hours: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>%HOURS% heures</highlight> avant de pouvoir en accepter une à nouveau.'
     day: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>1 jour</highlight> avant de pouvoir en accepter une à nouveau.'
     days: '<red>Les quêtes de <highlight>%CATEGORYDISPLAYNAME%</highlight> sont en attente partagée ! Vous devez patienter encore <highlight>%DAYS% jours</highlight> avant de pouvoir en accepter une à nouveau.'
+  quest-category-max-active: '<red>Vous avez déjà une tâche active de <highlight>%CATEGORYDISPLAYNAME%</highlight> ! Terminez-la avant d''en accepter une autre.'
   profiles:
     list-current: '<highlight>Profil actuel: <main>%PROFILENAME% (%QUESTPOINTS% points de quête)'
     list-other-heading: '<highlight>Autres profils:'

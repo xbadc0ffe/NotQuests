@@ -74,6 +74,7 @@ chat:
     hours: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>%HOURS% horas</highlight> más antes de poder aceptar otra.'
     day: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>1 día</highlight> más antes de poder aceptar otra.'
     days: '<red>¡Las misiones de <highlight>%CATEGORYDISPLAYNAME%</highlight> están en un tiempo de espera compartido! Tienes que esperar <highlight>%DAYS% días</highlight> más antes de poder aceptar otra.'
+  quest-category-max-active: '<red>¡Ya tienes una tarea activa de <highlight>%CATEGORYDISPLAYNAME%</highlight>! Termínala antes de aceptar otra.'
   profiles:
     list-current: '<highlight>Perfil actual: <main>%PROFILENAME% (%QUESTPOINTS% puntos)'
     list-other-heading: '<highlight>Otros perfiles:'

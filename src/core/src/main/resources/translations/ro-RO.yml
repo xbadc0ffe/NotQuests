@@ -74,6 +74,7 @@ chat:
     hours: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>%HOURS% ore</highlight> până poți lua alta.'
     day: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>1 zi</highlight> până poți lua alta.'
     days: '<red>Misiunile de la <highlight>%CATEGORYDISPLAYNAME%</highlight> sunt într-o așteptare comună! Trebuie să mai aștepți <highlight>%DAYS% zile</highlight> până poți lua alta.'
+  quest-category-max-active: '<red>Ai deja o sarcină activă de la <highlight>%CATEGORYDISPLAYNAME%</highlight>! Termin-o înainte să iei alta.'
   profiles:
     list-current: '<highlight>Profil curent: <main>%PROFILENAME% (%QUESTPOINTS% puncte de misiune)'
     list-other-heading: '<highlight>Alte profiluri:'

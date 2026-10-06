@@ -74,6 +74,7 @@ chat:
     hours: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>%HOURS% ure</highlight> wag voordat jy weer een kan neem.'
     day: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>1 dag</highlight> wag voordat jy weer een kan neem.'
     days: '<red>Soektogte van <highlight>%CATEGORYDISPLAYNAME%</highlight> is op ''n gedeelde afkoeltyd! Jy moet nog <highlight>%DAYS% dae</highlight> wag voordat jy weer een kan neem.'
+  quest-category-max-active: '<red>Jy het reeds ''n aktiewe taak van <highlight>%CATEGORYDISPLAYNAME%</highlight>! Voltooi dit voordat jy nog een neem.'
   profiles:
     list-current: '<highlight>Huidige profiel: <main>%PROFILENAME% (%QUESTPOINTS% soektogpunte)'
     list-other-heading: '<highlight>Ander profiele:'

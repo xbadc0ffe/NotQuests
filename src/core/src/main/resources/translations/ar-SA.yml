@@ -74,6 +74,7 @@ chat:
     hours: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>%HOURS% ساعة</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
     day: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>يوم واحد</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
     days: '<red>مهام <highlight>%CATEGORYDISPLAYNAME%</highlight> في فترة انتظار مشتركة! عليك الانتظار لمدة <highlight>%DAYS% يوم</highlight> حتى تتمكن من أخذ مهمة أخرى منها.'
+  quest-category-max-active: '<red>لديك بالفعل مهمة نشطة من <highlight>%CATEGORYDISPLAYNAME%</highlight>! أكملها قبل أن تأخذ مهمة أخرى.'
   profiles:
     list-current: '<highlight>الملف الشخصي الحالي: <main>%PROFILENAME% (%QUESTPOINTS% نقطة مهمة)'
     list-other-heading: '<highlight>الملفات الشخصية الأخرى:'

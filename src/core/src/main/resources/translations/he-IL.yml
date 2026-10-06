@@ -74,6 +74,7 @@ chat:
     hours: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>%HOURS% שעות</highlight> עד שתוכל לקחת אחת שוב.'
     day: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>יום אחד</highlight> עד שתוכל לקחת אחת שוב.'
     days: '<red>המשימות של <highlight>%CATEGORYDISPLAYNAME%</highlight> בזמן המתנה משותף! עליך להמתין עוד <highlight>%DAYS% ימים</highlight> עד שתוכל לקחת אחת שוב.'
+  quest-category-max-active: '<red>כבר יש לך משימה פעילה מ-<highlight>%CATEGORYDISPLAYNAME%</highlight>! סיים אותה לפני שתיקח אחת נוספת.'
   profiles:
     list-current: '<highlight>פרופיל נוכחי: <main>%PROFILENAME% (%QUESTPOINTS% נקודות משימה)'
     list-other-heading: '<highlight>פרופילים אחרים:'

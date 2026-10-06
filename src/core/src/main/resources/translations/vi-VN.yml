@@ -62,6 +62,7 @@ chat:
     hours: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>%HOURS% tiếng</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
     day: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>1 ngày</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
     days: '<red>Các nhiệm vụ của <highlight>%CATEGORYDISPLAYNAME%</highlight> đang trong thời gian chờ chung! Bạn phải đợi thêm <highlight>%DAYS% ngày</highlight> nữa cho đến khi bạn có thể nhận một nhiệm vụ khác.'
+  quest-category-max-active: '<red>Bạn đã có một nhiệm vụ đang thực hiện từ <highlight>%CATEGORYDISPLAYNAME%</highlight>! Hãy hoàn thành nó trước khi nhận nhiệm vụ khác.'
   profiles:
     list-current: '<highlight>Hồ sơ hiện tại: <main>%PROFILENAME% (%QUESTPOINTS% điểm nhiệm vụ)'
     list-other-heading: '<highlight>Hồ sơ khác:'

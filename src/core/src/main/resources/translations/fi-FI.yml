@@ -74,6 +74,7 @@ chat:
     hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>%HOURS% tuntia</highlight> ennen kuin voit ottaa uuden.'
     day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>1 päivä</highlight> ennen kuin voit ottaa uuden.'
     days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight>-tehtävät ovat yhteisellä jäähdytysajalla! Sinun on odotettava vielä <highlight>%DAYS% päivää</highlight> ennen kuin voit ottaa uuden.'
+  quest-category-max-active: '<red>Sinulla on jo aktiivinen tehtävä kohteelta <highlight>%CATEGORYDISPLAYNAME%</highlight>! Suorita se loppuun ennen kuin otat uuden.'
   profiles:
     list-current: '<highlight>Nykyinen profiili: <main>%PROFILENAME% (%QUESTPOINTS% tehtäväpistettä)'
     list-other-heading: '<highlight>Muut profiilit:'

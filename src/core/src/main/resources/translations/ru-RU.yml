@@ -74,6 +74,7 @@ chat:
     hours: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>%HOURS% часов</highlight>, прежде чем вы сможете взять новое.'
     day: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>1 день</highlight>, прежде чем вы сможете взять новое.'
     days: '<red>Задания <highlight>%CATEGORYDISPLAYNAME%</highlight> на общем откате! Подождите ещё <highlight>%DAYS% дней</highlight>, прежде чем вы сможете взять новое.'
+  quest-category-max-active: '<red>У вас уже есть активное задание от <highlight>%CATEGORYDISPLAYNAME%</highlight>! Завершите его, прежде чем брать новое.'
   profiles:
     list-current: '<highlight>Текущий профиль: <main>%PROFILENAME% (%QUESTPOINTS% очков)'
     list-other-heading: '<highlight>Прочие профили:'

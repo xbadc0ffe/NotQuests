@@ -74,6 +74,7 @@ chat:
     hours: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>%HOURS% timer</highlight> til før du kan ta et nytt.'
     day: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>1 dag</highlight> til før du kan ta et nytt.'
     days: '<red>Oppdragene fra <highlight>%CATEGORYDISPLAYNAME%</highlight> har felles nedkjøling! Du må vente <highlight>%DAYS% dager</highlight> til før du kan ta et nytt.'
+  quest-category-max-active: '<red>Du har allerede en aktiv oppgave fra <highlight>%CATEGORYDISPLAYNAME%</highlight>! Fullfør den før du tar en ny.'
   profiles:
     list-current: '<highlight>Nåværende profil: <main>%PROFILENAME% (%QUESTPOINTS% oppdragspoeng)'
     list-other-heading: '<highlight>Andre profiler:'

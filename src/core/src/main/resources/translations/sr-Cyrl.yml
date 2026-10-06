@@ -80,6 +80,7 @@ chat:
     hours: '<red>Задаци од <highlight>%CATEGORYDISPLAYNAME%</highlight> су на заједничком одмору! Мораш сачекати још <highlight>%HOURS% сати</highlight> да би поново узео неки.'
     day: '<red>Задаци од <highlight>%CATEGORYDISPLAYNAME%</highlight> су на заједничком одмору! Мораш сачекати још <highlight>1 дан</highlight> да би поново узео неки.'
     days: '<red>Задаци од <highlight>%CATEGORYDISPLAYNAME%</highlight> су на заједничком одмору! Мораш сачекати још <highlight>%DAYS% дана</highlight> да би поново узео неки.'
+  quest-category-max-active: '<red>Већ имаш активан задатак од <highlight>%CATEGORYDISPLAYNAME%</highlight>! Заврши га пре него што узмеш нови.'
   profiles:
     list-current: '<highlight>Тренутни профил: <main>%PROFILENAME% (%QUESTPOINTS% истражних поена)'
     list-other-heading: '<highlight>Остали профили:'

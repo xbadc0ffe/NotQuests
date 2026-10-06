@@ -74,6 +74,7 @@ chat:
     hours: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> görevleri ortak bekleme süresinde! Tekrar bir görev alabilmeniz için <highlight>%HOURS% saat</highlight> daha beklemeniz gerekiyor.'
     day: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> görevleri ortak bekleme süresinde! Tekrar bir görev alabilmeniz için <highlight>1 gün</highlight> daha beklemeniz gerekiyor.'
     days: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> görevleri ortak bekleme süresinde! Tekrar bir görev alabilmeniz için <highlight>%DAYS% gün</highlight> daha beklemeniz gerekiyor.'
+  quest-category-max-active: '<red><highlight>%CATEGORYDISPLAYNAME%</highlight> tarafından verilen aktif bir göreviniz zaten var! Yenisini almadan önce onu bitirin.'
   profiles:
     list-current: '<highlight>Güncel profil: <main>%PROFILENAME% (%QUESTPOINTS% görev puanı)'
     list-other-heading: '<highlight>Diğer profiller:'

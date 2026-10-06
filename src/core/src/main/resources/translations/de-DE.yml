@@ -74,6 +74,7 @@ chat:
     hours: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>%HOURS% Stunden</highlight> warten, bis du wieder eine annehmen kannst.'
     day: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>1 Tag</highlight> warten, bis du wieder eine annehmen kannst.'
     days: '<red>Die Quests von <highlight>%CATEGORYDISPLAYNAME%</highlight> sind auf einer gemeinsamen Abklingzeit! Du musst noch <highlight>%DAYS% Tage</highlight> warten, bis du wieder eine annehmen kannst.'
+  quest-category-max-active: '<red>Du hast bereits eine aktive Aufgabe von <highlight>%CATEGORYDISPLAYNAME%</highlight>! Schließe sie ab, bevor du eine weitere annimmst.'
   profiles:
     list-current: '<highlight>Aktuelles Profil: <main>%PROFILENAME% (%QUESTPOINTS% Questpunkte)'
     list-other-heading: '<highlight>Weitere Profile:'

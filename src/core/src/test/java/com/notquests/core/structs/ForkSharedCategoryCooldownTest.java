@@ -22,16 +22,16 @@ class ForkSharedCategoryCooldownTest {
   private static final long TEN_HOURS_AGO = NOW - TimeUnit.HOURS.toMillis(10);
   private static final long ONE_DAY_MINUTES = 1440;
 
-  private static Quest.SharedCooldown sharedDay(final String... questIdentifiers) {
-    return new Quest.SharedCooldown(ONE_DAY_MINUTES, Set.of(questIdentifiers));
+  private static Quest.CategoryRules sharedDay(final String... questIdentifiers) {
+    return new Quest.CategoryRules(ONE_DAY_MINUTES, Set.of(questIdentifiers));
   }
 
   private static Quest.AcceptCheck check(
       final Quest quest,
-      final Quest.SharedCooldown sharedCooldown,
+      final Quest.CategoryRules categoryRules,
       final List<QuestPlayer.CompletedQuest> completed,
       final List<QuestPlayer.FailedQuest> failed) {
-    return Quest.acceptCheck(quest, -1, List.of(), completed, failed, sharedCooldown, NOW);
+    return Quest.acceptCheck(quest, -1, List.of(), completed, failed, categoryRules, NOW);
   }
 
   @Test
@@ -141,8 +141,8 @@ class ForkSharedCategoryCooldownTest {
         List.of());
 
     assertEquals(Quest.AcceptCheck.Status.SHARED_COOLDOWN, check.status());
-    assertTrue(new Quest.SharedCooldown(1, Set.of("QuestA")).includes("qUeStA"));
-    assertFalse(new Quest.SharedCooldown(1, Set.of("QuestA")).includes("QuestB"));
+    assertTrue(new Quest.CategoryRules(1, Set.of("QuestA")).includes("qUeStA"));
+    assertFalse(new Quest.CategoryRules(1, Set.of("QuestA")).includes("QuestB"));
   }
 
   @Test

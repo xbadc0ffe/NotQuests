@@ -74,6 +74,7 @@ chat:
     hours: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>%HOURS% jam</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
     day: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>1 hari</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
     days: '<red>Quest dari <highlight>%CATEGORYDISPLAYNAME%</highlight> sedang dalam masa tunggu bersama! Kamu harus menunggu <highlight>%DAYS% hari</highlight> lagi sampai kamu bisa mengambil salah satunya lagi.'
+  quest-category-max-active: '<red>Kamu sudah memiliki tugas aktif dari <highlight>%CATEGORYDISPLAYNAME%</highlight>! Selesaikan dulu sebelum mengambil yang lain.'
   profiles:
     list-current: '<highlight>Profil saat ini: <main>%PROFILENAME% (%QUESTPOINTS% poin quest)'
     list-other-heading: '<highlight>Profil lainnya:'

@@ -74,6 +74,7 @@ chat:
     hours: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>%HOURS% годин</highlight>, доки ви зможете прийняти інше.'
     day: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>1 день</highlight>, доки ви зможете прийняти інше.'
     days: '<red>Завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight> мають спільне відновлення! Вам потрібно почекати ще <highlight>%DAYS% днів</highlight>, доки ви зможете прийняти інше.'
+  quest-category-max-active: '<red>У вас уже є активне завдання від <highlight>%CATEGORYDISPLAYNAME%</highlight>! Завершіть його, перш ніж брати інше.'
   profiles:
     list-current: '<highlight>Поточний профіль: <main>%PROFILENAME% (%QUESTPOINTS% балів завдань)'
     list-other-heading: '<highlight>Інші профілі:'

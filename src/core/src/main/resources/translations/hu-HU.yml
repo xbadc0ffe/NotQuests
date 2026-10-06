@@ -86,6 +86,7 @@ chat:
     hours: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>%HOURS% órát</highlight>, mielőtt újra elvállalhatnál egyet.'
     day: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>1 napot</highlight>, mielőtt újra elvállalhatnál egyet.'
     days: '<red>A(z) <highlight>%CATEGORYDISPLAYNAME%</highlight> küldetései közös újratöltésen vannak! Várnod kell <highlight>%DAYS% napot</highlight>, mielőtt újra elvállalhatnál egyet.'
+  quest-category-max-active: '<red>Már van egy aktív feladatod tőle: <highlight>%CATEGORYDISPLAYNAME%</highlight>! Fejezd be, mielőtt újat vállalnál.'
   profiles:
     list-current: '<highlight>Jelenlegi profilod: <main>%PROFILENAME% (%QUESTPOINTS% küldetés pont)'
     list-other-heading: '<highlight>Más profilok:'

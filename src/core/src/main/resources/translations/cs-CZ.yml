@@ -68,6 +68,7 @@ chat:
     hours: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>%HOURS% hodin</highlight>, než budeš moci vzít další.'
     day: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>1 den</highlight>, než budeš moci vzít další.'
     days: '<red>Úkoly od <highlight>%CATEGORYDISPLAYNAME%</highlight> mají společnou přestávku! Musíš počkat ještě <highlight>%DAYS% dnů</highlight>, než budeš moci vzít další.'
+  quest-category-max-active: '<red>Už máš aktivní úkol od <highlight>%CATEGORYDISPLAYNAME%</highlight>! Dokonči ho, než si vezmeš další.'
   profiles:
     list-current: '<highlight>Aktuální profil: <main>%PROFILENAME% (%QUESTPOINTS% quest bodů)'
     list-other-heading: '<highlight>Jiné profily:'

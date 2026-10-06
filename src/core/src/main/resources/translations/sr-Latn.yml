@@ -74,6 +74,7 @@ chat:
     hours: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>%HOURS% sati</highlight> dok ne možeš ponovno uzeti neki.'
     day: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>1 dan</highlight> dok ne možeš ponovno uzeti neki.'
     days: '<red>Zadaci od <highlight>%CATEGORYDISPLAYNAME%</highlight> su na zajedničkom hlađenju! Moraš čekati još <highlight>%DAYS% dana</highlight> dok ne možeš ponovno uzeti neki.'
+  quest-category-max-active: '<red>Već imaš aktivan zadatak od <highlight>%CATEGORYDISPLAYNAME%</highlight>! Završi ga pre nego što uzmeš novi.'
   profiles:
     list-current: '<highlight>Trenutni profil: <main>%PROFILENAME% (%QUESTPOINTS% istražnih poena)'
     list-other-heading: '<highlight>Ostali profili:'

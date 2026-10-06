@@ -74,6 +74,7 @@ chat:
     hours: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>%HOURS% godzin</highlight>, aby odebrać kolejne.'
     day: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>1 dzień</highlight>, aby odebrać kolejne.'
     days: '<red>Zadania od <highlight>%CATEGORYDISPLAYNAME%</highlight> mają wspólne odnowienie! Musisz poczekać jeszcze <highlight>%DAYS% dni</highlight>, aby odebrać kolejne.'
+  quest-category-max-active: '<red>Masz już aktywne zadanie od <highlight>%CATEGORYDISPLAYNAME%</highlight>! Ukończ je, zanim weźmiesz kolejne.'
   profiles:
     list-current: '<highlight>Bieżący profil: <main>%PROFILENAME% (%QUESTPOINTS% punktów misji)'
     list-other-heading: '<highlight>Inne profile:'

@@ -74,6 +74,7 @@ chat:
     hours: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>%HOURS% horas</highlight> até poderes aceitar outra.'
     day: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>1 dia</highlight> até poderes aceitar outra.'
     days: '<red>As missões de <highlight>%CATEGORYDISPLAYNAME%</highlight> estão em recarga partilhada! Tens de esperar mais <highlight>%DAYS% dias</highlight> até poderes aceitar outra.'
+  quest-category-max-active: '<red>Já tens uma tarefa ativa de <highlight>%CATEGORYDISPLAYNAME%</highlight>! Conclui-a antes de aceitares outra.'
   profiles:
     list-current: '<highlight>Perfil atual: <main>%PROFILENAME% (%QUESTPOINTS% pontos de missão)'
     list-other-heading: '<highlight>Outros perfis:'

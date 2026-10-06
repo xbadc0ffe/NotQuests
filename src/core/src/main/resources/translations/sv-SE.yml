@@ -74,6 +74,7 @@ chat:
     hours: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>%HOURS% timmar</highlight> innan du kan ta ett nytt.'
     day: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>1 dag</highlight> innan du kan ta ett nytt.'
     days: '<red>Uppdragen från <highlight>%CATEGORYDISPLAYNAME%</highlight> har en delad nedkylningstid! Du måste vänta ytterligare <highlight>%DAYS% dagar</highlight> innan du kan ta ett nytt.'
+  quest-category-max-active: '<red>Du har redan ett aktivt uppdrag från <highlight>%CATEGORYDISPLAYNAME%</highlight>! Slutför det innan du tar ett nytt.'
   profiles:
     list-current: '<highlight>Nuvarande profil: <main>%PROFILENAME% (%QUESTPOINTS% uppdragspoäng)'
     list-other-heading: '<highlight>Andra profiler:'

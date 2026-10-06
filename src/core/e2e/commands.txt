@@ -17,6 +17,9 @@ qa categories edit TestCategory displayName set Test Category With Spaces
 qa categories edit TestCategory sharedAcceptCooldown complete set 1d
 qa categories edit TestCategory sharedAcceptCooldown complete show
 qa categories edit TestCategory sharedAcceptCooldown complete disable
+qa categories edit TestCategory maxActiveQuests set 1
+qa categories edit TestCategory maxActiveQuests show
+qa categories edit TestCategory maxActiveQuests disable
 
 # ---- actions (literal-typed) ----
 qa actions add ActMsg SendMessage Hello there adventurer

@@ -4829,6 +4829,26 @@ public final class NotQuestsPlugin {
             final boolean guiItemGlow,
             final int conversationDelayMillis,
             final long sharedAcceptCooldownCompleteMinutes) {
+        return loadCategory(
+                categoryName,
+                displayName,
+                progressOrder,
+                guiItem,
+                guiItemGlow,
+                conversationDelayMillis,
+                sharedAcceptCooldownCompleteMinutes,
+                -1);
+    }
+
+    public Category loadCategory(
+            final String categoryName,
+            final String displayName,
+            final String progressOrder,
+            final ItemSelection guiItem,
+            final boolean guiItemGlow,
+            final int conversationDelayMillis,
+            final long sharedAcceptCooldownCompleteMinutes,
+            final int maxActiveQuests) {
         final Category category = getOrCreateCategory(categoryName);
         category.setDisplayName(displayName);
         category.setProgressOrder(progressOrder);
@@ -4836,7 +4856,18 @@ public final class NotQuestsPlugin {
         category.setGuiItemGlow(guiItemGlow);
         category.setConversationDelayInMS(conversationDelayMillis);
         category.setSharedAcceptCooldownComplete(sharedAcceptCooldownCompleteMinutes);
+        category.setMaxActiveQuests(maxActiveQuests);
         return category;
+    }
+
+    public boolean setCategoryMaxActiveQuests(final String categoryName, final int maxActiveQuests) {
+        final Category category = category(categoryName);
+        if (category == null) {
+            return false;
+        }
+        category.setMaxActiveQuests(maxActiveQuests);
+        dataManager.saveCategory(category);
+        return true;
     }
 
     public boolean setCategorySharedAcceptCooldownComplete(
@@ -4852,16 +4883,17 @@ public final class NotQuestsPlugin {
     }
 
     /**
-     * FORK DIVERGENCE: resolves the shared (category-wide) accept cooldown for a quest. Returns
-     * null when the quest's category has no shared cooldown configured, so accept checks skip the
-     * shared computation entirely.
+     * FORK DIVERGENCE: resolves the category-wide accept rules (shared cooldown + active-quest
+     * cap) for a quest. Returns null when the quest's category configures neither rule, so accept
+     * checks skip the category computation entirely.
      */
-    public Quest.SharedCooldown sharedAcceptCooldown(final Quest quest) {
+    public Quest.CategoryRules categoryAcceptRules(final Quest quest) {
         if (quest == null) {
             return null;
         }
         final Category category = category(quest.getCategory());
-        if (category == null || category.getSharedAcceptCooldownComplete() <= 0) {
+        if (category == null
+                || (category.getSharedAcceptCooldownComplete() <= 0 && category.getMaxActiveQuests() <= 0)) {
             return null;
         }
         final Set<String> questIdentifiers = new HashSet<>();
@@ -4870,7 +4902,10 @@ public final class NotQuestsPlugin {
                 questIdentifiers.add(categoryQuest.getIdentifier());
             }
         }
-        return new Quest.SharedCooldown(category.getSharedAcceptCooldownComplete(), questIdentifiers);
+        return new Quest.CategoryRules(
+                category.getSharedAcceptCooldownComplete(),
+                category.getMaxActiveQuests(),
+                questIdentifiers);
     }
 
     public boolean setCategoryConversationDelayMillis(final String categoryName, final int conversationDelayMillis) {
@@ -5973,7 +6008,7 @@ public final class NotQuestsPlugin {
                 playerData.getActiveQuestIdentifiers(),
                 playerData.getCompletedQuests(),
                 playerData.getFailedQuests(),
-                sharedAcceptCooldown(quest),
+                categoryAcceptRules(quest),
                 System.currentTimeMillis());
     }
 
@@ -6026,7 +6061,7 @@ public final class NotQuestsPlugin {
                 playerData.getActiveQuestIdentifiers(),
                 playerData.getCompletedQuests(),
                 playerData.getFailedQuests(),
-                sharedAcceptCooldown(quest),
+                categoryAcceptRules(quest),
                 nowMillis);
         return check.timeToWaitInMinutes() > 0
                 ? new Quest.AcceptCheck(
@@ -6358,7 +6393,7 @@ public final class NotQuestsPlugin {
                 configuration,
                 nowMillis,
                 quest -> questRequirementsFulfilled(questPlayer, quest, warningSink),
-                this::sharedAcceptCooldown);
+                this::categoryAcceptRules);
     }
 
     public boolean showAttachedNpcQuestPreview(
@@ -6962,7 +6997,7 @@ public final class NotQuestsPlugin {
                     playerData.getActiveQuestIdentifiers(),
                     playerData.getCompletedQuests(),
                     playerData.getFailedQuests(),
-                    sharedAcceptCooldown(quest),
+                    categoryAcceptRules(quest),
                     System.currentTimeMillis());
             if (check.status() != Quest.AcceptCheck.Status.ACCEPTABLE) {
                 final String message = questAcceptFailureMessage(questPlayer, quest, check);
@@ -10003,6 +10038,14 @@ public final class NotQuestsPlugin {
                             + "<highlight>" + check.failedAmount() + "</highlight> times.");
             case COOLDOWN -> questCooldownMessage(questPlayer, check);
             case SHARED_COOLDOWN -> questSharedCooldownMessage(questPlayer, quest, check);
+            // FORK DIVERGENCE: the category's active-quest cap blocks taking another quest of the
+            // same giver until the held one is finished.
+            case MAX_ACTIVE_QUESTS_PER_CATEGORY -> translate(questPlayer,
+                    "chat.quest-category-max-active",
+                    Map.of("%CATEGORYDISPLAYNAME%", categoryDisplayNameOrIdentifier(quest.getCategory())),
+                    "<red>You already have an active task from <highlight>"
+                            + categoryDisplayNameOrIdentifier(quest.getCategory())
+                            + "</highlight>! Finish it before taking another one.");
             case MAX_ACTIVE_QUESTS_PER_PLAYER -> translate(questPlayer,
                     "chat.reached-max-active-quests-per-player-limit",
                     Map.of("%MAXACTIVEQUESTSPERPLAYER%", String.valueOf(configuration.maxActiveQuestsPerPlayer())),

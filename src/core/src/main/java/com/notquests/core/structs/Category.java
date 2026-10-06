@@ -17,6 +17,8 @@ public final class Category {
     // FORK DIVERGENCE: shared accept cooldown (minutes) across every quest in this category;
     // -1 or 0 = disabled. Completing any category quest starts the shared window.
     private long sharedAcceptCooldownComplete = -1;
+    // FORK DIVERGENCE: cap on simultaneously active quests from this category; -1 or 0 = disabled.
+    private int maxActiveQuests = -1;
 
     public Category(final String identifier) {
         if (identifier == null || identifier.isBlank()) {
@@ -88,6 +90,14 @@ public final class Category {
     public void setSharedAcceptCooldownComplete(final long sharedAcceptCooldownCompleteMinutes) {
         this.sharedAcceptCooldownComplete =
                 sharedAcceptCooldownCompleteMinutes <= 0 ? -1 : sharedAcceptCooldownCompleteMinutes;
+    }
+
+    public int getMaxActiveQuests() {
+        return maxActiveQuests;
+    }
+
+    public void setMaxActiveQuests(final int maxActiveQuests) {
+        this.maxActiveQuests = maxActiveQuests <= 0 ? -1 : maxActiveQuests;
     }
 
     public static String canonical(final String categoryName) {
