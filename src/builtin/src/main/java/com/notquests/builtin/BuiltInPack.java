@@ -102,6 +102,7 @@ import com.notquests.builtin.variables.PlayerCurrentPositionZVariable;
 import com.notquests.builtin.variables.PlayerCurrentWorldVariable;
 import com.notquests.builtin.variables.PlayerExperienceLevelVariable;
 import com.notquests.builtin.variables.PlayerExperienceVariable;
+import com.notquests.builtin.variables.PlayerAllowFlightVariable;
 import com.notquests.builtin.variables.PlayerFlySpeedVariable;
 import com.notquests.builtin.variables.PlayerFlyingVariable;
 import com.notquests.builtin.variables.PlayerFoodLevelVariable;
@@ -244,6 +245,7 @@ public final class BuiltInPack {
         RandomNumberBetweenRangeVariable.register(platform);
         DayOfWeekVariable.register(platform);
         PlayerNameVariable.register(platform);
+        PlayerAllowFlightVariable.register(platform);
         PlayerFlyingVariable.register(platform);
         PlayerSneakingVariable.register(platform);
         PlayerSprintingVariable.register(platform);

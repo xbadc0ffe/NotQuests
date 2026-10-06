@@ -375,6 +375,20 @@ public class PaperPlayer implements PlatformPlayer {
     }
 
     @Override
+    public boolean isFlightAllowed() {
+        return hasPlayer() && getPlayer().getAllowFlight();
+    }
+
+    @Override
+    public boolean setFlightAllowed(final boolean flightAllowed) {
+        if (!hasPlayer()) {
+            return false;
+        }
+        getPlayer().setAllowFlight(flightAllowed);
+        return true;
+    }
+
+    @Override
     public boolean isSneaking() {
         return hasPlayer() && getPlayer().isSneaking();
     }

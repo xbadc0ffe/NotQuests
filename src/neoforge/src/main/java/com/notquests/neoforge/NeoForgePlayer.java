@@ -155,6 +155,18 @@ final class NeoForgePlayer implements PlatformPlayer {
     }
 
     @Override
+    public boolean isFlightAllowed() {
+        return player.getAbilities().mayfly;
+    }
+
+    @Override
+    public boolean setFlightAllowed(final boolean flightAllowed) {
+        player.getAbilities().mayfly = flightAllowed;
+        player.onUpdateAbilities();
+        return true;
+    }
+
+    @Override
     public boolean isSneaking() {
         return player.isShiftKeyDown();
     }

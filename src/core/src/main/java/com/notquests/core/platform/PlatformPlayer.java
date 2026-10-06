@@ -34,6 +34,12 @@ public interface PlatformPlayer {
 
     boolean setFlying(boolean flying);
 
+    // FORK DIVERGENCE: server-granted flight permission (the /fly state), distinct from
+    // isFlying() which reports whether the player is actually airborne right now.
+    boolean isFlightAllowed();
+
+    boolean setFlightAllowed(boolean flightAllowed);
+
     boolean isSneaking();
 
     boolean setSneaking(boolean sneaking);

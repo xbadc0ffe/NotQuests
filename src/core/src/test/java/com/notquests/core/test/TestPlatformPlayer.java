@@ -36,6 +36,14 @@ public interface TestPlatformPlayer extends PlatformPlayer {
         return false;
     }
 
+    default boolean isFlightAllowed() {
+        return false;
+    }
+
+    default boolean setFlightAllowed(final boolean flightAllowed) {
+        return false;
+    }
+
     default boolean isSneaking() {
         return false;
     }

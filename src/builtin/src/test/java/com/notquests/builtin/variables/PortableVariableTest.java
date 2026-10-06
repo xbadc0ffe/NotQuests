@@ -100,6 +100,10 @@ class PortableVariableTest {
         assertTrue(bool(registry, "Glowing").setValue(false, player));
         assertFalse(player.glowing);
 
+        assertFalse(bool(registry, "AllowFlight").getValue(player));
+        assertTrue(bool(registry, "AllowFlight").setValue(true, player));
+        assertTrue(player.flightAllowed);
+
         assertFalse(bool(registry, "Op").getValue(player));
         assertTrue(bool(registry, "Op").setValue(true, player));
         assertTrue(player.operator);
@@ -415,6 +419,7 @@ class PortableVariableTest {
         private double flySpeed = 0.1d;
         private boolean glowing = true;
         private boolean operator;
+        private boolean flightAllowed;
         private boolean sleeping = true;
         private boolean climbing = true;
         private boolean inLava = true;
@@ -551,6 +556,17 @@ class PortableVariableTest {
         @Override
         public boolean setGlowing(final boolean glowing) {
             this.glowing = glowing;
+            return true;
+        }
+
+        @Override
+        public boolean isFlightAllowed() {
+            return flightAllowed;
+        }
+
+        @Override
+        public boolean setFlightAllowed(final boolean flightAllowed) {
+            this.flightAllowed = flightAllowed;
             return true;
         }
 

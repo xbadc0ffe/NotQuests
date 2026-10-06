@@ -162,6 +162,7 @@ class NeoForgeRegistryTest {
         return Set.of(
                 "ActiveQuests",
                 "Advancement",
+                "AllowFlight",
                 "Block",
                 "Chance",
                 "Climbing",
