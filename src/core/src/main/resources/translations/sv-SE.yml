@@ -256,7 +256,7 @@ gui:
       infobook:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       abort:
         name: <!i><red>Avbryt uppdrag
         lore:
@@ -271,7 +271,7 @@ gui:
       quests:
         name: <!i><!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       back:
         name: <!i><gray>Föregående sida
       forward:
@@ -297,7 +297,7 @@ gui:
       quests:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       back:
         name: <!i><gray>Föregående sida
       forward:
@@ -320,7 +320,7 @@ gui:
       quest:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       back:
         name: <!i><gray>Föregående sida
       forward:
@@ -331,7 +331,7 @@ gui:
       info:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       accept:
         name: <!i><green>Acceptera uppdrag
       decline:

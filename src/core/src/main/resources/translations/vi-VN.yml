@@ -244,7 +244,7 @@ gui:
       infobook:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       abort:
         name: <!i><red>Hủy bỏ nhiệm vụ
         lore:
@@ -259,7 +259,7 @@ gui:
       quests:
         name: <!i><!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       back:
         name: <!i><gray>Trang trước
       forward:
@@ -285,7 +285,7 @@ gui:
       quests:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       back:
         name: <!i><gray>Trang trước
       forward:
@@ -308,7 +308,7 @@ gui:
       quest:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       back:
         name: <!i><gray>Trang trước
       forward:
@@ -319,7 +319,7 @@ gui:
       info:
         name: <!i><green>%QUESTNAME%
         lore:
-        - <!i><gray>%QUESTDESCRIPTION%
+        - <!i><gray>%WRAPPEDQUESTDESCRIPTION%
       accept:
         name: <!i><green>Chấp nhận nhiệm vụ
       decline:

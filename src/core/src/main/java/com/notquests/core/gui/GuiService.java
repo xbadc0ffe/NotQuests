@@ -672,11 +672,16 @@ public final class GuiService {
             }
             if (line.contains("%WRAPPEDQUESTDESCRIPTION%")) {
                 if (quest != null) {
-                    lore.add(line.replace("%WRAPPEDQUESTDESCRIPTION%", ""));
-                    lore.addAll(UtilManager.wrapToList(
+                    // FORK DIVERGENCE: the template line's styling prefix is carried onto every
+                    // wrapped line - continuation lines keep their colors instead of falling back
+                    // to the client's default lore styling, and no bare prefix-only line is left.
+                    final String prefix = line.replace("%WRAPPEDQUESTDESCRIPTION%", "");
+                    for (final String wrapped : UtilManager.wrapToList(
                             quest.getDescription(),
                             plugin.configuration().questDescriptionMaxLineLength(),
-                            plugin.configuration().wrapLongWords()));
+                            plugin.configuration().wrapLongWords())) {
+                        lore.add(prefix + wrapped);
+                    }
                 }
                 continue;
             }

@@ -161,6 +161,40 @@ class GuiServiceTest {
     }
 
     @Test
+    void wrappedDescriptionCarriesTheTemplateStylingOntoEveryLine() {
+        // FORK DIVERGENCE: the lore template's prefix styles every wrapped line, and no bare
+        // prefix-only line is emitted before the description.
+        final NotQuestsPlugin plugin = NotQuestsPlugin.create();
+        plugin.configuration().loadFrom(YamlConfig.fromMap(Map.of(
+                "gui", Map.of(
+                        "quest-description-max-line-length", 10,
+                        "wrap-long-words", false))));
+        plugin.languageManager().configuration().set(
+                "gui.quest-preview.button.info.lore",
+                List.of("<!i><gray>%WRAPPEDQUESTDESCRIPTION%"));
+        plugin.getOrCreateQuest("Story").setDescription("every archive begins with something humble");
+
+        final ResolvedGui view = new GuiService(plugin).build(
+                "quest-preview",
+                new Player("alessio"),
+                "Story",
+                "");
+        final GuiSlot info = view.slots().stream()
+                .filter(slot -> slot.material().equalsIgnoreCase("BOOK"))
+                .findFirst()
+                .orElseThrow();
+
+        final List<String> description = info.lore().stream()
+                .filter(line -> line.startsWith("<!i><gray>"))
+                .toList();
+        assertTrue(description.size() >= 3, () -> String.valueOf(info.lore()));
+        assertTrue(description.stream().noneMatch(line -> line.equals("<!i><gray>")),
+                () -> "no bare prefix-only line expected: " + info.lore());
+        assertTrue(description.stream().allMatch(line -> line.length() <= "<!i><gray>".length() + 10),
+                () -> "every line must respect the wrap length: " + info.lore());
+    }
+
+    @Test
     void mainMenuKeepsPlayerHeadTexturesForPlatformRenderers() {
         final GuiService guiService = new GuiService(NotQuestsPlugin.create());
 
