@@ -67,6 +67,7 @@ import com.notquests.core.structs.ActiveObjective;
 import com.notquests.core.structs.ActiveQuest;
 import com.notquests.core.structs.ActiveObjectives;
 import com.notquests.core.structs.Category;
+import com.notquests.core.structs.KillCreditTracker;
 import com.notquests.core.structs.PredefinedProgressOrder;
 import com.notquests.core.structs.Quest.AcceptCheck;
 import com.notquests.core.structs.Quest.ConditionSettings;
@@ -413,6 +414,7 @@ public final class NotQuestsPlugin {
     private final Packs<Object> registryPacks = new Packs<>();
     private final QuestManager questManager = new QuestManager();
     private final QuestPlayerManager questPlayerManager = new QuestPlayerManager();
+    private final KillCreditTracker killCreditTracker = new KillCreditTracker();
     private final NpcAttachments.Selections npcSelections = new NpcAttachments.Selections();
     private final ConcurrentHashMap<String, Tag> tags = new ConcurrentHashMap<>();
     private final TagManager playerTagPersistence = new TagManager();
@@ -8912,6 +8914,69 @@ public final class NotQuestsPlugin {
         if (killer != null && killedEntity != null) {
             playerKilledEntity(killer, killedEntity);
         }
+    }
+
+    /**
+     * FORK DIVERGENCE: shared kill credit. Remembers that {@code player} hurt the entity so its
+     * death can credit everyone who fought it (see {@link #entityDiedSharedCredit}). Platform
+     * adapters feed this from their damage events with the player behind the hit already
+     * resolved (direct hit, projectile shooter, tamed pet owner).
+     */
+    public void entityDamagedByPlayer(final String entityId, final PlatformPlayer player) {
+        if (entityId == null || entityId.isBlank() || player == null) {
+            return;
+        }
+        killCreditTracker.recordHit(
+                entityId,
+                player.playerIdentifier(),
+                System.currentTimeMillis(),
+                killCreditWindowMillis());
+    }
+
+    /**
+     * FORK DIVERGENCE: shared kill credit. Reports the death of {@code entityId} as a shared kill
+     * to every player who hurt it within {@code general.kill-credit.shared-window-seconds}, is
+     * still connected, and is within {@code general.kill-credit.shared-range-blocks} of the
+     * death (a negative range disables the distance check). The platform's killer is skipped
+     * here because {@link #entityDied} already credited them, without any range limit. Whether
+     * an objective accepts shared credit is decided per objective by
+     * {@link ActiveObjectives#acceptsSharedCredit}, with {@code general.kill-credit.mode} as the
+     * default. Always forgets the entity's hits, so a mob can only pay out once.
+     */
+    public void entityDiedSharedCredit(
+            final String entityId,
+            final PlatformPlayer killer,
+            final NQLocation deathLocation,
+            final Objectives.EntityEvent killedEntity) {
+        final Set<String> contributors =
+                killCreditTracker.contributors(entityId, System.currentTimeMillis(), killCreditWindowMillis());
+        if (contributors.isEmpty() || killedEntity == null) {
+            return;
+        }
+        final boolean sharedByDefault = configuration.killCreditShared();
+        final int range = configuration.killCreditSharedRangeBlocks();
+        final String killerId = killer == null ? null : killer.playerIdentifier();
+        for (final String contributorId : contributors) {
+            if (contributorId.equals(killerId)) {
+                continue;
+            }
+            final PlatformPlayer contributor = activePlatformPlayer(contributorId);
+            if (contributor == null) {
+                continue;
+            }
+            if (range >= 0 && deathLocation != null && contributor.distanceTo(deathLocation) > range) {
+                continue;
+            }
+            questPlayerManager.getActiveObjectives().onPlayerKillEntity(contributor, killedEntity, true, sharedByDefault);
+        }
+    }
+
+    public KillCreditTracker killCreditTracker() {
+        return killCreditTracker;
+    }
+
+    private long killCreditWindowMillis() {
+        return Math.max(0, configuration.killCreditSharedWindowSeconds()) * 1000L;
     }
 
     public void playerMoved(

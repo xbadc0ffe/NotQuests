@@ -22,6 +22,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
@@ -350,6 +351,36 @@ public class QuestEvents implements Listener {
                 && player.getUniqueId().equals(entity.getUniqueId());
     }
 
+    private static PaperEntityEvent entityEvent(final LivingEntity entity, final boolean selfAttributedDeath) {
+        return new PaperEntityEvent(
+                entity.getType().name(),
+                entity.customName() == null
+                        ? ""
+                        : PlainTextComponentSerializer.plainText().serialize(entity.customName()),
+                selfAttributedDeath);
+    }
+
+    /**
+     * The player behind a damaging entity: the player themselves, the shooter of a projectile or
+     * lingering effect cloud, or the online owner of a tamed pet. Anything else (golems, wild
+     * animals, TNT) resolves to nobody.
+     */
+    static Player attackingPlayer(final Entity damager) {
+        if (damager instanceof final Player player) {
+            return player;
+        }
+        if (damager instanceof final Projectile projectile) {
+            return projectile.getShooter() instanceof final Player shooter ? shooter : null;
+        }
+        if (damager instanceof final AreaEffectCloud cloud) {
+            return cloud.getSource() instanceof final Player source ? source : null;
+        }
+        if (damager instanceof final Tameable pet && pet.isTamed() && pet.getOwner() != null) {
+            return Bukkit.getPlayer(pet.getOwner().getUniqueId());
+        }
+        return null;
+    }
+
     private record PaperInteractionEvent(PlayerInteractEvent event)
             implements Objectives.InteractionEvent {
         @Override
@@ -442,14 +473,26 @@ public class QuestEvents implements Listener {
                 deadPlayer,
                 deadPlayer == null ? null : new PaperDeathEvent(deathDamageType((Player) e.getEntity())),
                 killerPlayer,
-                killerPlayer == null
-                        ? null
-                        : new PaperEntityEvent(
-                                e.getEntity().getType().name(),
-                                e.getEntity().customName() == null
-                                        ? ""
-                                        : PlainTextComponentSerializer.plainText().serialize(e.getEntity().customName()),
-                                isSelfAttributedDeath(killer, e.getEntity())));
+                killerPlayer == null ? null : entityEvent(e.getEntity(), isSelfAttributedDeath(killer, e.getEntity())));
+        if (!(e.getEntity() instanceof Player)) { // shared kill credit is for mobs; PvP keeps vanilla credit
+            main.getCorePlugin().entityDiedSharedCredit(
+                    e.getEntity().getUniqueId().toString(),
+                    killerPlayer,
+                    paperLocation(e.getEntity().getLocation()),
+                    entityEvent(e.getEntity(), false));
+        }
+    }
+
+    /** Shared kill credit: remembers every uncancelled player hit on a mob (direct, projectile, tamed pet). */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+        if (!(e.getEntity() instanceof LivingEntity) || e.getEntity() instanceof Player) {
+            return;
+        }
+        final PaperPlayer questPlayer = activePaperPlayer(attackingPlayer(e.getDamager()));
+        if (questPlayer != null) {
+            main.getCorePlugin().entityDamagedByPlayer(e.getEntity().getUniqueId().toString(), questPlayer);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

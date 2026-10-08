@@ -93,6 +93,9 @@ public final class ConfigurationManager implements Palette {
     private volatile int objectiveDescriptionMaxLineLength = 50;
     private volatile boolean wrapLongWords = false;
     private volatile boolean moveEventEnabled = true;
+    private volatile boolean killCreditShared = false;
+    private volatile int killCreditSharedWindowSeconds = 30;
+    private volatile int killCreditSharedRangeBlocks = 48;
     private volatile boolean objectiveUnlockConditionsCheckOnAnyAction = true;
     private volatile int objectiveUnlockConditionsCheckRegularIntervalSeconds = -1;
     private volatile boolean objectiveTrackingActionbarEnabled = true;
@@ -272,6 +275,10 @@ public final class ConfigurationManager implements Palette {
         supportPlaceholderApiInTranslationStrings =
                 configuration.getBoolean("placeholders.support_placeholderapi_in_translation_strings", false);
         moveEventEnabled = configuration.getBoolean("general.enable-move-event", true);
+        killCreditShared = "shared".equalsIgnoreCase(
+                String.valueOf(configuration.getString("general.kill-credit.mode", "solo")).trim());
+        killCreditSharedWindowSeconds = configuration.getInt("general.kill-credit.shared-window-seconds", 30);
+        killCreditSharedRangeBlocks = configuration.getInt("general.kill-credit.shared-range-blocks", 48);
         objectiveUnlockConditionsCheckOnAnyAction =
                 configuration.getBoolean("general.objectives.unlock-conditions-checks.any-action", true);
         objectiveUnlockConditionsCheckRegularIntervalSeconds =
@@ -640,6 +647,21 @@ public final class ConfigurationManager implements Palette {
 
     public boolean moveEventEnabled() {
         return moveEventEnabled;
+    }
+
+    /** FORK: {@code general.kill-credit.mode} is {@code shared}, so kills credit every recent contributor by default. */
+    public boolean killCreditShared() {
+        return killCreditShared;
+    }
+
+    /** FORK: how long after hurting a mob a player still counts as a contributor to its death. */
+    public int killCreditSharedWindowSeconds() {
+        return killCreditSharedWindowSeconds;
+    }
+
+    /** FORK: how close to the death a contributor must be to receive credit; negative means unlimited. */
+    public int killCreditSharedRangeBlocks() {
+        return killCreditSharedRangeBlocks;
     }
 
     public boolean objectiveUnlockConditionsCheckOnAnyAction() {
@@ -1017,6 +1039,15 @@ public final class ConfigurationManager implements Palette {
         bool(configuration, defaults, "storage.backups.create-for-database-before-database-loads", true);
 
         integer(configuration, defaults, "general.max-active-quests-per-player", -1);
+        string(configuration, defaults, "general.kill-credit.mode", "solo");
+        configuration.setComments("general.kill-credit.mode", List.of(
+                "Who gets credit when a mob dies.",
+                "solo: only the player the server reports as the killer (vanilla: last player hit within 5 seconds).",
+                "shared: additionally every player who hurt the mob within shared-window-seconds and is still within",
+                "shared-range-blocks of the death. Kill objectives can override this with their own creditMode.",
+                "Default: solo"));
+        integer(configuration, defaults, "general.kill-credit.shared-window-seconds", 30);
+        integer(configuration, defaults, "general.kill-credit.shared-range-blocks", 48);
         string(configuration, defaults, "visual.language", "en-US");
         bool(configuration, defaults, "visual.hide-rewards-without-name", true);
         bool(configuration, defaults, "visual.show-rewards-after-quest-completion", true);

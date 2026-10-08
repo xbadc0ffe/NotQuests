@@ -1,7 +1,9 @@
 package com.notquests.builtin.objectives;
 
 import com.notquests.core.platform.NotQuestsAdapter;
+import com.notquests.core.structs.ActiveObjectives;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,6 +33,12 @@ public final class KillMobsObjective {
                         "nametag_containsany",
                         adapter.fields().greedyText().config("extras.nameTagContainsAny"),
                         "Only count mobs whose custom name contains every word in this text.")
+                .flag(
+                        ActiveObjectives.CREDIT_MODE_FIELD,
+                        adapter.fields().text(() -> List.of("default", "solo", "shared")).config("specifics.creditMode"),
+                        "Who gets credit for each kill: `solo` only the player the server reports as the killer, "
+                                + "`shared` also every player who hurt the mob shortly before it died and is still nearby, "
+                                + "`default` follows general.yml kill-credit.mode.")
                 .taskDescription((objective, questPlayer, activeObjective) -> adapter.objectiveTaskText(
                         "chat.objectives.taskDescription.killMobs.base",
                         questPlayer,

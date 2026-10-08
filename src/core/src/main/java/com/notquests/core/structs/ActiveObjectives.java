@@ -1171,11 +1171,52 @@ public final class ActiveObjectives {
                 handler.handle(objective));
     }
 
+    /**
+     * FORK DIVERGENCE: shared kill credit. Objective value naming how an objective takes kill
+     * credit: {@code solo} (only the platform's killer), {@code shared} (every recent contributor),
+     * or empty/{@code default} to follow the server setting.
+     */
+    public static final String CREDIT_MODE_FIELD = "creditMode";
+
     public void onPlayerKillEntity(
             final PlatformPlayer questPlayer,
             final Objectives.EntityEvent event) {
-        dispatch(questPlayer, Objectives.Type::killEntityHandler, (handler, objective) ->
-                handler.handle(event, objective));
+        onPlayerKillEntity(questPlayer, event, false, false);
+    }
+
+    /**
+     * FORK DIVERGENCE: shared kill credit. {@code sharedCredit} marks a contributor who hurt the
+     * entity but is not the player the platform reports as its killer; such a report only
+     * progresses objectives that accept shared credit (see {@link #acceptsSharedCredit}). The
+     * platform's killer always progresses every matching objective.
+     */
+    public void onPlayerKillEntity(
+            final PlatformPlayer questPlayer,
+            final Objectives.EntityEvent event,
+            final boolean sharedCredit,
+            final boolean sharedByDefault) {
+        dispatch(questPlayer, Objectives.Type::killEntityHandler, (handler, objective) -> {
+            if (sharedCredit && !acceptsSharedCredit(objective, sharedByDefault)) {
+                return;
+            }
+            handler.handle(event, objective);
+        });
+    }
+
+    /**
+     * Resolves an objective's kill-credit mode: an explicit {@code shared} or {@code solo}
+     * {@link #CREDIT_MODE_FIELD} wins, anything else follows {@code sharedByDefault}
+     * (general.yml {@code general.kill-credit.mode}).
+     */
+    public static boolean acceptsSharedCredit(final Objectives.Data objective, final boolean sharedByDefault) {
+        final String mode = objective == null
+                ? ""
+                : objective.text(CREDIT_MODE_FIELD).trim().toLowerCase(Locale.ROOT);
+        return switch (mode) {
+            case "shared" -> true;
+            case "solo" -> false;
+            default -> sharedByDefault;
+        };
     }
 
     public void onPlayerBreedEntity(
