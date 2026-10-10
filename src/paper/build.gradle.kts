@@ -290,7 +290,7 @@ bukkit {
         "Jobs",
         "EcoMobs",
         "eco",
-        "Floodgate",
+        "floodgate",
         "BetonQuest"
     )
 
@@ -387,7 +387,9 @@ paper {
         register("eco") {
             required = false
         }
-        register("Floodgate") {
+        // Floodgate names itself "floodgate"; a Paper plugin only sees the classes of dependencies
+        // whose name matches exactly, so the capitalised form left FloodgateApi unresolvable at runtime.
+        register("floodgate") {
             required = false
         }
         register("BetonQuest") {

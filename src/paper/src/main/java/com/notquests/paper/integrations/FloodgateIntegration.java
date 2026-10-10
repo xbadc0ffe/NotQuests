@@ -14,6 +14,19 @@ public class FloodgateIntegration {
   }
 
   public final boolean isPlayerOnFloodgate(final UUID playerUUID) {
-    return FloodgateApi.getInstance().isFloodgatePlayer(playerUUID);
+    try {
+      return FloodgateApi.getInstance().isFloodgatePlayer(playerUUID);
+    } catch (final LinkageError | RuntimeException exception) {
+      // The API class is not reachable from this plugin's class loader (dependency not declared or
+      // not loaded) or Floodgate is not initialised: treat the player as a Java player instead of
+      // failing whatever asked (a conversation condition, an NPC click).
+      if (!warned) {
+        warned = true;
+        main.getMain().getLogger().warning("Floodgate lookup failed; treating players as non-Floodgate: " + exception);
+      }
+      return false;
+    }
   }
+
+  private boolean warned;
 }
