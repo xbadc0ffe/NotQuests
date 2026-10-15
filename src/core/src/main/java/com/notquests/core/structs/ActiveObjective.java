@@ -297,13 +297,18 @@ public final class ActiveObjective implements Objectives.Progress {
 
     @Override
     public void addProgress(final double amount) {
-        if (amount <= 0 || completed || !unlocked || !canProgress(false)) {
+        if (amount <= 0 || !canProgress()) {
             return;
         }
         final double oldProgress = progress;
         progress += amount;
         progressChangeHandler.handle(this, oldProgress, progress);
         completeIfReady();
+    }
+
+    @Override
+    public boolean canProgress() {
+        return !completed && unlocked && canProgress(false);
     }
 
     @Override

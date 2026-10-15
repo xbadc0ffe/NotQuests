@@ -34,6 +34,11 @@ public final class TalkToNPCObjective {
                     if (!sameNpc(objective.text("npc"), event.npcSelector())) {
                         return;
                     }
+                    // A click that cannot count (the objective waits on a progress condition,
+                    // typically "finish the hunt first") records nothing, so it says nothing.
+                    if (!objective.canProgress()) {
+                        return;
+                    }
                     objective.addProgress(1);
                     event.questPlayer().sendMessage("<GREEN>You talked to <highlight>" + event.npcName());
                 })

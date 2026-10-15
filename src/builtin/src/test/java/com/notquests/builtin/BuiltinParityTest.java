@@ -300,6 +300,11 @@ class BuiltinParityTest {
         }
 
         @Override
+        public boolean canProgress() {
+            return true;
+        }
+
+        @Override
         public void copyTo(final Objectives.Draft objective) {
             values.forEach(objective::setValue);
         }

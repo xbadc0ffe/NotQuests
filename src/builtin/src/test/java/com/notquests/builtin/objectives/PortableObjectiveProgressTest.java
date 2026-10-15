@@ -34,8 +34,10 @@ import com.notquests.core.structs.Quest;
 import com.notquests.core.variables.VariableDataType;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class PortableObjectiveProgressTest {
@@ -78,6 +80,76 @@ class PortableObjectiveProgressTest {
         assertTrue(plugin.playerInteractedWithNpc(player, completionNpc));
         assertEquals(6, apples.get());
         assertTrue(plugin.activeQuestPlayer(PLAYER).hasCompletedQuest("Delivery"));
+    }
+
+    @Test
+    void gatedDeliveryLeavesTheInventoryAloneUntilItsProgressCanCount() {
+        // The server's gather-then-deliver quests gate the delivery objective behind the
+        // gather objective with a progress condition. Handing items to the recipient while
+        // that gate is closed must not take them: addProgress refuses, so the items would
+        // be lost.
+        final NotQuestsPlugin plugin = NotQuestsPlugin.create();
+        final NotQuestsAdapter adapter = plugin.createRegistryAdapter(new NotQuestsRegistry.PlatformHooks(null, null, null));
+        BuiltInPack.register(plugin, adapter);
+        final AtomicBoolean gateOpen = registerGate(adapter);
+        final AtomicInteger apples = new AtomicInteger(3);
+        final TestPlayer player = new TestPlayer(PLAYER, apples);
+        assertTrue(plugin.createQuest("GatedDelivery").success());
+        plugin.quest("GatedDelivery")
+                .addObjective("DeliverItems",
+                        Objectives.parse(adapter, type(plugin.registry(), "DeliverItems"), "apple 5 citizens:1"), "")
+                .addCondition("progress", "Gate", null);
+        assertTrue(plugin.giveQuest(player, "GatedDelivery", false, ignored -> {}));
+        final ActiveObjective objective = plugin.activeObjectives(PLAYER).getFirst();
+        final NpcEvent recipient = new NpcEvent(player, "citizens:1", "Merchant");
+
+        assertFalse(plugin.playerInteractedWithNpc(player, recipient));
+        assertEquals(3, apples.get());
+        assertEquals(0, objective.currentProgress());
+
+        gateOpen.set(true);
+        assertTrue(plugin.playerInteractedWithNpc(player, recipient));
+        assertEquals(0, apples.get());
+        assertEquals(3, objective.currentProgress());
+    }
+
+    @Test
+    void talkToNpcReportsOnlyClicksThatRecordedProgress() {
+        final NotQuestsPlugin plugin = NotQuestsPlugin.create();
+        final NotQuestsAdapter adapter = plugin.createRegistryAdapter(new NotQuestsRegistry.PlatformHooks(null, null, null));
+        BuiltInPack.register(plugin, adapter);
+        final AtomicBoolean gateOpen = registerGate(adapter);
+        final TestPlayer player = new TestPlayer(PLAYER);
+        assertTrue(plugin.createQuest("Report").success());
+        plugin.quest("Report")
+                .addObjective("TalkToNPC",
+                        Objectives.parse(adapter, type(plugin.registry(), "TalkToNPC"), "citizens:1"), "")
+                .addCondition("progress", "Gate", null);
+        assertTrue(plugin.giveQuest(player, "Report", false, ignored -> {}));
+        final ActiveObjective objective = plugin.activeObjectives(PLAYER).getFirst();
+        final NpcEvent npc = new NpcEvent(player, "citizens:1", "The Swordsman");
+
+        assertFalse(plugin.playerInteractedWithNpc(player, npc));
+        assertEquals(0, objective.currentProgress());
+        assertEquals(0, player.talkedToMessages());
+
+        gateOpen.set(true);
+        assertTrue(plugin.playerInteractedWithNpc(player, npc));
+        assertTrue(objective.hasBeenCompleted());
+        assertEquals(1, player.talkedToMessages());
+    }
+
+    /** A progress condition the test opens and closes: unmet while the flag is false. */
+    private static AtomicBoolean registerGate(final NotQuestsAdapter adapter) {
+        final AtomicBoolean open = new AtomicBoolean(false);
+        adapter.conditions()
+                .condition("Gate")
+                .displayName("Gate")
+                .description("Test gate: fulfilled only while the test holds it open.")
+                .conditionDescription((condition, questPlayer, objects) -> "Gate is open")
+                .check((condition, questPlayer) -> open.get() ? "" : "<yellow>Gate is closed.")
+                .register();
+        return open;
     }
 
     @Test
@@ -315,9 +387,18 @@ class PortableObjectiveProgressTest {
                 .orElseThrow();
     }
 
-    private record TestPlayer(String playerIdentifier, AtomicInteger apples) implements TestPlatformPlayer {
+    private record TestPlayer(String playerIdentifier, AtomicInteger apples, List<String> messages)
+            implements TestPlatformPlayer {
         private TestPlayer(final String playerIdentifier) {
             this(playerIdentifier, new AtomicInteger());
+        }
+
+        private TestPlayer(final String playerIdentifier, final AtomicInteger apples) {
+            this(playerIdentifier, apples, new ArrayList<>());
+        }
+
+        long talkedToMessages() {
+            return messages.stream().filter(message -> message.contains("You talked to")).count();
         }
 
         @Override
@@ -341,7 +422,9 @@ class PortableObjectiveProgressTest {
         }
 
         @Override
-        public void sendMessage(final String miniMessage) {}
+        public void sendMessage(final String miniMessage) {
+            messages.add(miniMessage);
+        }
 
         @Override
         public void sendActionBar(final String miniMessage) {}

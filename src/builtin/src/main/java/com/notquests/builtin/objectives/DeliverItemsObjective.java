@@ -58,6 +58,12 @@ public final class DeliverItemsObjective {
                     if (!sameNpc(objective.text("npc"), event.npcSelector())) {
                         return;
                     }
+                    // Items leave the inventory before progress is added, so ask first whether
+                    // the progress would be accepted. A delivery gated behind another objective
+                    // (gather first, then deliver) must not eat the items while the gate is shut.
+                    if (!objective.canProgress()) {
+                        return;
+                    }
                     final ItemSelection selection = objective.itemSelection("materials");
                     if (selection == null) {
                         return;

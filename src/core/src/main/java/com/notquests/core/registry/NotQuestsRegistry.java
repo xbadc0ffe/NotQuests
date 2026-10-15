@@ -3540,6 +3540,14 @@ public final class NotQuestsRegistry {
 
             double progressNeeded();
 
+            /**
+             * Whether {@link #addProgress} would record anything right now: the objective is
+             * unlocked, not completed and its progress conditions hold. A handler that spends
+             * something before it adds progress (items handed to an NPC) asks this first, and a
+             * handler that announces progress announces only what was recorded.
+             */
+            boolean canProgress();
+
             int childObjectiveCount();
 
             PlatformPlayer questPlayer();
