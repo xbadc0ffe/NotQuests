@@ -68,6 +68,7 @@ qa conditions add CondCond Condition CondTime                           # UNSURE
 # variable-based conditions via tags
 qa conditions add CondNumber TagInteger testint moreThan 3
 qa conditions add CondStr TagString teststring equals hello
+qa conditions add CondStrAny TagString teststring equalsAny hello,hi
 qa conditions add CondBool TagBoolean testbool equals true
 qa conditions add CondList ActiveQuests contains TestQuest              # UNSURE
 qa conditions add CondItemList Inventory contains stone 1               # UNSURE

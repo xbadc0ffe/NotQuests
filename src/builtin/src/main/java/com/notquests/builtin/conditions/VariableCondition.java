@@ -131,7 +131,7 @@ public final class VariableCondition {
                 .field(
                         OPERATOR,
                         adapter.fields()
-                                .text(() -> List.of("equals", "equalsIgnoreCase", "contains", "startsWith", "endsWith", "isEmpty"))
+                                .text(() -> List.of("equals", "equalsIgnoreCase", "equalsAny", "contains", "startsWith", "endsWith", "isEmpty"))
                                 .config("specifics.operator"),
                         "How to compare the variable value with the required text.")
                 .field(
@@ -154,7 +154,7 @@ public final class VariableCondition {
                         VariableDataType.STRING,
                         VARIABLE_NAME,
                         OPERATOR,
-                        List.of("equals", "equalsIgnoreCase", "contains", "startsWith", "endsWith", "isEmpty"),
+                        List.of("equals", "equalsIgnoreCase", "equalsAny", "contains", "startsWith", "endsWith", "isEmpty"),
                         EXPRESSION,
                         adapter.fields().greedyText(),
                         "How to compare the selected text variable against the supplied text.",
@@ -352,6 +352,9 @@ public final class VariableCondition {
         final boolean fulfilled = switch (condition.text(OPERATOR)) {
             case "equals" -> current.equals(required);
             case "equalsIgnoreCase" -> current.equalsIgnoreCase(required);
+            // Exact match against any entry of a comma-separated list: the only way to say
+            // "biome A or biome B" in one condition, since conditions are AND-ed.
+            case "equalsAny" -> splitList(required).contains(current);
             case "contains" -> current.contains(required);
             case "startsWith" -> current.startsWith(required);
             case "endsWith" -> current.endsWith(required);

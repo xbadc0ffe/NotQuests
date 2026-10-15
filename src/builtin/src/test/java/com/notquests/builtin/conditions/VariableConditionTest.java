@@ -78,6 +78,42 @@ class VariableConditionTest {
     }
 
     @Test
+    void stringEqualsAnyMatchesOneEntryOfACommaSeparatedListExactly() {
+        final NotQuestsRegistry registry = new NotQuestsRegistry();
+        final NotQuestsAdapter adapter = registry.createAdapter(new NotQuestsRegistry.PlatformHooks(null, null, null));
+        BuiltInPack.register(adapter);
+        final PlatformPlayer player = new TestPlayer() {
+            @Override
+            public String biomeName() {
+                return "old_growth_pine_taiga";
+            }
+        };
+
+        assertEquals("", check(registry, "String", data -> {
+            data.setValue("variableName", "CurrentBiome");
+            data.setValue("operator", "equalsAny");
+            data.setValue("expression", "taiga,old_growth_pine_taiga, snowy_taiga");
+        }, player));
+        assertEquals("<yellow>Biome must satisfy equalsAny.", check(registry, "String", data -> {
+            data.setValue("variableName", "CurrentBiome");
+            data.setValue("operator", "equalsAny");
+            data.setValue("expression", "taiga,snowy_taiga");
+        }, player));
+        // exact: no substring or case folding
+        assertEquals("<yellow>Biome must satisfy equalsAny.", check(registry, "String", data -> {
+            data.setValue("variableName", "CurrentBiome");
+            data.setValue("operator", "equalsAny");
+            data.setValue("expression", "pine_taiga,OLD_GROWTH_PINE_TAIGA");
+        }, player));
+        // plain equals keeps treating the list as one literal
+        assertEquals("<yellow>Biome must satisfy equals.", check(registry, "String", data -> {
+            data.setValue("variableName", "CurrentBiome");
+            data.setValue("operator", "equals");
+            data.setValue("expression", "taiga,old_growth_pine_taiga");
+        }, player));
+    }
+
+    @Test
     void conditionInputParserReadsBuiltInConditionCommandArguments() {
         final NotQuestsRegistry registry = new NotQuestsRegistry();
         final NotQuestsAdapter adapter = registry.createAdapter(new NotQuestsRegistry.PlatformHooks(null, null, null));
@@ -297,7 +333,7 @@ class VariableConditionTest {
         return assertInstanceOf(java.util.Map.class, data.value(name));
     }
 
-    private static final class TestPlayer implements TestPlatformPlayer {
+    private static class TestPlayer implements TestPlatformPlayer {
         @Override
         public boolean hasPlayer() {
             return true;
