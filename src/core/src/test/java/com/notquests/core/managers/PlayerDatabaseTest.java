@@ -153,6 +153,53 @@ class PlayerDatabaseTest {
         }
     }
 
+    @Test
+    void savingAPlayerAgainReplacesTheirActiveTriggerRows() throws Exception {
+        try (var connection = DriverManager.getConnection("jdbc:sqlite::memory:")) {
+            PlayerDatabase.prepare(connection, null);
+            final PlayerDatabase.ActiveTriggerRow trigger = new PlayerDatabase.ActiveTriggerRow(
+                    "STARTFLYING", "swordsman_02_skeleton", PLAYER_ID, 0, 1, "default");
+
+            PlayerDatabase.save(connection, List.of(snapshot(List.of("swordsman_02_skeleton"), List.of(trigger))));
+            PlayerDatabase.save(connection, List.of(snapshot(List.of("swordsman_02_skeleton"), List.of(trigger))));
+
+            assertEquals(1, countRows(connection, "ActiveTriggers"));
+            assertEquals(
+                    1,
+                    PlayerDatabase.load(connection, PLAYER_ID).getFirst()
+                            .activeTriggers("swordsman_02_skeleton").size());
+
+            PlayerDatabase.save(connection, List.of(snapshot(List.of(), List.of())));
+            assertEquals(0, countRows(connection, "ActiveTriggers"));
+        }
+    }
+
+    private static PlayerDatabase.PlayerSnapshot snapshot(
+            final List<String> activeQuestNames,
+            final List<PlayerDatabase.ActiveTriggerRow> activeTriggers) {
+        return new PlayerDatabase.PlayerSnapshot(
+                PLAYER_ID,
+                "default",
+                "default",
+                0,
+                activeQuestNames,
+                activeTriggers,
+                List.of(),
+                List.of(),
+                List.of(),
+                Map.of());
+    }
+
+    private static int countRows(
+            final java.sql.Connection connection,
+            final String table) throws SQLException {
+        try (var statement = connection.createStatement();
+             var result = statement.executeQuery("SELECT COUNT(*) FROM " + table)) {
+            result.next();
+            return result.getInt(1);
+        }
+    }
+
     private static PlayerDatabase.PlayerSnapshot snapshot(
             final long questPoints,
             final Map<String, Object> tags) {

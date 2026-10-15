@@ -216,6 +216,10 @@ public final class PlayerDatabase {
             INSERT INTO ActiveObjectives (ObjectiveType, QuestName, PlayerUUID, CurrentProgress, ObjectiveID, HasBeenCompleted, ProgressNeeded, Profile) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
          """;
 
+    public static final String DELETE_ACTIVE_TRIGGERS = """
+            DELETE FROM ActiveTriggers WHERE PlayerUUID = ? AND Profile = ?;
+         """;
+
     public static final String INSERT_ACTIVE_TRIGGER = """
             INSERT INTO ActiveTriggers (TriggerType, QuestName, PlayerUUID, CurrentProgress, TriggerID, Profile) VALUES (?, ?, ?, ?, ?, ?);
          """;
@@ -492,6 +496,8 @@ public final class PlayerDatabase {
                         connection.prepareStatement(DELETE_ACTIVE_OBJECTIVES);
                 PreparedStatement insertActiveQuest =
                         connection.prepareStatement(INSERT_ACTIVE_QUEST);
+                PreparedStatement deleteActiveTriggers =
+                        connection.prepareStatement(DELETE_ACTIVE_TRIGGERS);
                 PreparedStatement insertActiveTrigger =
                         connection.prepareStatement(INSERT_ACTIVE_TRIGGER);
                 PreparedStatement insertActiveObjective =
@@ -517,6 +523,7 @@ public final class PlayerDatabase {
                         insertPlayer,
                         deleteActiveQuests,
                         deleteActiveObjectives,
+                        deleteActiveTriggers,
                         insertActiveQuest,
                         insertActiveTrigger,
                         insertActiveObjective,
@@ -547,6 +554,7 @@ public final class PlayerDatabase {
             final PreparedStatement insertPlayer,
             final PreparedStatement deleteActiveQuests,
             final PreparedStatement deleteActiveObjectives,
+            final PreparedStatement deleteActiveTriggers,
             final PreparedStatement insertActiveQuest,
             final PreparedStatement insertActiveTrigger,
             final PreparedStatement insertActiveObjective,
@@ -579,6 +587,12 @@ public final class PlayerDatabase {
         deleteActiveObjectives.setString(1, player.playerIdentifier());
         deleteActiveObjectives.setString(2, player.profile());
         deleteActiveObjectives.executeUpdate();
+
+        // Trigger rows were insert-only until 26.3.22, so every save appended another copy
+        // and rows of finished quests never left. Same delete-then-insert as the other tables.
+        deleteActiveTriggers.setString(1, player.playerIdentifier());
+        deleteActiveTriggers.setString(2, player.profile());
+        deleteActiveTriggers.executeUpdate();
 
         for (final String activeQuestName : player.activeQuestNames()) {
             insertActiveQuest.setString(1, activeQuestName);
